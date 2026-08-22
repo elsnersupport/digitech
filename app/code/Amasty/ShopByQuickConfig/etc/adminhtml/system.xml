@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2022 Amasty (https://www.amasty.com)
+ * @package ILN Quick Config for Magento 2 (System)
+ */-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="amshopby_quick_config" translate="label" type="text" sortOrder="91316" showInDefault="1" showInWebsite="1" showInStore="1">
+            <resource>Amasty_ShopByQuickConfig::config</resource>
+            <class>separator-top</class>
+            <label>Improved Layered Navigation: Quick Config</label>
+            <tab>amasty</tab>
+            <group id="amasty_information" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
+                <label>Information</label>
+                <frontend_model>Amasty\ShopByQuickConfig\Block\Adminhtml\System\Config\Information</frontend_model>
+            </group>
+        </section>
+    </system>
+</config>

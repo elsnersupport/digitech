@@ -1,0 +1,88 @@
+/* .page-footer {} */
+.page-footer {
+    .form.subscribe {
+        .btn-action {
+            @apply relative px-[15px] rounded-ee;
+            &:before {
+                @apply content-[""] w-px h-[15px] absolute left-[-3px] bg-primary;
+              }
+             &:hover {
+                @apply bg-white;
+             } 
+        }
+        input {
+            @apply placeholder-[#262626] font-medium;
+        }
+    }
+    
+    .footer-absolute-bottom {
+        @apply relative;
+
+    }
+
+}
+
+@screen max-md {
+    .page-footer {
+        .news-letter-block{
+            @apply flex-col;
+        }
+        .footer-middle-wrapper{
+            @apply flex-wrap;
+            .call-info {
+                @apply w-full justify-center text-center items-center sm:mb-5;
+            }
+        }
+        .news-letter-form{
+            @apply w-full;
+            > div {
+                @apply mx-auto;
+            }
+        }
+    }
+}
+
+@screen max-sm {
+    .page-footer {
+        .form.subscribe .btn-action {
+            @apply text-sm;
+        }
+    }
+    .newsletter-text-wrapper {
+        .newsletter-first-text{
+            @apply flex-row items-center gap-[0_12px];
+        }
+    }
+    .footer-middle-wrapper{
+        .footer-links {
+            @apply m-0;
+        }
+    }
+    .footer-links {
+        @apply py-[5px];
+        .block-title {
+            @apply mb-0 text-sm leading-none py-[5px] relative;
+            &:before,
+            &:after {
+                @apply content-[""] w-2.5 h-px absolute rotate-45 left-auto right-[7px] top-[12px] bg-black-brand;
+            }
+            &:after {
+                @apply -rotate-45 right-0;
+            }
+            &.active {
+                &:before {
+                    @apply right-0
+                }
+                &:after {
+                    @apply right-[7px];
+                }
+            }
+        }
+        > ul {
+            @apply hidden;
+        }
+    }
+    .footer-copyright{
+        @apply text-center text-xs leading-none max-w-[280px] w-full mx-auto;
+    }
+}

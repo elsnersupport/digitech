@@ -1,0 +1,259 @@
+<?php
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_Shopbybrand
+ * @copyright   Copyright (c) Mageplaza (https://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+
+use Magento\Swatches\Model\Swatch;
+use Mageplaza\Shopbybrand\Block\Link\CategoryMenu;
+use Mageplaza\Shopbybrand\Model\Config\Source\BrandListDisplay;
+use Mageplaza\Shopbybrand\Model\Config\Source\MegaMenu;
+use Hyva\Theme\ViewModel\HeroiconsSolid;
+use Mageplaza\Shopbybrand\Model\Config\Source\BrandPosition;
+
+/** @var CategoryMenu $block */
+$brands           = $block->getCollection();
+$showDropdownMenu = $block->showBrandMenu() && $brands->getData();
+$count            = 0;
+$limit            = $block->getLimit();
+$columns          = $block->getGridColumns();
+$layout           = $block->showBrandMenu() === '2' ? 'grid-' . $columns : '';
+$showBrandLogo    = $block->showBrandInfo() === BrandListDisplay::DISPLAY_LOGO
+    || $block->showBrandInfo() === BrandListDisplay::DISPLAY_LOGO_AND_LABEL;
+$showBrandName    = $block->showBrandInfo() === BrandListDisplay::DISPLAY_LABEL
+    || $block->showBrandInfo() === BrandListDisplay::DISPLAY_LOGO_AND_LABEL;
+$helperData       = $this->helper(\Mageplaza\ShopByBrand\Helper\Data::class);
+$position         = $helperData->getNumberPosition();
+$heroiconsSolid = $viewModels->require(HeroiconsSolid::class);
+?>
+<?php if($helperData->canShowBrandLink(BrandPosition::CATEGORY)) : ?>
+<li class="relative level-0 border-b-2 border-transparent hover:border-primary data-[active]:border-primary mega-menu changes-made <?= $escaper->escapeHtmlAttr($layout) ?>"
+    @mouseenter="hoverPanelActiveId = '<?= /* @noEscape */ 'category-node-100' ?>'"
+    @mouseleave="hoverPanelActiveId = 0"
+    @keyup.escape="hoverPanelActiveId = 0"
+>
+    <span class="flex items-center text-md">
+         <a href="<?= $escaper->escapeUrl($block->getBrandUrl()) ?>"
+            class="w-full text-base text-gray-700 level-0 py-[18px] px-0.5"
+            id="ui-id-8"
+            tabindex="-1"
+            @focus="hoverPanelActiveId = 0"
+         >
+            <span><?= $escaper->escapeHtml($block->getBrandTitle()) ?></span>
+         </a>
+        <?php if ($showDropdownMenu) : ?>
+            <button
+                type="button"
+                data-sr-button-id="<?= $escaper->escapeHtmlAttr('category-node-100') ?>"
+                :aria-expanded="hoverPanelActiveId === '<?= /* @noEscape */ (string) 'category-node-100' ?>' ? 'true' : 'false'"
+                @click="openMenuOnClick('<?= /* @noEscape */ (string) 'category-node-100' ?>')"
+                class="rounded p-1 text-gray-500"
+            >
+                                    <?= $heroiconsSolid->chevronDownHtml("flex self-center h-5 w-5", 25, 25, ['aria-hidden' => 'true']) ?>
+                                    <span class="sr-only">
+                                        <?= $escaper->escapeHtml(__('Show submenu for %1 category')) ?>
+                                    </span>
+                 </button>
+        <?php endif; ?>
+    </span>
+    <?php if ($showDropdownMenu) : ?>
+        <?php if ($block->showBrandMenu() === MegaMenu::DROPDOWN) : ?>
+            <ul class="absolute top-full z-10 hidden px-6 py-4 mt-0.5 -ml-6 shadow-lg bg-container-lighter"
+                :class="{
+                       'hidden' : hoverPanelActiveId !== '<?= /* @noEscape */ 'category-node-100' ?>',
+                      'block' : hoverPanelActiveId === '<?= /* @noEscape */ 'category-node-100' ?>'
+                }"
+            >
+                <div class="ui-menu-item mpbrand-dropdown-menu">
+                    <?php foreach ($brands as $brand) : ?>
+                        <?php if ($block->isShowBrandsWithoutProducts()
+                            || (!$block->isShowBrandsWithoutProducts()
+                                && $block->getProductQuantity($brand->getOptionId()))) : ?>
+                            <li class="level1 nav-8-<?= /** @noEscape */ $count ?> ui-menu-item mt-3">
+                                <a href="<?= /** @noEscape */ $block->getBrandUrl($brand) ?>"
+                                   id="ui-brand-id-<?= /** @noEscape */ $brand->getId() ?>"
+                                   class="ui-corner-all" tabindex="-1"
+                                >
+                                    <?php if ($showBrandLogo) : ?>
+                                        <span class="mpbrand-image-container">
+                                            <span class="mpbrand-image-wrapper">
+                                                <?php if ($brand->getSwatchType() == Swatch::SWATCH_TYPE_VISUAL_COLOR): ?>
+                                                    <span class="img-responsive brand-topmenu-image" style="background-color: <?= /** @noEscape */ $brand->getSwatchValue() ?>; display: block"></span>
+                                                <?php else: ?>
+                                                    <img class="img-responsive brand-topmenu-image"
+                                                         src="<?= /** @noEscape */ $brand->getImage()
+                                                             ? $escaper->escapeUrl($block->getBrandThumbnail($brand))
+                                                             : $escaper->escapeUrl($block->getBrandImageUrl($brand)) ?>"
+                                                         alt="<?= $escaper->escapeHtml($brand->getValue()) ?>"/>
+                                                <?php endif; ?>
+                                            </span>
+                                        </span>
+                                    <?php endif; ?>
+                                    <?php if ($showBrandName) : ?>
+                                        <span>
+                                            <?= $escaper->escapeHtml($brand->getValue()) ?>
+                                        </span>
+                                    <?php endif; ?>
+                                </a>
+                            </li>
+                            <?php
+                            $count++;
+                            if ($count === $limit) {
+                                break;
+                            } ?>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </div>
+                <li class="level1 nav-8-<?= /** @noEscape */ $count + 1 ?> ui-menu-item"
+                    style="border-top:solid 1px #dfdfdf; margin: 0 5px; padding: 13px; text-align: center"
+                >
+                    <a href="<?= $escaper->escapeUrl($block->getBrandUrl()) ?>"
+                       id="ui-all-brand" class="ui-corner-all"
+                       tabindex="-1">
+                        <span class="view-all-brand">
+                            <?= /** @noEscape */ __('View All') ?>
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        <?php else : ?>
+            <div class="menu-wrapper absolute top-full z-10 megamenu-products changes-made hidden"
+                :class="{
+                       'hidden' : hoverPanelActiveId !== '<?= /* @noEscape */ 'category-node-100' ?>',
+                      'block' : hoverPanelActiveId === '<?= /* @noEscape */ 'category-node-100' ?>'
+                }"
+             >
+                <div class="block-container changes-made">
+                    <div class="row-mp">
+                        <ul class="main-subitem subchildmenu changes-made">
+                            <?php foreach ($brands as $brand) : ?>
+                                <?php if ($block->isShowBrandsWithoutProducts()
+                                    || (!$block->isShowBrandsWithoutProducts()
+                                        && $block->getProductQuantity($brand->getOptionId()))) : ?>
+                                    <li style="text-align: center" class="level1 nav-8-<?= /** @noEscape */ $count ?> ui-menu-item col-mp <?= /** @noEscape */ 'mp-' . 12 / $columns ?>" role="presentation">
+                                        <a href="<?= /** @noEscape */ $block->getBrandUrl($brand) ?>"
+                                           id="ui-brand-id-<?= /** @noEscape */ $brand->getId() ?>"
+                                           class="ui-corner-all inline-block mb-6" tabindex="-1"
+                                           >
+                                            <?php if ($showBrandLogo) : ?>
+                                                <span class="mpbrand-image-container">
+                                                    <span class="mpbrand-image-wrapper brand-topmenu-image inline-flex justify-center items-center p-2">
+                                                        <?php if ($brand->getSwatchType() == Swatch::SWATCH_TYPE_VISUAL_COLOR): ?>
+                                                            <span class="img-responsive" style="background-color: <?= /** @noEscape */ $brand->getSwatchValue() ?>; display: block"></span>
+                                                        <?php else: ?>
+                                                            <img class="img-responsive object-contain"
+                                                                src="<?= /** @noEscape */ $brand->getImage()
+                                                                    ? $escaper->escapeUrl($block->getBrandThumbnail($brand))
+                                                                    : $escaper->escapeUrl($block->getBrandImageUrl($brand)) ?>"
+                                                                alt="<?= $escaper->escapeHtml($brand->getValue()) ?>"/>
+                                                        <?php endif; ?>
+                                                    </span>
+                                                </span>
+                                            <?php endif; ?>
+                                            <?php if ($showBrandName) : ?>
+                                                <div class="block overflow-hidden text-ellipsis">
+                                                    <?= $escaper->escapeHtml($brand->getValue()) ?>
+                                                </div>
+                                            <?php endif; ?>
+                                        </a>
+                                    </li>
+                                    <?php
+                                    $count++;
+                                    if ($count === $limit) {
+                                        break;
+                                    }
+                                endif;
+                            endforeach; ?>
+                            <hr>
+                        </ul>
+                        <div class="level1 nav-8-<?= /** @noEscape */ $count + 1 ?> ui-menu-item col-mp mp-12 mp-sm-12 text-right">
+                            <a href="<?= $escaper->escapeUrl($block->getBrandUrl()) ?>"
+                               id="ui-all-brand" class="ui-corner-all"
+                               tabindex="-1">
+                                <span class="text-lg text-primary font-medium underline border-0"><?= /** @noEscape */ __('View All') ?></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+    <?php endif; ?>
+</li>
+<style>
+    .view-all-brand {
+        border: 1px solid #666666;
+        border-radius: 15px;
+        padding: 3px 20px;
+        font-weight: 600;
+        font-size: 16px;
+        color: #374151;
+    }
+    .view-all-brand:hover {
+        border: 1px solid #000000;
+        color: #000000;
+    }
+    li.level0.mpbrand-top-link.grid-3 > .submenu {
+            min-width: 500px;
+    }
+    .brand-topmenu-image {
+        width: 80px;
+        height: 80px;
+        border-radius: 100%;
+        border: 1px solid #d9d9d9;
+        margin: auto;
+    }
+    li.level0.mpbrand-top-link .mpbrand-dropdown-menu {
+        overflow-x: hidden;
+        overflow-y: scroll;
+        max-height: 350px;
+        min-width: 232px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .mpbrand-dropdown-menu li span {
+        font-weight: 600;
+        font-size: 16px;
+        color: #374151;
+    }
+    .mpbrand-dropdown-menu li:hover .brand-topmenu-image {
+        border: 1px solid #000000;
+    }
+    .mpbrand-dropdown-menu li:hover span {
+        color: #000000;
+    }
+</style>
+
+<script>
+    var menuItem = document.querySelectorAll('nav.relative ul li.level-0');
+    var itemBrand = document.querySelector('.parent.mpbrand-top-link');
+    if (itemBrand) {
+        let ulItem = itemBrand.querySelector('ul');
+        if (<?= /** @noEscape */ $position ?> > menuItem.length) {
+            menuItem[menuItem.length - 1].parentNode.insertBefore(itemBrand, menuItem[menuItem.length - 1].nextSibling);
+        } else {
+            menuItem[<?= $position - 1 ?>].parentNode.insertBefore(itemBrand, menuItem[<?= $position - 1 ?>]);
+        }
+        if(<?= /** @noEscape */ $position ?>  > menuItem.length /2) {
+            ulItem.style.right = '0';
+            ulItem.style.left = 'unset';
+        }
+    }
+</script>
+<?php endif; ?>

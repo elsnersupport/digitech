@@ -1,0 +1,30 @@
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="page.wrapper">
+            <block class="Amasty\MessengerWidget\Block\Messenger\Widget"
+                   name="messengers.container"
+                   template="Amasty_MessengerWidget::widget_container.phtml"
+                   after="-">
+                <arguments>
+                     <argument name="jsLayout" xsi:type="array">
+                        <item name="components" xsi:type="array">
+                            <item name="ammessenger-widget" xsi:type="array">
+                                <item name="component" xsi:type="string">Amasty_MessengerWidget/js/view/messenger-widget</item>
+                                <item name="template" xsi:type="string">Amasty_MessengerWidget/messenger-widget</item>
+                                <item name="children" xsi:type="array">
+<!--                                    TODO: add privacy policy or not by setting-->
+                                    <item name="ammessenger-privacy-policy" xsi:type="array">
+                                        <item name="component" xsi:type="string">Amasty_MessengerWidget/js/view/privacy-policy</item>
+                                        <item name="template" xsi:type="string">Amasty_MessengerWidget/privacy-policy</item>
+                                        <item name="children" xsi:type="array">
+                                        </item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

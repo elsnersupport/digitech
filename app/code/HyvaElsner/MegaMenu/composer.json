@@ -1,0 +1,22 @@
+{
+    "name": "hyvaelsner/module-megamenu",
+    "description": "hyva-elsner",
+    "type": "magento2-module",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Elsner",
+            "email": "support@elsner.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "HyvaElsner\\MegaMenu\\": ""
+        }
+    }
+}

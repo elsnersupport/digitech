@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="checkout_submit_all_after">
+        <observer name="digi_order_sync_observer" instance="Digi\OrderSync\Observer\OrderPlaced"/>
+    </event>
+    <event name="customer_register_success">
+        <observer name="digi_customer_sync_observer" instance="Digi\OrderSync\Observer\CustomerRegistered"/>
+    </event>
+</config>

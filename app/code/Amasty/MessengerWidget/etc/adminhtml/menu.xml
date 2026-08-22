@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Live Chat for Magento 2
+ */-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Amasty_MessengerWidget::messenger_manage" title="Messengers" translate="title" module="Amasty_MessengerWidget" sortOrder="100"
+             parent="Magento_Backend::marketing_communications" action="ammessengerwidget/messenger" resource="Amasty_MessengerWidget::messenger_manage"/>
+    </menu>
+</config>

@@ -1,0 +1,125 @@
+<?php
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_Shopbybrand
+ * @copyright   Copyright (c) Mageplaza (https://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+
+use Magento\Swatches\Model\Swatch;
+
+$timeId = time();
+/** @var \Mageplaza\Shopbybrand\Block\Brand\Featured $block */
+$featureBrands = $block->getFeaturedBrand();
+$style = $block->getStyleDisplayFeature();
+?>
+<?php if (!empty($featureBrands)) : ?>
+    <div class="block-brand-feature widget bg-gray-100 py-6 mb-12 max-h-[96px] bg-bleed-full">
+        <div class="block-content block-container">
+            <?php if (!empty($featureBrands) &&
+            $style === \Mageplaza\Shopbybrand\Model\Config\Source\FeatureStyle::DISPLAY_SLIDER) : ?>
+            <section class="brand-carousel splide w-full"
+                 id="home-feature-brand-carousel-<?= /** @noEscape */ $timeId ?>"
+                 data-mage-init='{"brandSlider": {}}' style="width: calc(100%)"
+                 x-defer='intersect'>
+                <div class="splide__track">
+                    <ul class="splide__list gap-3">
+
+            <?php endif; ?>
+                <?php foreach ($featureBrands as $brand) : ?>
+                    <?php if ($style === \Mageplaza\Shopbybrand\Model\Config\Source\FeatureStyle::DISPLAY_SLIDER) : ?>
+                    <li class="relate-content item splide__slide">
+                    <?php else : ?>
+                    <li class="relate-content item mp-2 mp-sm-4 mp-xs-6 col-mp" style="float: left; padding: 10px 0;list-style: none">
+                    <?php endif; ?>
+                        <a href="<?= /** @noEscape */ $block->helper()->getBrandUrl($brand) ?>" class="hover:underline" style="display: flex; flex-direction: column; align-items: center">
+                            <?php if ($brand->getSwatchType() == Swatch::SWATCH_TYPE_VISUAL_COLOR): ?>
+                                <img class="img-responsive brand-image grayscale hover:grayscale-0"
+                                     style="background-color: <?= /** @noEscape */ $brand->getSwatchValue() ?>"
+                                     width="<?= /** @noEscape */ $block->getLogoWidth() ?>"
+                                     height="<?= /** @noEscape */ $block->getLogoHeight() ?>">
+                            <?php else: ?>
+                                <img class="img-responsive brand-image grayscale hover:grayscale-0"
+                                     src="<?= /** @noEscape */ $block->helper()->getBrandImageUrl($brand) ?>"
+                                     width="<?= /** @noEscape */ $block->getLogoWidth() ?>"
+                                     height="<?= /** @noEscape */ $block->getLogoHeight() ?>"
+                                     alt="<?= /** @noEscape */ $brand->getValue() ?>">
+                            <?php endif; ?>
+                            <?php if ($block->showLabel()) : ?>
+                                <span class="font-semibold"><?= /** @noEscape */ $brand->getValue() ?></span>
+                            <?php endif; ?>
+                        </a>
+                    </li>
+
+                <?php endforeach; ?>
+            </div>
+                </section>
+                </div>
+
+        </div>
+
+<?php endif; ?>
+<div style="clear: both"></div>
+
+<style>
+    .block-brand-feature .block-content {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding-inline: 25px;
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const splideElement = document.getElementById('home-feature-brand-carousel-<?= /** @noEscape */ $timeId ?>');
+        if (splideElement) {
+            new Splide('#home-feature-brand-carousel-<?= /** @noEscape */ $timeId ?>', {
+                autoStart: true,
+                start: 1,
+                perPage: 6,
+                perMove: 1,
+                gap: 10,
+                type: 'loop',
+                drag: 'free',
+                omitEnd: true,
+                snap: false,
+                interval: 2000,
+                pagination: false,
+                rewind: true,
+                rewindByDrag: true,
+                lazyLoad: true,
+                autoplay: true,
+                autoScroll: {
+                    speed: 2
+                },
+                arrows: false,
+                breakpoints: {
+                    768: {
+                        perPage: 1,
+                        snap: true
+                    },
+                    1028: {
+                        perPage: 2,
+                        snap: true
+                    }
+                }
+            }).mount();
+            splideElement.querySelectorAll('.splide__slide').forEach(function (slide) {
+                slide.removeAttribute('role');
+            });
+        }
+    });
+</script>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2022 Amasty (https://www.amasty.com)
+ * @package ILN Quick Config for Magento 2 (System)
+ */-->
+<layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/layout_generic.xsd">
+    <container name="root">
+        <block class="Amasty\ShopByQuickConfig\Block\Adminhtml\EditForm" name="filter_setting_edit_content"
+               template="Amasty_ShopByQuickConfig::form.phtml">
+            <arguments>
+                <argument name="additional_class" xsi:type="string">accordion</argument>
+            </arguments>
+            <container name="form" label="Form fields">
+                <block class="Amasty\ShopByQuickConfig\Block\Adminhtml\Setting\GroupForm" as="amshopby"/>
+            </container>
+        </block>
+    </container>
+</layout>

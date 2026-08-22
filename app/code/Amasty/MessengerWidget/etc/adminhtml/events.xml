@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Live Chat for Magento 2
+ */-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="amasty_messenget_widget_messenger_delete_after">
+        <observer name="amasty_messenget_widget_delete_icons" instance="Amasty\MessengerWidget\Observer\Admin\Messenger\Delete" />
+    </event>
+</config>

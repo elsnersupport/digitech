@@ -1,0 +1,19 @@
+<!-- ko foreach: getRegion('before-fields') -->
+   <!-- ko template: getTemplate() --><!-- /ko -->
+   <!--/ko-->
+   <form data-bind="attr: {'data-hasrequired': $t('* Required Fields')}">
+       <fieldset id="billing-new-address-form" class="fieldset address">
+           <!-- ko foreach: getRegion('additional-fieldsets') -->
+           <!-- ko template: getTemplate() --><!-- /ko -->
+           <!--/ko-->
+           <!-- ko if: (isCustomerLoggedIn) -->
+           <div class="field save-address">
+               <input type="checkbox" class="checkbox" 
+               	data-bind="checked: saveInAddressBook attr: {id: 'billing-save-in-address-book'}" />
+               <label class="label" data-bind="attr: {for: 'billing-save-in-address-book'}">
+                   <span data-bind="i18n: 'Save in address book'"></span>
+               </label>
+           </div>
+           <!-- /ko -->
+       </fieldset>
+   </form>

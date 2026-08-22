@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Elsnertech_DeliveryCountdown
+ * 
+ * @category    Elsnertech
+ * @package     Elsnertech_DeliveryCountdown
+ * @author      Elsnertech
+ * @copyright   Copyright (c) 2025 Elsnertech
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="elsnertech" translate="label" sortOrder="400">
+            <label>Elsnertech</label>
+        </tab>
+        <section id="delivery_countdown" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Delivery Countdown</label>
+            <tab>elsnertech</tab>
+            <resource>Elsnertech_DeliveryCountdown::config</resource>
+            
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General Settings</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Delivery Countdown</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Enable/Disable delivery countdown on product detail page</comment>
+                </field>
+                <field id="cutoff_time" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Cutoff Time</label>
+                    <comment>Enter cutoff time in 24-hour format (e.g., 14:00 for 2:00 PM)</comment>
+                    <validate>required-entry</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="same_day_enabled" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Same Day Delivery</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Show same day delivery option if ordered before cutoff time</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="next_day_enabled" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Next Day Delivery</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Show next day delivery option</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="exclude_weekends" translate="label comment" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Exclude Weekends</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Skip Saturday and Sunday for delivery calculation</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="same_day_message" translate="label comment" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Same Day Delivery Message</label>
+                    <comment>Message to display for same day delivery. Use {date} and {time} as placeholders.</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="same_day_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="next_day_message" translate="label comment" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Next Day Delivery Message</label>
+                    <comment>Message to display for next day delivery. Use {date} and {time} as placeholders.</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="next_day_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="countdown_text" translate="label comment" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Countdown Text</label>
+                    <comment>Text to display before countdown. Use {hours} and {mins} as placeholders.</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="test_mode_enabled" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Test Mode</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="test_day" translate="label" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Test Day</label>
+                    <source_model>Elsnertech\DeliveryCountdown\Model\Config\Source\TestDay</source_model>
+                    <depends>
+                        <field id="test_mode_enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+            
+            <group id="location" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Location-Based Settings</label>
+                <field id="enable_location_check" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Location-Based Delivery</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Show delivery countdown only for specific locations</comment>
+                </field>
+                <field id="allowed_countries" translate="label comment" type="multiselect" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Allowed Countries</label>
+                    <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                    <comment>Select countries where delivery countdown should be shown. Use Ctrl+Click to select multiple.</comment>
+                    <depends>
+                        <field id="enable_location_check">1</field>
+                    </depends>
+                </field>
+                <field id="allowed_regions" translate="label comment" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Allowed Regions/Cities</label>
+                    <comment>Enter allowed regions or cities, one per line (e.g., Dubai, Abu Dhabi). Leave empty to allow all regions in selected countries.</comment>
+                    <depends>
+                        <field id="enable_location_check">1</field>
+                    </depends>
+                </field>
+                <field id="use_ip_detection" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Use IP-Based Location Detection</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Automatically detect visitor location using IP address. Requires external API.</comment>
+                    <depends>
+                        <field id="enable_location_check">1</field>
+                    </depends>
+                </field>
+                <field id="geolocation_api_key" translate="label comment" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Geolocation API Key</label>
+                    <comment>Enter your API key for IP geolocation service (e.g., ipapi.co). Leave empty to use free tier.</comment>
+                    <depends>
+                        <field id="enable_location_check">1</field>
+                        <field id="use_ip_detection">1</field>
+                    </depends>
+                </field>
+                <field id="fallback_to_session" translate="label comment" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Fallback to Customer Address</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Use logged-in customer's billing/shipping address if IP detection fails</comment>
+                    <depends>
+                        <field id="enable_location_check">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

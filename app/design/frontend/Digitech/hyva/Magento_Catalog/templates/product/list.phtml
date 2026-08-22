@@ -1,0 +1,115 @@
+<?php
+
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\CurrentCategory;
+use Hyva\Theme\ViewModel\ProductListItem;
+use Hyva\Theme\ViewModel\ProductPage;
+use Magento\Catalog\Block\Product\ListProduct;
+use Magento\Framework\Escaper;
+use HyvaElsner\CategoryListing\ViewModel\CategoryData;
+
+/** @var ListProduct $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+/** @var ProductPage $productViewModel */
+/** @var CurrentCategory $currentCategoryViewModel */
+
+$productViewModel         = $viewModels->require(ProductPage::class);
+$productListItemViewModel = $viewModels->require(ProductListItem::class);
+$currentCategoryViewModel = $viewModels->require(CurrentCategory::class);
+
+$eagerLoadImagesCount = (int) ($block->getData('eager_load_images_count') ?? 3);
+$productCollection = $block->getLoadedProductCollection();
+$zarazProducts = [];
+$categoryData = $viewModels->require(CategoryData::class);
+?>
+<?php if (!$productCollection->count()): ?>
+    <div class="message info empty">
+        <div>
+            <?= $escaper->escapeHtml(__('We can\'t find products matching the selection.')) ?>
+        </div>
+    </div>
+<?php else: ?>
+    <section class="" id="product-list" aria-label="<?= $escaper->escapeHtmlAttr(__('Product list')) ?>" tabindex="-1">
+        <?= $block->getToolbarHtml() ?>
+        <?= $block->getAdditionalHtml() ?>
+        <?php
+        if ($block->getMode() == 'grid') {
+            $viewMode         = 'grid';
+            $imageDisplayArea = 'category_page_grid';
+            $showDescription  = false;
+            $templateType     = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+        } else {
+            $viewMode         = 'list';
+            $imageDisplayArea = 'category_page_list';
+            $showDescription  = false;
+            $templateType     = \Magento\Catalog\Block\Product\ReviewRendererInterface::FULL_VIEW;
+        }
+        /**
+         * Position for actions regarding image size changing in vde if needed
+         */
+        $pos = $block->getPositioned();
+        ?>
+        <div class="products wrapper mode-<?= /* @noEscape */ $viewMode ?> products-<?= /* @noEscape */ $viewMode ?>">
+            <ul
+                role="list"
+                class="product-category-list mx-auto pt-4 pb-4 grid gap-4 grid-cols-1 <?= /* @noEscape */ $viewMode === 'grid'
+                                                                                            ? 'sm:grid-cols-3 lg:grid-cols-4'
+                                                                                            : '' ?>">
+                <?php
+                /** @var \Magento\Catalog\Model\Product $product */
+                foreach (array_values($productCollection->getItems()) as $i => $product):
+                    if ($i < $eagerLoadImagesCount) {
+                        $product->setData('image_custom_attributes', ['loading' => 'eager', 'fetchpriority' => 'high']);
+                    }
+                ?>
+                    <li>
+                        <?= $productListItemViewModel->getItemHtml(
+                            $product,
+                            $block,
+                            $viewMode,
+                            $templateType,
+                            $imageDisplayArea,
+                            $showDescription
+                        ); ?>
+                    </li>
+                    <?php
+                    try {
+                        $category = $categoryData->getCategoryNameById($product->getCategoryIds()[0]);
+                    } catch (\Exception $e) {
+                        $category = $product->getAttributeText('manufacturer');
+                    }
+                    $zarazProducts[] = [
+                        'product_id' => $product->getId(),
+                        'sku' => $product->getSku(),
+                        'category' => $category,
+                        'name' => $product->getName(),
+                        'brand' => $product->getAttributeText('manufacturer'),
+                        'price' => $product->getFinalPrice(),
+                        'currency' => $categoryData->getCurrencyCode()
+                    ];
+                    ?>
+                <?php endforeach; ?>
+                <?php
+                $zarazProducts = preg_replace('/"([^"]+)"\s*:\s*/', '$1:', json_encode($zarazProducts));
+                $zarazProducts = preg_replace("/\"/", "'", $zarazProducts);
+                ?>
+            </ul>
+        </div>
+        <?= $block->getChildBlock('toolbar')->setIsBottom(true)->toHtml() ?>
+    </section>
+<?php endif; ?>
+<script type="text/javascript">
+    if (window.zaraz) {
+        zaraz.ecommerce('Product List Viewed', {
+            products: <?= json_encode($zarazProducts) ?>,
+        });
+    }
+</script>

@@ -1,0 +1,177 @@
+<?php
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_Shopbybrand
+ * @copyright   Copyright (c) Mageplaza (https://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+
+use Magento\Swatches\Model\Swatch;
+use Mageplaza\Shopbybrand\Block\Link\CategoryMenu;
+use Mageplaza\Shopbybrand\Model\Config\Source\BrandListDisplay;
+use Mageplaza\Shopbybrand\Model\Config\Source\MegaMenu;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Mageplaza\Shopbybrand\Model\Config\Source\BrandPosition;
+
+/** @var CategoryMenu $block */
+$brands           = $block->getCollection();
+$showDropdownMenu = $block->showBrandMenu() && $brands->getData();
+$count            = 0;
+$limit            = $block->getLimit();
+$columns          = $block->getGridColumns();
+$layout           = $block->showBrandMenu() === '2' ? 'grid-' . $columns : '';
+$showBrandLogo    = $block->showBrandInfo() === BrandListDisplay::DISPLAY_LOGO
+    || $block->showBrandInfo() === BrandListDisplay::DISPLAY_LOGO_AND_LABEL;
+$showBrandName    = $block->showBrandInfo() === BrandListDisplay::DISPLAY_LABEL
+    || $block->showBrandInfo() === BrandListDisplay::DISPLAY_LOGO_AND_LABEL;
+$helperData       = $this->helper(\Mageplaza\ShopByBrand\Helper\Data::class);
+$position         = $helperData->getNumberPosition();
+$heroicons= $viewModels->require(HeroiconsOutline::class);
+
+$index = "mpbrand-mobile-top-link";
+?>
+<?php if($helperData->canShowBrandLink(BrandPosition::CATEGORY)) : ?>
+<li
+    data-child-id="<?= $block->escapeHtmLAttr($index) ?>-main"
+    class="level-0 parent <?= $block->escapeHtmLAttr($index) ?> <?= $block->escapeHtmlAttr($layout) ?>"
+>
+    <div
+        class="flex items-center transition-transform duration-150 ease-in-out transform"
+        :class="{
+                            '-translate-x-full' : mobilePanelActiveId,
+                            'translate-x-0' : !mobilePanelActiveId
+                        }"
+    >
+        <a
+            class="flex items-center w-full py-4 border-b cursor-pointer
+                                bg-container-lighter border-container
+                            "
+            href="<?= $block->escapeUrl($block->getBrandUrl()) ?>"
+            title="<?= $block->escapeHtml($block->getBrandTitle()) ?>"
+        >
+            <?= $block->escapeHtml($block->getBrandTitle()) ?>
+        </a>
+        <?php if ($showDropdownMenu): ?>
+            <button
+                @click="openSubcategory('<?= /* @noEscape */ $index ?>')"
+                class="absolute right-0 flex items-center justify-center w-11 h-11 cursor-pointer
+                                bg-container-lighter border-container"
+                aria-label="<?= $block->escapeHtmlAttr(__('Open %1 subcategories', $block->getBrandTitle())) ?>"
+                aria-haspopup="true"
+                :aria-expanded="mobilePanelActiveId === '<?= /* @noEscape */ (string) $index ?>'"
+            >
+                <div class="w-8 h-8 rounded">
+                    <?= $heroicons->chevronRightHtml('w-full h-full p-1', 24, 24, ["aria-hidden" => "true"]) ?>
+                </div>
+            </button>
+        <?php endif; ?>
+    </div>
+    <?php if ($showDropdownMenu): ?>
+        <div
+        data-child-id="<?= $block->escapeHtmLAttr($index) ?>"
+        class="absolute top-0 right-0 z-10 flex flex-col gap-1 w-full h-full p-1 bg-container-lighter"
+        :class="{
+                                'hidden': mobilePanelActiveId !== '<?= /* @noEscape */ (string) $index ?>'
+                            }"
+        >
+            <ul class="mt-16 transition-transform duration-200 ease-in-out translate-x-full transform"
+                :class="{
+                                    'translate-x-full' : mobilePanelActiveId !== '<?= /* @noEscape */ (string) $index ?>',
+                                    'translate-x-0' : mobilePanelActiveId === '<?= /* @noEscape */ (string) $index ?>',
+                                }"
+                aria-label="<?= $block->escapeHtmlAttr(__('Subcategories')) ?>"
+            >
+                <li>
+                    <button
+                        type="button"
+                        class="flex items-center px-8 py-4 border-b cursor-pointer bg-container border-container w-full border-t"
+                        @click="backToMainCategories('<?= /* @noEscape */ $index ?>-main')"
+                        aria-label="<?= $block->escapeHtmlAttr(__('Back to main categories')) ?>"
+                    >
+                        <?= $heroicons->chevronLeftHtml('', 24, 24, ["aria-hidden" => "true"]); ?>
+                        <span class="ml-4">
+                                            <?= $block->escapeHtml($block->getBrandTitle()) ?>
+                        </span>
+                    </button>
+                </li>
+                
+                <?php foreach ($brands as $brand): ?>
+                    <li>
+                        <a
+                            href="<?= $block->escapeUrl($block->getBrandUrl($brand)) ?>"
+                            title="<?= $block->escapeHtmlAttr($block->getValue()) ?>"
+                            class="flex items-center w-full px-8 py-4 border-b cursor-pointer
+                                                bg-container-lighter border-container
+                                            "
+                        >
+                            <?php if ($showBrandLogo) : ?>
+                                <span class="mpbrand-image-container">
+                                            <span class="mpbrand-image-wrapper">
+                                                <?php if ($brand->getSwatchType() == Swatch::SWATCH_TYPE_VISUAL_COLOR): ?>
+                                                    <span class="img-responsive brand-topmenu-image" style="background-color: <?= /** @noEscape */ $brand->getSwatchValue() ?>; display: block"></span>
+                                                <?php else: ?>
+                                                    <img class="img-responsive brand-topmenu-image object-contain p-2"
+                                                         src="<?= /** @noEscape */ $brand->getImage()
+                                                             ? $block->escapeUrl($block->getBrandThumbnail($brand))
+                                                             : $block->escapeUrl($block->getBrandImageUrl($brand)) ?>"
+                                                         alt="<?= $block->escapeHtml($brand->getValue()) ?>"/>
+                                                <?php endif; ?>
+                                            </span>
+                                        </span>
+                            <?php endif; ?>
+                            <?php if ($showBrandName) : ?>
+                                <span class="ml-10 text-base text-gray-700">
+                                                <?= $block->escapeHtml($brand->getValue())  ?>
+                                </span>
+                            <?php endif; ?>
+
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+
+                <li>
+                    <a
+                        href="<?= $block->escapeUrl($block->getBrandUrl()) ?>"
+                        title="<?= $block->escapeHtmlAttr($block->getBrandTitle()) ?>"
+                        class="flex justify-center items-center w-full px-8 py-4 cursor-pointer bg-container-lighter border-container">
+                            <span class="font-medium text-sm text-primary">
+                                <?= $block->escapeHtml(__('View All')) ?>
+                            </span>
+                    </a>
+                </li>
+            </ul>
+            <button
+                @click="closeMenu()"
+                class="absolute flex justify-end w-16 self-end mb-1 transition-none"
+                aria-label="<?= $block->escapeHtmlAttr(__('Close menu')) ?>"
+            >
+                <?= $heroicons->xHtml('hidden p-4', 64, 64, [":class" => "{ 'hidden' : !open, 'block': open }", "aria-hidden" => "true"]) ?>
+            </button>
+        </div>
+    <?php endif; ?>
+</li>
+<script>
+    var menuItem = document.querySelectorAll('nav.mobile ul li.level-0');
+    var itemBrand = document.querySelector('.parent.mpbrand-mobile-top-link');
+    if (<?= /** @noEscape */ $position ?> > menuItem.length) {
+        menuItem[menuItem.length - 1].parentNode.insertBefore(itemBrand, menuItem[menuItem.length - 1].nextSibling);
+    } else {
+        menuItem[<?= $position - 1 ?>].parentNode.insertBefore(itemBrand, menuItem[<?= $position - 1 ?>]);
+    }
+</script>
+
+
+<?php endif; ?>

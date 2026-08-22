@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd" layout="1column">
+    <update handle="sales_order_info_links"/>
+    <update handle="sales_order_view"/>
+    <referenceBlock name="page.main.title" remove="true"/>
+    <referenceBlock name="breadcrumbs">
+        <action method="addCrumb">
+            <argument name="crumbName" xsi:type="string">home</argument>
+            <argument name="crumbInfo" xsi:type="array">
+                <item name="title" xsi:type="string">Home</item>
+                <item name="label" xsi:type="string">Home</item>
+                <item name="link" xsi:type="string">{{baseUrl}}</item>
+            </argument>
+        </action>
+        <action method="addCrumb">
+            <argument name="crumbName" xsi:type="string">OrderTracking</argument>
+            <argument name="crumbInfo" xsi:type="array">
+                <item name="title" xsi:type="string">OrderTracking</item>
+                <item name="label" xsi:type="string">OrderTracking</item>
+                <item name="link" xsi:type="string">{{baseUrl}}ordertracking</item>
+            </argument>
+        </action>
+        <action method="addCrumb">
+            <argument name="crumbName" xsi:type="string">OrderDetails</argument>
+            <argument name="crumbInfo" xsi:type="array">
+                <item name="title" xsi:type="string">OrderDetails</item>
+                <item name="label" xsi:type="string">OrderDetails</item>
+            </argument>
+        </action>
+    </referenceBlock>
+</page>

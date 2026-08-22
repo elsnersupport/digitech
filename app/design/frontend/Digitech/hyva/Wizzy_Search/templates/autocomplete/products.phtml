@@ -1,0 +1,99 @@
+<?php
+$configs = $block->getConfigs();
+$title = $configs['autocomplete']['topProducts']['title'];
+$currencySymbol = $configs['store']['currency']['symbol'];
+$currencyCode = $configs['store']['currency']['code'];
+?>
+
+<script type="text/template" id="wizzy-autocomplete-topproducts">
+
+    <div class="wizzy-autocomplete-top-products digitech-wizzy-top-products">
+        <?php
+        if ($title != "") {
+            ?>
+           <p class="top-products-title"><?= $block->escapeHtmlAttr($title) ?></p>
+            <?php
+        }
+        ?>
+        <ul class="autocomplete-top-products">
+            {{#products}}
+
+                <li class="topproduct-item" title="{{{ name }}}" data-id="{{id}}"
+                    {{#groupId}}data-groupId="{{groupId}}"{{/groupId}}>
+                    <a href="{{{url}}}" class="topproduct-item-link">
+                        <div class="topproduct-item-image-wrapper">
+                        <span class="topproduct-item-discount">
+                            {{#discountPercentage}}
+                                {{discountPercentage}}% Off
+                            {{/discountPercentage}}
+                        </span>
+                        <div class="topproduct-item-image">
+                        <img src="{{ mainImage }}" class="topproduct-image" />
+                        </div><!-- ending of topproduct-item-image -->
+                        <div class="topproduct-item-image hover-image">
+                            {{#hoverImage}}
+                                <img src="{{ hoverImage }}" class="topproduct-image" />
+                            {{/hoverImage}}
+                            {{^hoverImage}}
+                                <img src="{{ mainImage }}" class="topproduct-image" />
+                            {{/hoverImage}}
+                        </div><!-- ending of topproduct-item-image -->
+                        </div>
+                        <div class="topproduct-item-info">
+                            {{#inStock}} 
+                            <div class="wz-stock-available"><span>In stock</span></div> 
+                            {{/inStock}}
+
+                            {{^inStock}}
+                            {{^wzProductAvailibility}}
+                                <div class="wz-stock-unavailable"><span>Out of stock</span></div>
+                            {{/wzProductAvailibility}}
+                            {{/inStock}}
+
+                            {{#wzProductAvailibility}}
+                            {{^inStock}}
+                            <div class="wizzy-product-availability-label"> {{{wzProductAvailibility}}} </div>
+                            {{/inStock}}
+                            {{/wzProductAvailibility}}
+
+                            <p class="product-item-brand"> {{{ highLevelCategory }}} </p>
+                            <p class="topproduct-title">{{{ name }}}</p>
+                            {{#hasCategories}}
+                                <p class="topproduct-in-category">in {{{category}}}</p>
+                            {{/hasCategories}}
+                            <p class="topproduct-price">
+                                <span class="topproduct-org-price-{{#price}}green{{/price}}">
+                                {{#hasToShowCurrencySymbol}} <?= $block->escapeHtmlAttr($currencySymbol); ?> {{/hasToShowCurrencySymbol}} {{^hasToShowCurrencySymbol}} <?= $block->escapeHtmlAttr($currencyCode); ?> {{/hasToShowCurrencySymbol}}{{ finalPrice }}
+                                </span>
+
+                                {{#price}}
+                                    <span class="topproduct-excl-txt green"> 
+                                    <span class="excl-text">Excl. Tax: </span> 
+                                    <span class="topproduct-excl-val"> {{#hasToShowCurrencySymbol}} <?= $block->escapeHtmlAttr($currencySymbol); ?> {{/hasToShowCurrencySymbol}} {{^hasToShowCurrencySymbol}} <?= $block->escapeHtmlAttr($currencyCode); ?> {{/hasToShowCurrencySymbol}} {{ sellingPrice }} </span> </span>
+                                {{/price}}
+
+                                {{^price}} 
+                                <span class="product-item-excTaxPrice">
+                                    <span class="topproduct-excl-txt">
+                                      <span class="excl-text">Excl. Tax: </span>
+                                      <span class="topproduct-excl-val">{{#hasToShowCurrencySymbol}} <?= $block->escapeHtmlAttr($currencySymbol); ?> {{/hasToShowCurrencySymbol}} {{^hasToShowCurrencySymbol}} <?= $block->escapeHtmlAttr($currencyCode); ?> {{/hasToShowCurrencySymbol}}{{ sellingPrice }} </span> </span>
+                                </span>
+                                {{/price}} 
+
+                                {{#price}}
+                                <span class="topproduct-original-price">
+                                    {{#hasToShowCurrencySymbol}} <?= $block->escapeHtmlAttr($currencySymbol); ?> {{/hasToShowCurrencySymbol}} {{^hasToShowCurrencySymbol}} <?= $block->escapeHtmlAttr($currencyCode); ?> {{/hasToShowCurrencySymbol}}{{ price }}
+                                </span>
+                                {{/price}}
+
+                            </p>
+
+                        </div><!-- ending of topproduct-item-info -->
+                    </a><!-- ending of topproduct-item-link -->
+                </li><!-- ending of topproduct-item -->
+
+            {{/products}}
+        </ul><!-- ending of autocomplete-top-products -->
+    </div><!-- ending of top-products -->
+
+</script>

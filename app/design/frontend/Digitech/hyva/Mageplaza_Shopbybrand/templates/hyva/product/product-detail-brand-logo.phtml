@@ -1,0 +1,71 @@
+<?php
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_Shopbybrand
+ * @copyright   Copyright (c) Mageplaza (https://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+
+use Magento\Swatches\Model\Swatch;
+use Mageplaza\Shopbybrand\Block\Product\Logo;
+use Mageplaza\Shopbybrand\Model\Config\Source\ShowBrandInfo;
+
+/** @var Logo $block */
+
+$helper = $block->helper();
+$showBrandInfo = $block->getShowBrandInfo() ? $block->getShowBrandInfo() : $block->showBrandInfo();
+if ($helper->isEnabled() && !in_array(ShowBrandInfo::NOT_SHOW, $showBrandInfo, true)) {
+    $brand = $helper->getBrandObject();
+}
+if ($block->getIsShowList() == 1) {
+    $brand = $block->getBrand();
+}
+
+?>
+
+<?php if (isset($brand) && $brand !== '' && $brand->getIsDisplay()) : ?>
+    <?php $brand->setShortDescription($helper->getBrandDescription($brand, true)); ?>
+    <?php if (in_array(ShowBrandInfo::BRAND_LOGO, $showBrandInfo, true)) : ?>
+        <div class="product-brand-logo w-full">
+            <a href="<?= /** @noEscape */ $helper->getBrandUrl($brand) ?>" class="flex flex-col">
+                <?php if ($brand->getSwatchType() == Swatch::SWATCH_TYPE_VISUAL_COLOR): ?>
+                    <img class="img-responsive brand-thumbnail-image" style="background-color: <?= /** @noEscape */ $brand->getSwatchValue() ?>; width: 30px;height: 30px;">
+                <?php else: ?>
+                    <img src="<?= /** @noEscape */ $block->helper()->getBrandImageUrl($brand) ?>"
+                         title="<?= /** @noEscape */ $brand->getValue() ?>"
+                         alt="<?= /** @noEscape */ $brand->getValue() ?>"
+                         class="block ml-auto pr-3"
+                         >
+                <?php endif; ?>
+                <span class="text-xs text-right"><?= $block->escapeHtml(__('Authorized Reseller')) ?></span>
+            </a>
+        </div>
+    <?php endif; ?>
+    <?php if (in_array(ShowBrandInfo::BRAND_NAME, $showBrandInfo, true)) : ?>
+        <div class="product-brand-name text-lg hover:underline w-full text-left font-semibold">
+            <a href="<?= /** @noEscape */ $helper->getBrandUrl($brand) ?>">
+                <span
+                    title="<?= $block->escapeHtml($brand->getValue()) ?>"><?= $block->escapeHtml($brand->getValue()) ?>
+                </span>
+            </a>
+        </div>
+    <?php endif; ?>
+    <?php if (in_array(ShowBrandInfo::BRAND_DESC, $showBrandInfo, true)) : ?>
+        <div class="product-brand-desc text-sm text-left">
+            <?= /** @noEscape */ $brand->getShortDescription() ?>
+        </div>
+    <?php endif; ?>
+<?php endif; ?>

@@ -1,0 +1,5 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Meetanshi\OrderTracking\Controller\OrderTracking\View" type="HyvaElsner\OrderTracking\Controller\OrderTracking\View" />
+    <preference for="Hyva\Theme\ViewModel\Sales\PaymentInfo" type="HyvaElsner\OrderTracking\ViewModel\Sales\PaymentInfo" />
+    <preference for="Meetanshi\OrderTracking\Block\TrackingDetails" type="HyvaElsner\OrderTracking\Block\TrackingDetails" />
+</config>

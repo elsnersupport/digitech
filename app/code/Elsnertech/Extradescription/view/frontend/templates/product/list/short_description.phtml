@@ -1,0 +1,5 @@
+<?php if ($_shortDescription = $block->getCurrentCategory()->getShortDescription()): ?>
+    <div class="category-short-description">
+        <?= /* @escapeNotVerified */ $this->helper('Magento\Catalog\Helper\Output')->categoryAttribute($block->getCurrentCategory(), $_shortDescription, 'short_description') ?>
+    </div>
+<?php endif; ?>

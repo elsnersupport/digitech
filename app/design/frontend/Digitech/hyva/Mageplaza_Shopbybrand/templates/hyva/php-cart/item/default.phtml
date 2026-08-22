@@ -1,0 +1,184 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+// phpcs:disable Magento2.Files.LineLength.MaxExceeded
+
+use Magento\Checkout\Block\Cart\Item\Renderer;
+use Magento\Framework\Escaper;
+use Mageplaza\Shopbybrand\Block\Product\Logo;
+use Hyva\Theme\ViewModel\ProductStockItem;
+
+/** @var Renderer $block */
+/** @var Escaper $escaper */
+/** @var Logo $logo */
+/** @var ProductStockItem $stockItemViewModel */
+
+$item = $block->getItem();
+$product = $item->getProduct();
+$isVisibleProduct = $product->isVisibleInSiteVisibility();
+$helperData       = $this->helper(\Mageplaza\ShopByBrand\Helper\Data::class);
+$stockItemViewModel = $viewModels->require(ProductStockItem::class);
+$maxSalesQty = $stockItemViewModel->getMaxSaleQty($product);
+
+$step = $stockItemViewModel->getQtyIncrements($product)
+    ? $stockItemViewModel->getQtyIncrements($product)
+    : null;
+/**
+ * sets minimum and maximum values taking into account the values set in the admin,
+ * but taking into account the value of Qty Increments
+ */
+if ($step) {
+    $maxSalesQty = floor($maxSalesQty / $step) * $step;
+}
+$maxSalesQtyLength = ($maxSalesQty ? strlen((string) $maxSalesQty) : 4)
+    + (/* add one if decimal for separator */(int) $stockItemViewModel->isQtyDecimal($product));
+?>
+<tbody class="cart item bg-white border-b">
+    <tr class="item-info align-top text-left lg:text-right flex flex-wrap lg:table-row">
+        <td data-th="<?= $escaper->escapeHtml(__('Item')) ?>" class="col item pt-6 px-4 flex flex-wrap gap-8 text-left w-full sm:flex-nowrap lg:w-auto">
+            <?php if ($block->hasProductUrl()): ?>
+                <a href="<?= $escaper->escapeUrl($block->getProductUrl()) ?>"
+                   title="<?= $escaper->escapeHtmlAttr($block->getProductName()) ?>"
+                   tabindex="-1"
+                   class="product-item-photo shrink-0">
+            <?php else: ?>
+                <span class="product-item-photo shrink-0">
+            <?php endif;?>
+            <?= $block->getImage($block->getProductForThumbnail(), 'cart_page_product_thumbnail')
+                ->setTemplate('Magento_Catalog::product/image.phtml')
+                ->toHtml() ?>
+            <?php if ($block->hasProductUrl()): ?>
+                </a>
+            <?php else: ?>
+                </span>
+            <?php endif; ?>
+            <div class="product-item-details grow">
+                <h3 class="product-item-name break-all font-semibold text-gray-500 text-base mb-2">
+                    <?php if ($block->hasProductUrl()): ?>
+                        <a href="<?= $escaper->escapeUrl($block->getProductUrl()) ?>"><?= $escaper->escapeHtml($block->getProductName()) ?></a>
+                    <?php else: ?>
+                        <?= $escaper->escapeHtml($block->getProductName()) ?>
+                    <?php endif; ?>
+                </h3>
+                <?php
+                $brandObj = $helperData->getBrandObjectById($block->getProduct()->getId()) ? $helperData->getBrandObjectById($block->getProduct()->getId()) : '';
+                $showBrandInfo =  explode(',', $helperData->getConfigGeneral('show_brand_info_checkout')) ?: [];
+                ?>
+                <?= $this->getLayout()
+                    ->createBlock(Logo::class)
+                    ->setTemplate('Mageplaza_Shopbybrand::hyva/product/logo.phtml')
+                    ->setShowBrandInfo($showBrandInfo)
+                    ->setIsShowList(1)
+                    ->setBrand($brandObj)
+                    ->toHtml(); ?>
+                <?php if ($options = $block->getOptionList()): ?>
+                    <dl class="item-options w-full break-all mt-4 pb-2 text-sm clearfix">
+                        <?php foreach ($options as $option): ?>
+                            <?php $formatedOptionValue = $block->getFormatedOptionValue($option) ?>
+                            <dt class="font-bold float-left clear-left mr-2 mb-2"><?= $escaper->escapeHtml($option['label']) ?>:</dt>
+                            <dd class="float-left">
+                                <?php if (isset($formatedOptionValue['full_view'])): ?>
+                                        <?= $escaper->escapeHtml($formatedOptionValue['full_view']) ?>
+                                    <?php else: ?>
+                                        <?= $escaper->escapeHtml($formatedOptionValue['value'], ['span', 'a']) ?>
+                                <?php endif; ?>
+                            </dd>
+                        <?php endforeach; ?>
+                    </dl>
+                <?php endif;?>
+                <?php if ($messages = $block->getMessages()): ?>
+                    <?php foreach ($messages as $message): ?>
+                        <div class= "cart item message mt-3 <?= $escaper->escapeHtmlAttr($message['type']) ?>">
+                            <div><?= $escaper->escapeHtml($message['text']) ?></div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+                <?php $addInfoBlock = $block->getProductAdditionalInformationBlock(); ?>
+                <?php if ($addInfoBlock): ?>
+                    <?= $addInfoBlock->setItem($item)->toHtml() ?>
+                <?php endif;?>
+            </div>
+        </td>
+
+
+        <td class="col price pt-6 px-4 block w-full sm:w-1/3 lg:w-auto lg:table-cell text-gray-500">
+            <span class="lg:hidden font-semibold text-gray-500 mt-2">
+                <?= $escaper->escapeHtml(__('Price')) ?>
+            </span>
+            <?= $block->getUnitPriceHtml($item) ?>
+        </td>
+
+        <td class="col qty pt-6 lg:pt-2 px-4 block w-full sm:w-1/3 lg:w-auto lg:table-cell text-gray-500">
+            <span class="lg:hidden font-semibold">
+                <?= $escaper->escapeHtml(__('Qty')) ?>
+            </span>
+            <div class="field qty">
+                <div class="control qty">
+                    <label for="cart-<?= $escaper->escapeHtmlAttr($item->getId()) ?>-qty">
+                        <span class="label sr-only"><?= $escaper->escapeHtml(__('Qty')) ?></span>
+                        <input id="cart-<?= $escaper->escapeHtmlAttr($item->getId()) ?>-qty"
+                               name="cart[<?= $escaper->escapeHtmlAttr($item->getId()) ?>][qty]"
+                               value="<?= $escaper->escapeHtmlAttr($block->getQty()) ?>"
+                               size="4"
+                               step="any"
+                               title="<?= $escaper->escapeHtmlAttr(__('Qty')) ?>"
+                               class="qty form-input px-2 py-2 w-20 text-center"
+                               required
+                               min="0"
+                               maxlength="5"
+                               <?php if ($stockItemViewModel->isQtyDecimal($product)): ?>
+                                    type="text"
+                                    pattern="[0-9]+(\.[0-9]{1,<?=/** @noEscape */$maxSalesQtyLength ?>})?"
+                                    inputmode="decimal"
+                                <?php else: ?>
+                                    type="number"
+                                    pattern="[0-9]{0,<?=/** @noEscape */ $maxSalesQtyLength ?>}"
+                                    inputmode="numeric"
+                                    <?php if ($maxSalesQty): ?>max="<?= /** @noEscape */ $maxSalesQty ?>" <?php endif; ?>
+                                    <?php if ($step): ?>step="<?= /** @noEscape */ $step ?>" <?php endif; ?>
+                                <?php endif; ?>
+                               data-role="cart-item-qty"/>
+                    </label>
+                </div>
+            </div>
+        </td>
+
+        <td class="col subtotal pt-6 px-4 block w-full sm:w-1/3 lg:w-auto lg:table-cell text-gray-500">
+            <span class="lg:hidden font-semibold">
+                <?= $escaper->escapeHtml(__('Subtotal')) ?>
+            </span>
+            <?= $block->getRowTotalHtml($item) ?>
+        </td>
+    </tr>
+    <tr class="item-actions">
+        <td colspan="4">
+            <div class="flex justify-end gap-4 p-4 pt-2 text-gray-500 hover:text-primary">
+                <?= /* @noEscape */ $block->getActions($item) ?>
+            </div>
+        </td>
+    </tr>
+</tbody>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const inputs = document.querySelectorAll('[data-role="cart-item-qty"]');
+        inputs.forEach(input => {
+            input.addEventListener('input', function () {
+                const maxLength = 5;
+                const value = this.value;
+                if (value.length > maxLength) {
+                    this.setCustomValidity('Maximum 5 digits allowed');
+                } else {
+                    this.setCustomValidity('');
+                }
+            });
+        });
+    });
+</script>
+

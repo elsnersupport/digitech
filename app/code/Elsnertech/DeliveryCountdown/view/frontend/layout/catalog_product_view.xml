@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Elsnertech_DeliveryCountdown
+ * 
+ * @category    Elsnertech
+ * @package     Elsnertech_DeliveryCountdown
+ * @author      Elsnertech
+ * @copyright   Copyright (c) 2025 Elsnertech
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+         <referenceBlock name="product.info">
+            <block class="Magento\Framework\View\Element\Template" 
+                   name="elsnertech.delivery.countdown" 
+                   template="Elsnertech_DeliveryCountdown::product/delivery_countdown.phtml"
+                   after="product.info.price">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">Elsnertech\DeliveryCountdown\ViewModel\DeliveryCountdown</argument>
+                </arguments>
+            </block>
+         </referenceBlock>
+    </body>
+</page>

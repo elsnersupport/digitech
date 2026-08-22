@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="category.view.container">
+            <block class="Magento\Cms\Block\Block" name="custom.cms.block.after.image" after="category.image">
+                <arguments>
+                    <argument name="block_id" xsi:type="string">dealsz-cms-section</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

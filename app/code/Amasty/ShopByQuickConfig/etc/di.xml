@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2022 Amasty (https://www.amasty.com)
+ * @package ILN Quick Config for Magento 2 (System)
+ */-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Amasty\ShopByQuickConfig\Model\ConfigFilter\FilterCodeRegistry">
+        <arguments>
+            <argument name="customFilterCodes" xsi:type="array">
+                <item name="stock" xsi:type="string">stock</item>
+                <item name="rating" xsi:type="string">rating</item>
+                <item name="am_is_new" xsi:type="string">am_is_new</item>
+                <item name="am_on_sale" xsi:type="string">am_on_sale</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <virtualType name="countryFilterViewModel" type="Amasty\ShopbyBase\Model\Di\ViewModelWrapper">
+        <arguments>
+            <argument name="name" xsi:type="string">Magento\Config\ViewModel\CountryFilter</argument>
+            <argument name="getShared" xsi:type="boolean">true</argument>
+            <argument name="isProxy" xsi:type="boolean">true</argument>
+        </arguments>
+    </virtualType>
+</config>

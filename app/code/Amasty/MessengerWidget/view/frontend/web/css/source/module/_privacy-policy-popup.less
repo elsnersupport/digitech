@@ -1,0 +1,121 @@
+//
+//  Amasty Messenger Widget Privacy Policy Popup
+//  ___________________________________________
+
+//
+//  Variables
+//  -------------------------------------------
+
+@ammessenger-privacy-policy__main__color: #5384ec;
+@ammessenger-privacy-policy-popup__desktop__width: 700px;
+
+//
+//  Common
+//  -------------------------------------------
+
+& when (@media-common = true) {
+    .ammessenger-privacy-policy {
+        & {
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .ammessenger-popup {
+            z-index: 1;
+            box-sizing: border-box;
+            padding: 30px;
+            width: 90%;
+            border-radius: 8px;
+            background: @color-white;
+            box-shadow: 0 -2px 18px rgba(0, 0, 0, .06);
+        }
+
+        .ammessenger-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: @color-white;
+            opacity: .6;
+        }
+
+        .ammessenger-title {
+            margin: 0 0 15px;
+            color: @ammessenger-privacy-policy__main__color;
+            font-size: 30px;
+        }
+
+        .ammessenger-content {
+            overflow: auto;
+            margin-bottom: 30px;
+            max-height: 45vh;
+        }
+
+        .ammessenger-actions {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .ammessenger-button {
+            & {
+                padding: 10px 20px;
+                border: none;
+                background: @color-white;
+                color: @ammessenger-privacy-policy__main__color;
+                text-transform: uppercase;
+                letter-spacing: 1.35px;
+                font-weight: @font-weight__bold;
+            }
+
+            &:active {
+                box-shadow: none;
+            }
+        }
+
+        .ammessenger-button.-accept {
+            & {
+                margin-bottom: 15px;
+                background: @ammessenger-privacy-policy__main__color;
+                color: @color-white;
+            }
+
+            &:hover {
+                background: lighten(@ammessenger-privacy-policy__main__color, 10%);
+            }
+        }
+    }
+}
+
+//
+// Tablet +
+//  -------------------------------------------
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+    .ammessenger-privacy-policy {
+        .ammessenger-popup {
+            width: @ammessenger-privacy-policy-popup__desktop__width;
+        }
+
+        .ammessenger-actions {
+            flex-direction: row;
+        }
+
+        .ammessenger-button.-accept {
+            order: 1;
+            margin: 0;
+        }
+
+        .ammessenger-button.-reject {
+            order: 0;
+            margin-right: 15px;
+        }
+    }
+}

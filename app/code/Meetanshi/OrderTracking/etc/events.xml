@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../../lib/internal/Magento/Framework/Event/etc/events.xsd">
+    <event name="sales_order_save_after">
+        <observer name="save_order_tracking" instance="Meetanshi\OrderTracking\Observer\SaveOrderTracking" />
+    </event>
+    <event name="view_block_abstract_to_html_before">
+        <observer name="OrderTracking_view_block_abstract_to_html_before" instance="Meetanshi\OrderTracking\Observer\EmailTemplate"/>
+    </event>
+</config>

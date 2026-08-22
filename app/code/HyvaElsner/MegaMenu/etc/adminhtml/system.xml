@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="hyva_mega_menu" sortOrder="20" showInWebsite="1" showInStore="1" showInDefault="1" translate="label">
+            <label>MegaMenu Configuration</label>
+            <tab>elsnertech</tab>
+            <resource>HyvaElsner_MegaMenu::config_hyvaelsner_megamenu</resource>
+            <group id="product_categories" sortOrder="10" showInWebsite="1" showInStore="1" showInDefault="1" translate="label">
+                <comment>Here is the List of Category which will show products in MegaMenu</comment>
+                <label>Category Configuration To Show Products</label>
+                <field id="enable" translate="label comment" type="select" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable ?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="categories_to_show" translate="label" type="multiselect" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Category List</label>
+                    <source_model>HyvaElsner\MegaMenu\Model\Config\Source\CategoriesOnMegaMenu</source_model>
+                    <depends>
+                        <field id="enable">1</field>
+                    </depends>
+                    <comment>Select categories with products to show on MegaMenu</comment>
+                </field>
+            </group>
+            <group id="menu_configuration" sortOrder="20" showInWebsite="1" showInStore="1" showInDefault="1" translate="label">
+                <label>Mega Menu CMS links Configuration</label>
+                <field id="data" translate="label" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Mega Menu Links (Desktop + Mobile)</label>
+                    <frontend_model>HyvaElsner\MegaMenu\Block\Adminhtml\Form\Field\Menu</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <comment><![CDATA[
+                    <h2>You can add here custom links with SVG Icons. If you have svg icon, you can share us, we'll adjust it.</br>
+                    In order to create new custom links, You can specify URL Label & Front URL.</br></br>
+                    
+                    For Example, If front url of current website is like below.</br>
+                    https://digitech-hyva.elsnermage.com/new-arrivals then</br>
+                    URL Label can be like, New Arrivals</br>
+                    Front URL can be like, /new-arrivals</br>
+                    .... So On with other urls.</br></br>
+
+                    If you want to specify external URL, you can specify it directly with https.</br>
+                    Like. https://example.com/</br></h2>]]></comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

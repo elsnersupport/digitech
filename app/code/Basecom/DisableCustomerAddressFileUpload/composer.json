@@ -1,0 +1,31 @@
+{
+    "name": "basecom/magento2-disable-customer-address-file-upload",
+    "description": "Disable the controller that allows users to upload files for customer address attributes.",
+    "minimum-stability": "stable",
+    "type": "magento2-module",
+    "version": "1.0.0",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Team Magento @basecom",
+            "email": "magento@basecom.de"
+        },
+        {
+            "name": "Maximilian Fickers",
+            "email": "m.fickers@basecom.de"
+        }
+    ],
+    "require": {
+        "php": "7.4|~8.1",
+        "magento/framework": ">=103.0.0.4",
+        "magento/module-customer": ">=102.0.2"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Basecom\\DisableCustomerAddressFileUpload\\": ""
+        }
+    }
+}

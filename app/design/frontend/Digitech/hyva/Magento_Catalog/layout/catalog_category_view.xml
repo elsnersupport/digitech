@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <script src="Magento_Catalog::js/view.js"></script>
+    </head>
+    <body>
+        <referenceContainer name="page.top">
+            <container name="category.image.block" as="category.image.block" htmlTag="div" htmlClass="category-image-block w-full min-h-[100px] flex flex-col items-center justify-center">
+                <block class="Magento\Catalog\Block\Category\View" name="category.images" template="HyvaElsner_CategoryListing::category/image/image.phtml"/>
+                <!-- <block class="Magento\Catalog\Block\Category\View" name="top-category" template="Magento_Catalog::category/top.phtml" after="category.images"/> -->
+            </container>
+            <!-- <block class="Elsnertech\CategoryListing\Block\CategoryShortDescription" name="category.short.description" template="Elsnertech_CategoryListing::category_short_description.phtml" after="-"/> -->
+        </referenceContainer>
+        <referenceContainer name="sidebar.additional">
+          <block class="HyvaElsner\BestSeller\Block\BestSellerProducts" name="popular-products" template="HyvaElsner_BestSeller::category/popular-product-slider.phtml"/>
+          <block class="Magento\Catalog\Block\Category\View" name="category.sidebar.poster" template="HyvaElsner_CategoryListing::category/sidebar/sidebar_poster.phtml" after="popular-products"/>
+        </referenceContainer>
+
+        <block class="Magento\Catalog\Block\Category\View" name="category.faq" template="Magento_Catalog::faq.phtml" />
+        <referenceBlock name="category.image" remove="true"/>
+        <referenceBlock name="page.main.title" remove="true"/>
+        <referenceBlock name="category.description">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">HyvaElsner_CategoryListing::category/description.phtml</argument>
+            </action>
+        </referenceBlock>
+
+        <!-- <move element="category.image.block" destination="page.top"  after="-"/> -->
+        <!-- <referenceContainer name="category.view.container" remove="true" /> -->
+        <move element="breadcrumbs" destination="page.top"  before="-"/>
+
+        <container name="above.footer" label="Above Footer" htmlTag="div" htmlClass="above-footer" htmlId="above-footer"/>
+        <move element="category.description" destination="above.footer" before="-"/>
+        <move element="category.faq" destination="above.footer" after="category.description" />
+        <move element="above.footer" destination="page.wrapper" before="footer" />
+    </body>
+</page>

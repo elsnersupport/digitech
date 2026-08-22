@@ -1,0 +1,195 @@
+<?xml version="1.0"?>
+<csp_whitelist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Csp:etc/csp_whitelist.xsd">
+    <policies>
+        <policy id="frame-ancestors">
+            <values>
+                <value id="ccavenueae_frame_ancestors" type="host">ccavenue.ae</value>
+                <value id="googleae_frame_ancestors" type="host">google.ae</value>
+                <value id="ccav_frame_ancestors" type="host">secure.ccavenue.ae</value>
+                <value id="ga_frame_ancestors" type="host">*.google-analytics.com</value>
+                <value id="clarity_frame_ancestors" type="host">*.clarity.ms</value>
+                <value id="google_frame_ancestors" type="host">*.google.com</value>
+                <value id="scstatic_frame_ancestors" type="host">*.sc-static.net</value>
+                <value id="clickguardian_frame_ancestors" type="host">*.clickguardian.app</value>
+                <value id="cloudflare_frame_ancestors" type="host">*.cloudflare.com</value>
+                <value id="doubleclick_frame_ancestors" type="host">*.doubleclick.net</value>
+                <value id="snapchat_frame_ancestors" type="host">*.snapchat.com</value>
+                <value id="tawkto_frame_ancestors" type="host">*.tawk.to</value>
+                <value id="merchant_frame_ancestors" type="host">*.merchant-center-analytics.goog</value>
+                <value id="gtag_frame_ancestors" type="host">*.googletagmanager.com</value>
+                <value id="googlein_frame_ancestors" type="host">*.google.co.in</value>
+                <value id="bing_frame_ancestors" type="host">*.bing.com</value>
+                <value id="gads_frame_ancestors" type="host">googleads.g.doubleclick.net</value>
+                <value id="scstatic_https_frame_ancestors" type="host">sc-static.net</value>
+                <value id="embedtawk_https_frame_ancestors" type="host">embed.tawk.to</value>
+            </values>
+        </policy>
+        <policy id="default-src">
+            <values>
+                <value id="custom.intucdn.com" type="host">custom.intucdn.com</value>
+            </values>
+        </policy>
+        <policy id="form-action">
+            <values>
+                <value id="ccavenueae_form_action" type="host">ccavenue.ae</value>
+                <value id="googleae_form_action" type="host">google.ae</value>
+                <value id="ccav_form_action" type="host">secure.ccavenue.ae</value>
+                <value id="ga_form_action" type="host">*.google-analytics.com</value>
+                <value id="clarity_form_action" type="host">*.clarity.ms</value>
+                <value id="google_form_action" type="host">*.google.com</value>
+                <value id="scstatic_form_action" type="host">*.sc-static.net</value>
+                <value id="clickguardian_form_action" type="host">*.clickguardian.app</value>
+                <value id="cloudflare_form_action" type="host">*.cloudflare.com</value>
+                <value id="doubleclick_form_action" type="host">*.doubleclick.net</value>
+                <value id="snapchat_form_action" type="host">*.snapchat.com</value>
+                <value id="tawkto_form_action" type="host">*.tawk.to</value>
+                <value id="merchant_form_action" type="host">*.merchant-center-analytics.goog</value>
+                <value id="gtag_form_action" type="host">*.googletagmanager.com</value>
+                <value id="googlein_form_action" type="host">*.google.co.in</value>
+                <value id="bing_form_action" type="host">*.bing.com</value>
+                <value id="gads_form_action" type="host">googleads.g.doubleclick.net</value>
+                <value id="scstatic_https_form_action" type="host">sc-static.net</value>
+                <value id="embedtawk_https_form_action" type="host">embed.tawk.to</value>
+            </values>
+        </policy>
+        <policy id="script-src">
+            <values>
+                <value id="ccavenueae_script" type="host">ccavenue.ae</value>
+                <value id="googleae_script" type="host">google.ae</value>
+                <value id="ccav_script" type="host">secure.ccavenue.ae</value>
+                <value id="ga_script" type="host">*.google-analytics.com</value>
+                <value id="clarity_script" type="host">*.clarity.ms</value>
+                <value id="google_script" type="host">*.google.com</value>
+                <value id="scstatic_script" type="host">*.sc-static.net</value>
+                <value id="clickguardian_script" type="host">*.clickguardian.app</value>
+                <value id="cloudflare_script" type="host">*.cloudflare.com</value>
+                <value id="doubleclick_script" type="host">*.doubleclick.net</value>
+                <value id="snapchat_script" type="host">*.snapchat.com</value>
+                <value id="tawkto_script" type="host">*.tawk.to</value>
+                <value id="merchant_script" type="host">*.merchant-center-analytics.goog</value>
+                <value id="gtag_script" type="host">*.googletagmanager.com</value>
+                <value id="googlein_script" type="host">*.google.co.in</value>
+                <value id="bing_script" type="host">*.bing.com</value>
+                <value id="gads_script" type="host">googleads.g.doubleclick.net</value>
+                <value id="scstatic_https_script" type="host">sc-static.net</value>
+                <value id="embedtawk_https_script" type="host">embed.tawk.to</value>
+            </values>
+        </policy>
+        <policy id="connect-src">
+            <values>
+                <value id="ccavenueae_connectsrc" type="host">ccavenue.ae</value>
+                <value id="googleae_content" type="host">google.ae</value>
+                <value id="ccav_content" type="host">secure.ccavenue.ae</value>
+                <value id="ga_content" type="host">*.google-analytics.com</value>
+                <value id="clarity_content" type="host">*.clarity.ms</value>
+                <value id="google_content" type="host">*.google.com</value>
+                <value id="scstatic_content" type="host">*.sc-static.net</value>
+                <value id="clickguardian_content" type="host">*.clickguardian.app</value>
+                <value id="cloudflare_content" type="host">*.cloudflare.com</value>
+                <value id="doubleclick_content" type="host">*.doubleclick.net</value>
+                <value id="snapchat_content" type="host">*.snapchat.com</value>
+                <value id="tawkto_content" type="host">*.tawk.to</value>
+                <value id="merchant_content" type="host">*.merchant-center-analytics.goog</value>
+                <value id="gtag_content" type="host">*.googletagmanager.com</value>
+                <value id="googlein_content" type="host">*.google.co.in</value>
+                <value id="bing_content" type="host">*.bing.com</value>
+                <value id="gads_content" type="host">googleads.g.doubleclick.net</value>
+                <value id="scstatic_https_content" type="host">sc-static.net</value>
+                <value id="embedtawk_https_content" type="host">embed.tawk.to</value>
+                <value id="embedtawk_webhook_content" type="host">wss://*.tawk.to</value>
+            </values>
+        </policy>
+        <policy id="frame-src">
+            <values>
+                <value id="ccavenueae_frame" type="host">ccavenue.ae</value>
+                <value id="googleae_frame" type="host">google.ae</value>
+                <value id="ccav_frame" type="host">secure.ccavenue.ae</value>
+                <value id="ga_frame" type="host">*.google-analytics.com</value>
+                <value id="clarity_frame" type="host">*.clarity.ms</value>
+                <value id="google_frame" type="host">*.google.com</value>
+                <value id="scstatic_frame" type="host">*.sc-static.net</value>
+                <value id="clickguardian_frame" type="host">*.clickguardian.app</value>
+                <value id="cloudflare_frame" type="host">*.cloudflare.com</value>
+                <value id="doubleclick_frame" type="host">*.doubleclick.net</value>
+                <value id="snapchat_frame" type="host">*.snapchat.com</value>
+                <value id="tawkto_frame" type="host">*.tawk.to</value>
+                <value id="merchant_frame" type="host">*.merchant-center-analytics.goog</value>
+                <value id="gtag_frame" type="host">*.googletagmanager.com</value>
+                <value id="googlein_frame" type="host">*.google.co.in</value>
+                <value id="bing_frame" type="host">*.bing.com</value>
+                <value id="gads_frame" type="host">googleads.g.doubleclick.net</value>
+                <value id="scstatic_https_frame" type="host">sc-static.net</value>
+                <value id="embedtawk_https_frame" type="host">embed.tawk.to</value>
+            </values>
+        </policy>
+        <policy id="img-src">
+            <values>
+                <value id="ccavenueae_imgsrc" type="host">ccavenue.ae</value>
+                <value id="googleae_imgsrc" type="host">google.ae</value>
+                <value id="ccav_imgsrc" type="host">secure.ccavenue.ae</value>
+                <value id="ga_imgsrc" type="host">*.google-analytics.com</value>
+                <value id="clarity_imgsrc" type="host">*.clarity.ms</value>
+                <value id="google_imgsrc" type="host">*.google.com</value>
+                <value id="scstatic_imgsrc" type="host">*.sc-static.net</value>
+                <value id="clickguardian_imgsrc" type="host">*.clickguardian.app</value>
+                <value id="cloudflare_imgsrc" type="host">*.cloudflare.com</value>
+                <value id="doubleclick_imgsrc" type="host">*.doubleclick.net</value>
+                <value id="snapchat_imgsrc" type="host">*.snapchat.com</value>
+                <value id="tawkto_imgsrc" type="host">*.tawk.to</value>
+                <value id="merchant_imgsrc" type="host">*.merchant-center-analytics.goog</value>
+                <value id="gtag_imgsrc" type="host">*.googletagmanager.com</value>
+                <value id="googlein_imgsrc" type="host">*.google.co.in</value>
+                <value id="bing_imgsrc" type="host">*.bing.com</value>
+                <value id="gads_imgsrc" type="host">googleads.g.doubleclick.net</value>
+                <value id="scstatic_https_imgsrc" type="host">sc-static.net</value>
+                <value id="embedtawk_https_imgsrc" type="host">embed.tawk.to</value>
+            </values>
+        </policy>
+        <policy id="style-src">
+            <values>
+                <value id="ccavenueae_stylesrc" type="host">ccavenue.ae</value>
+                <value id="googleae_stylesrc" type="host">google.ae</value>
+                <value id="ccav_stylesrc" type="host">secure.ccavenue.ae</value>
+                <value id="ga_stylesrc" type="host">*.google-analytics.com</value>
+                <value id="clarity_stylesrc" type="host">*.clarity.ms</value>
+                <value id="google_stylesrc" type="host">*.google.com</value>
+                <value id="scstatic_stylesrc" type="host">*.sc-static.net</value>
+                <value id="clickguardian_stylesrc" type="host">*.clickguardian.app</value>
+                <value id="cloudflare_stylesrc" type="host">*.cloudflare.com</value>
+                <value id="doubleclick_stylesrc" type="host">*.doubleclick.net</value>
+                <value id="snapchat_stylesrc" type="host">*.snapchat.com</value>
+                <value id="tawkto_stylesrc" type="host">*.tawk.to</value>
+                <value id="merchant_stylesrc" type="host">*.merchant-center-analytics.goog</value>
+                <value id="gtag_stylesrc" type="host">*.googletagmanager.com</value>
+                <value id="googlein_stylesrc" type="host">*.google.co.in</value>
+                <value id="bing_stylesrc" type="host">*.bing.com</value>
+                <value id="gads_stylesrc" type="host">googleads.g.doubleclick.net</value>
+                <value id="scstatic_https_stylesrc" type="host">sc-static.net</value>
+                <value id="embedtawk_https_stylesrc" type="host">embed.tawk.to</value>
+            </values>
+        </policy>
+        <policy id="font-src">
+            <values>
+                <value id="ccavenueae_fontsrc" type="host">ccavenue.ae</value>
+                <value id="googleae_fontsrc" type="host">google.ae</value>
+                <value id="ccav_fontsrc" type="host">secure.ccavenue.ae</value>
+                <value id="ga_fontsrc" type="host">*.google-analytics.com</value>
+                <value id="clarity_fontsrc" type="host">*.clarity.ms</value>
+                <value id="google_fontsrc" type="host">*.google.com</value>
+                <value id="scstatic_fontsrc" type="host">*.sc-static.net</value>
+                <value id="clickguardian_fontsrc" type="host">*.clickguardian.app</value>
+                <value id="cloudflare_fontsrc" type="host">*.cloudflare.com</value>
+                <value id="doubleclick_fontsrc" type="host">*.doubleclick.net</value>
+                <value id="snapchat_fontsrc" type="host">*.snapchat.com</value>
+                <value id="tawkto_fontsrc" type="host">*.tawk.to</value>
+                <value id="merchant_fontsrc" type="host">*.merchant-center-analytics.goog</value>
+                <value id="gtag_fontsrc" type="host">*.googletagmanager.com</value>
+                <value id="googlein_fontsrc" type="host">*.google.co.in</value>
+                <value id="bing_fontsrc" type="host">*.bing.com</value>
+                <value id="gads_fontsrc" type="host">googleads.g.doubleclick.net</value>
+                <value id="scstatic_https_fontsrc" type="host">sc-static.net</value>
+                <value id="embedtawk_https_fontsrc" type="host">embed.tawk.to</value>
+            </values>
+        </policy>
+    </policies>
+</csp_whitelist>

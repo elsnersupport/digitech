@@ -1,0 +1,136 @@
+<?php
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_GoogleTagManager
+ * @copyright   Copyright (c) Mageplaza (https://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+use Mageplaza\GoogleTagManager\Block\TagManager;
+
+/** @var TagManager $block */
+?>
+<!--Google Tag Manager: dataLayer - Added by Mageplaza-->
+<?php
+if (!empty($block->getEventData())) {
+    $data = $block->getEventData();
+    if (!empty($data['add']['gtm'])) {
+        ?>
+        <script>dataLayer.push(<?= /** @noEscape */ $data['add']['gtm'] ?>);</script>
+        <?php
+    }
+    if (!empty($data['add']['pixel'])) {
+        ?>
+        <script>fbq('track', 'AddToCart', <?= /** @noEscape */  $data['add']['pixel'] ?>);</script>
+        <?php
+    }
+    if (!empty($data['wishlist']['gtm'])) {
+        ?>
+        <script>dataLayer.push(<?= /** @noEscape */  $data['wishlist']['gtm'] ?>);</script>
+        <?php
+    }
+    if (!empty($data['wishlist']['pixel'])) {
+        ?>
+        <script>fbq('track', 'AddToWishlist', <?= /** @noEscape */  $data['wishlist']['pixel'] ?>);</script>
+        <?php
+    }
+    $block->removeAddToWishlistData();
+    if (!empty($data['add']['ga'])) {
+        ?>
+        <script>gtag('event', 'add_to_cart', <?= /** @noEscape */  $data['add']['ga'] ?>);</script>
+        <?php
+    }
+    $block->removeAddToCartData();
+    if (!empty($data['remove']['gtm'])) {
+        ?>
+        <script>dataLayer.push(<?= /** @noEscape */  $data['remove']['gtm'] ?>);</script>
+        <?php
+    }
+    if (!empty($data['remove']['ga'])) {
+        ?>
+        <script>gtag('event', 'remove_from_cart', <?= /** @noEscape */  $data['remove']['ga'] ?>);</script>
+        <?php
+    }
+    $block->removeRemoveFromCartData();
+
+    if(!empty($data['login']['gtm'])){
+        ?>
+        <script>dataLayer.push(<?= /** @noEscape */  $data['login']['gtm'] ?>);</script>
+        <?php
+    }
+    $block->removeLoginData();
+
+    if(!empty($data['signup']['gtm'])){
+        ?>
+        <script>dataLayer.push(<?= /** @noEscape */  $data['signup']['gtm'] ?>);</script>
+        <?php
+    }
+
+    if(!empty($data['signup']['pixel'])){
+        ?>
+        <script>fbq('track', 'CompleteRegistration', <?= /** @noEscape */  $data['signup']['pixel'] ?>);</script>
+        <?php
+    }
+    $block->removeSignUpData();
+}
+?>
+<div id="mp-event"></div>
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        const baseUrl = "<?= $this->getUrl(); ?>";
+        const mpEventElement = document.getElementById("mp-event");
+
+        function sendAjaxRequest(url, data) {
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.json())
+                .then(responseData => {
+                    if (responseData.data && mpEventElement) {
+                        mpEventElement.innerHTML = responseData.data;
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
+        document.querySelectorAll("button.tocart").forEach(button => {
+            button.addEventListener("click", function () {
+                const customUrl1 = `${baseUrl}mpgoogletagmanager/event/index`;
+                sendAjaxRequest(customUrl1, { customdata: "addtocart" });
+
+                if (document.getElementById("confirmBox")) {
+                    const customUrl2 = `${baseUrl}mptagmanager/event/index`;
+                    sendAjaxRequest(customUrl2, { customdata: "addtocart" });
+                }
+            });
+        });
+
+        const addToCartButton = document.getElementById("product-addtocart-button");
+        if (addToCartButton) {
+            addToCartButton.addEventListener("mouseover", function () {
+                addToCartButton.addEventListener("click", function () {
+                    if (document.getElementById("confirmBox")) {
+                        const customUrl = `${baseUrl}mptagmanager/event/index`;
+                        sendAjaxRequest(customUrl, { customdata: "addtocart" });
+                    }
+                });
+            });
+        }
+    });
+</script>

@@ -1,0 +1,254 @@
+<?php
+
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_GoogleTagManager
+ * @copyright   Copyright (c) Mageplaza (https://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+
+use Mageplaza\GoogleTagManager\Block\Tag\ManagerTag;
+
+/** @var ManagerTag $block */
+?>
+<?php if ($block->canShowGtm()) :
+    [$dimensionsAndMetrics, $values] = $block->getDimensionsAndMetrics();
+?>
+    <!-- Google Tag Manager Added by Mageplaza -->
+    <!-- Global site tag (gtag.js) - Google Analytics 4 -->
+    <script>
+        // window.addEventListener('DOMContentLoaded', () => {
+            window.setTimeout(() => {
+                (function(w, d, s, l, i) {
+                    w[l] = w[l] || [];
+                    w[l].push({
+                        'gtm.start': new Date().getTime(),
+                        event: 'gtm.js'
+                    });
+                    var f = d.getElementsByTagName(s)[0],
+                        j = d.createElement(s),
+                        dl = l != 'dataLayer' ? '&l=' + l : '';
+                    j.async = true;
+                    j.src =
+                        'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+                    f.parentNode.insertBefore(j, f);
+                })(window, document, 'script', 'dataLayer', '<?= $block->escapeHtmlAttr($block->getTagId()) ?>');
+                window.setTimeout(() => {
+                    window.dataLayer = window.dataLayer || [];
+
+                    function gtag() {
+                        window.dataLayer.push(arguments);
+                    }
+
+                    gtag('js', new Date());
+
+                    <?php if (isset($dimensionsAndMetrics['custom_map']) && $dimensionsAndMetrics['custom_map']) : ?>
+                        <?php foreach ($block->getGa4TagId() as $measurementId): ?>
+                            gtag('config', '<?=
+                                            /** @noEscape */
+                                            $measurementId ?>');
+                        <?php endforeach; ?>
+                        gtag('event', 'Custom Event Parameter', <?= $values ?
+                                                                    /** @noEscape */
+                                                                    $block->encodeJs($values) : '{}' ?>);
+                    <?php endif; ?>
+                }, 3000);
+            }, 5000);
+        // });
+    </script>
+    <!-- End Google Tag Manager -->
+<?php endif; ?>
+
+<?php if ($block->enableConsentV2()) : ?>
+    <div id="mageplaza-consentpopup-block" class="mageplaza-consentpopup-block">
+        <div id="consent-popup" class="consent-popup">
+            <div class="content">
+                <button type="button" class="close-popup" title="Close Popup"></button>
+                <h2 class="title">Customize Consent Preferences</h2>
+                <?php if ($block->getConsentPopupContent()): ?>
+                    <div class="frontend-content">
+                        <?= /* @noescape */ $block->getConsentPopupContent() ?>
+                    </div>
+                <?php endif; ?>
+                <div class="gtm">
+                    <input type="checkbox" id="analytics" name="analytics" value="checked">
+                    <label for="analytics" class="label">Analytics</label>
+                    <input type="checkbox" id="advertisement" name="advertisement" value="checked">
+                    <label for="advertisement" class="label">Advertisement</label>
+                </div>
+                <div class="actions">
+                    <button class="accept" title="Accept all">Accept all</button>
+                    <button class="save" title="Save my preferences">Save my preferences</button>
+                    <button class="reject" title="Reject all">Reject all</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/x-magento-init">
+        {
+            "#mageplaza-consentpopup-block": {
+                "Mageplaza_GoogleTagManager/js/popup": {
+                    "cookie_validity" : <?= /* @noEscape */ $block->getCookieValidity() ?>
+                }
+            }
+        }
+    </script>
+    <style type="text/css">
+        #consent-popup {
+            display: none;
+            position: fixed;
+            width: 100%;
+            font-family: 'Titillium Web', sans-serif;
+            font-size: 16px;
+            bottom: 0;
+            background-color: #fff;
+            box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.5);
+            z-index: 10002;
+        }
+
+        #consent-popup .content {
+            padding: 5px 30px 30px;
+        }
+
+        h2.title {
+            font-weight: 600;
+            font-size: 27px;
+        }
+
+        .frontend-content {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .gtm {
+            margin-bottom: 15px;
+            padding-left: 3px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .gtm label {
+            padding-right: 10px;
+        }
+
+        .gtm input {
+            margin-right: 0;
+            width: 20px;
+            height: 20px;
+            top: 4px;
+        }
+
+        .actions button {
+            font-size: 18px !important;
+            padding: 14px 35px;
+            margin-right: 7px;
+            border-radius: 5px;
+        }
+
+        /*Responsive screen monitor 650px*/
+        @media all and (max-width: 650px) {
+            #consent-popup {
+                height: 50%;
+                overflow: auto;
+            }
+
+            .actions button {
+                width: 100%;
+            }
+
+            button.accept,
+            button.save {
+                margin-bottom: 10px;
+            }
+        }
+
+        button.accept {
+            font-size: 18px;
+            background: #1979c3;
+            color: #fff;
+        }
+
+        button.save {
+            background: #fff;
+        }
+
+        button.reject {
+            color: #1979c3;
+            background: #fff;
+            border: 1px solid #1979c3;
+        }
+
+        button.accept:hover {
+            background: #006bb4;
+            color: #fff;
+        }
+
+        button.reject:hover {
+            color: #0084b4;
+            border: 1px solid #0084b4;
+        }
+
+        .close-popup {
+            position: absolute;
+            top: 0;
+            right: 0;
+            overflow: hidden;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            background: #fff;
+            border: none !important;
+            color: #000;
+        }
+
+        .close-popup:before {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-size: 14px;
+            line-height: 14px;
+            content: '\e616';
+            font-family: 'luma-icons';
+            margin: 0;
+            padding-top: 2px;
+            vertical-align: top;
+            display: inline-block;
+            font-weight: 400;
+            overflow: hidden;
+            speak: none;
+            text-align: center;
+        }
+
+        #bio_ep_bg {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            opacity: 0.3;
+            z-index: 10001;
+        }
+    </style>
+<?php endif; ?>
+
+<?php if ($block->hideGdprPopup()): ?>
+    <style type="text/css">
+        #gdpr-notice-cookie-block {
+            display: none !important;
+        }
+    </style>
+<?php endif; ?>

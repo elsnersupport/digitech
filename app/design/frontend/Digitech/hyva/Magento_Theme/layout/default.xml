@@ -1,0 +1,83 @@
+<!-- 
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+ -->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="script-alpine-js">
+            <block name="alpine-plugin-collapse" template="Magento_Theme::page/js/plugins/collapse.phtml"/>
+            <block name="alpine-plugin-ajax-cart" template="Magento_Theme::page/js/plugins/ajax-cart.phtml">
+                <arguments>
+                    <argument name="delay" xsi:type="number">500</argument> <!-- Extra delay in milliseconds added to the loader (true/false) -->
+                    <argument name="show_sku" xsi:type="boolean">true</argument> <!-- Show Sku (true/false) -->
+                    <argument name="display_on_success" xsi:type="string">modal</argument> <!-- What to show on success (false/minicart/modal) -->
+                </arguments>
+            </block>
+        </referenceBlock>
+        
+        <referenceContainer name="header.container">
+            <block class="Magento\Cms\Block\Block" name="hyva-header-break" before="hyva-header-top-bar">
+                <arguments>
+                    <argument name="block_id" xsi:type="string">break</argument>
+                </arguments>
+            </block>
+            <block class="Magento\Cms\Block\Block" name="hyva-header-top-bar" before="-">
+                <arguments>
+                    <argument name="block_id" xsi:type="string">header-top-bar</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+        
+        <referenceContainer name="footer">
+            <container name="footer.top" 
+                label="Hyva Footer Top Section-1" 
+                htmlTag="div" htmlClass="section-1 footer-top bg-primary text-white" 
+                before="-">
+                <block class="Magento\Cms\Block\Block" name="hyva-footer-top-details">
+                    <arguments>
+                        <argument name="block_id" xsi:type="string">hyva-footer-top-details</argument>
+                    </arguments>
+                </block>
+            </container>
+
+            <container name="footer.middle" 
+                label="Hyva Footer Middle Section-2" 
+                htmlTag="div" htmlClass="section-2 footer-middle block-container" 
+                after="footer.top">
+                <block class="Magento\Cms\Block\Block" name="hyva-footer-middle-details">
+                    <arguments>
+                        <argument name="block_id" xsi:type="string">hyva-footer-middle-details</argument>
+                    </arguments>
+                </block>
+            </container>
+
+            <container name="footer.absolute.bottom" 
+                label="Hyva Absolute Bottom Panel" 
+                htmlTag="div" htmlClass="section-3 block-container footer-absolute-bottom flex flex-col md:flex-row gap-3 justify-center items-center md:justify-between w-full border-t py-3 mx-auto" 
+                after="-">
+                <container name="footer.bottom.copyright" 
+                    label="Hyva Absolute Bottom Copyright" 
+                    htmlTag="div" htmlClass="left footer-absolute-bottom-copyright font-medium" 
+                    after="-">
+                    <block class="Magento\Theme\Block\Html\Footer" 
+                        name="footer-copyright" 
+                        template="Magento_Theme::html/footer/copyright.phtml" 
+                        as="copyright" 
+                        before="-"/>
+                </container>
+                <block class="Magento\Cms\Block\Block" name="hyva-footer-absolute-bottom-cards" after="-">
+                    <arguments>
+                        <argument name="block_id" xsi:type="string">hyva-footer-absolute-bottom-cards</argument>
+                    </arguments>
+                </block>
+            </container>
+
+            <referenceBlock name="footer-content" remove="true"/>
+            <referenceBlock name="skip_to_content" remove="true"/>
+        </referenceContainer>
+    </body>
+</page>

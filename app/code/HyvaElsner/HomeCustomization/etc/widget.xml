@@ -1,0 +1,84 @@
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Widget:etc/widget.xsd">
+    <widget class="HyvaElsner\HomeCustomization\Block\Widget\CategoryCollection" id="hyvaelsner_homecustomization_categorycollection">
+        <label>Category Collection For Hyvä Themes</label>
+        <description>Upload multiple images to show as Categories in a section!</description>
+        <parameters>
+            <parameter name="status" xsi:type="select" required="false" visible="true" sort_order="0">
+                <label>Enable ?</label>
+                <options>
+                    <option name="enabled" value="1" selected="true">
+                        <label>Yes</label>
+                    </option>
+                    <option name="disabled" value="0">
+                        <label>No</label>
+                    </option>
+                </options>
+            </parameter>
+            <parameter name="label" xsi:type="text" required="false" visible="true" sort_order="1">
+                <label>Section Label</label>
+            </parameter>
+            <parameter name="view_all_categories_label" xsi:type="text" required="false" visible="true" sort_order="4">
+                <label>"View All Categories" Label</label>
+            </parameter>
+            <parameter name="view_all_categories_link" xsi:type="text" required="false" visible="true" sort_order="5">
+                <label>"View All Categories" Link</label>
+            </parameter>
+            <parameter name="container_border_width" xsi:type="text" required="false" visible="true" sort_order="8">
+                <label>Container Border Width (e.g. 2px, 2rem, 5% etc..)</label>
+            </parameter>
+            <parameter name="hide_container_border" xsi:type="select" required="false" visible="true" sort_order="9">
+                <label>Hide Container Border ?</label>
+                <options>
+                    <option name="show" value="0" selected="true">
+                        <label>No</label>
+                    </option>
+                    <option name="hide" value="1">
+                        <label>Yes</label>
+                    </option>
+                </options>
+            </parameter>
+            <parameter name="image_default_width" xsi:type="text" required="false" visible="true" sort_order="10">
+                <label>Image Width (e.g. 100,120,80 etc)</label>
+            </parameter>
+            <parameter name="image_default_height" xsi:type="text" required="false" visible="true" sort_order="11">
+                <label>Image Height (e.g. 100,120,80 etc)</label>
+            </parameter>
+            <parameter name="image_border_width" xsi:type="text" required="false" visible="true" sort_order="12">
+                <label>Image Border Width (e.g. 2px, 2rem, 5% etc..)</label>
+            </parameter>
+            <parameter name="image_border_radius" xsi:type="text" required="false" visible="true" sort_order="14">
+                <label>Image Border Radius (e.g. 2px, 10% etc...)</label>
+            </parameter>
+            <parameter name="category_link_target" xsi:type="select" required="false" visible="true" sort_order="15">
+                <label>Open Category URL In New Tab ?</label>
+                <options>
+                    <option name="_bank" value="_blank" selected="true">
+                        <label>Yes</label>
+                    </option>
+                    <option name="_self" value="_self">
+                        <label>No</label>
+                    </option>
+                </options>
+            </parameter>
+            <parameter name="conditions" xsi:type="block" required="true" visible="true" sort_order="16">
+                <label translate="true">Add Category Images</label>
+                <block class="HyvaElsner\HomeCustomization\Block\Adminhtml\CategoryCollection"/>
+            </parameter>
+            <parameter name="section_classes" xsi:type="text" required="false" visible="true" sort_order="17">
+                <label>Section CSS Classes</label>
+            </parameter>
+        </parameters>
+    </widget>
+    <widget id="products_list">
+        <parameters>
+            <parameter name="template" xsi:type="select" required="true" visible="true">
+                <label translate="true">Template</label>
+                <options>
+                    <option name="feature_grid" value="Magento_CatalogWidget::product/widget/content/feature_grid.phtml">
+                        <label translate="true">Feature Products Grid Template</label>
+                    </option>
+                </options>
+            </parameter>
+        </parameters>
+    </widget>
+</widgets>

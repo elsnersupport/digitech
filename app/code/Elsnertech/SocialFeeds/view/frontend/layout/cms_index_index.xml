@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <!-- Example usage - can be removed if using widget -->
+            
+            <block class="Elsnertech\SocialFeeds\Block\Widget\SocialFeeds" 
+                   name="instagram.feeds.homepage" 
+                   template="Elsnertech_SocialFeeds::widget/social_feeds.phtml">
+                <arguments>
+                    <argument name="title" xsi:type="string">SOCIAL MEDIA FEEDS</argument>
+                    <argument name="posts_count" xsi:type="string">4</argument>
+                </arguments>
+            </block>
+           
+        </referenceContainer>
+    </body>
+</page>

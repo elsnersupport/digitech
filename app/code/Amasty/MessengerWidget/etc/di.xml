@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Live Chat for Magento 2
+ */-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Amasty\MessengerWidget\Api\Data\MessengerInterface" type="Amasty\MessengerWidget\Model\Messenger"/>
+    <preference for="Amasty\MessengerWidget\Api\MessengerGetInterface" type="Amasty\MessengerWidget\Model\Messenger\MessengerGet"/>
+    <preference for="Amasty\MessengerWidget\Api\MessengerSaveInterface" type="Amasty\MessengerWidget\Model\Messenger\MessengerSave"/>
+    <preference for="Amasty\MessengerWidget\Api\MessengerDeleteInterface" type="Amasty\MessengerWidget\Model\Messenger\MessengerDelete"/>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="ammessengerwidget_messenger_listing_data_source" xsi:type="string">Amasty\MessengerWidget\Model\ResourceModel\Messenger\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Amasty\MessengerWidget\Ui\Component\Listing\Column\Store">
+        <arguments>
+            <argument name="storeKey" xsi:type="string">store_ids</argument>
+        </arguments>
+    </type>
+
+    <type name="Amasty\MessengerWidget\Model\ResourceModel\Messenger\Grid\Collection">
+        <arguments>
+            <argument name="resourceModel" xsi:type="string">Amasty\MessengerWidget\Model\ResourceModel\Messenger</argument>
+            <argument name="collectionProcessor" xsi:type="object">Amasty\MessengerWidget\Model\ResourceModel\Messenger\Grid\Collection\Processor</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="Amasty\MessengerWidget\Model\ResourceModel\Messenger\Grid\Collection\Processor" type="Amasty\MessengerWidget\Model\ResourceModel\Collection\Processor">
+        <arguments>
+            <argument name="dataFillers" xsi:type="array">
+                <item name="name" xsi:type="object">Amasty\MessengerWidget\Model\ResourceModel\Messenger\Grid\Collection\DataFiller\MessengerName</item>
+                <item name="store" xsi:type="object">Amasty\MessengerWidget\Model\ResourceModel\Messenger\Grid\Collection\DataFiller\Store</item>
+            </argument>
+            <argument name="filterAndSortingAppliers" xsi:type="array">
+                <item name="name" xsi:type="object">Amasty\MessengerWidget\Model\ResourceModel\Messenger\Grid\Collection\FilterAndSortingApplier\MessengerName</item>
+                <item name="store" xsi:type="object">Amasty\MessengerWidget\Model\ResourceModel\Messenger\Grid\Collection\FilterAndSortingApplier\Store</item>
+            </argument>
+        </arguments>
+    </virtualType>
+</config>

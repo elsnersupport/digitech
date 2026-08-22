@@ -1,0 +1,66 @@
+<div class="block items-in-cart">
+    <div class="title" data-role="title">
+        <strong role="heading" aria-level="1">
+            <translate args="maxCartItemsToDisplay" if="maxCartItemsToDisplay < getCartLineItemsCount()"></translate>
+            <translate args="'of'" if="maxCartItemsToDisplay < getCartLineItemsCount()"></translate>
+            <span data-bind="text: getCartSummaryItemsCount().toLocaleString(window.LOCALE)"></span>
+            <span data-bind="text : getCartSummaryItemsCount() === 1 ? 'Item : ' : 'Items : '">
+            </span>
+            <span class="cart-items-total" data-bind="text: getCartItemTotals()"></span>
+        </strong>
+    </div>
+    <div class="content minicart-items cart-images-with-images" data-role="content"
+        data-trigger="trigger-order-summary">
+        <div class="minicart-items-wrapper">
+            <div class="minicart-items">
+                <each args="items()">
+                    <div class="product-item">
+                        <div class="product">
+                            <each args="$parent.elems()" render=""></each>
+                        </div>
+                    </div>
+                </each>
+            </div>
+            <div class="show-all-items-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20" width="2rem" height="2rem"
+                    class="SvgIcon_SvgIcon__XZVZw">
+                    <path fill="currentColor" fill-rule="evenodd"
+                        d="M6.793 3.043a1 1 0 0 1 1.414 0l6.25 6.25a1 1 0 0 1 0 1.414l-6.25 6.25a1 1 0 0 1-1.414-1.414L12.336 10 6.793 4.457a1 1 0 0 1 0-1.414Z"
+                        clip-rule="evenodd"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div data-bind="mageInit: {
+    'Magento_Ui/js/modal/modal':{
+        'type': 'popup',
+        'title': jQuery.mage.__('Order Summary'),
+        'trigger':'[data-trigger=trigger-order-summary]',
+        'responsive' : true,
+        'buttons' :[],
+        'modalClass':'checkout-modal order-summary'
+    }}" style="display: none;" id="cart-items-popup">
+    <div class="content minicart-items popup-minicart-items" data-role="content">
+        <div class="cart-items-total">
+            <span data-bind="text: getCartSummaryItemsCount().toLocaleString(window.LOCALE)"></span>
+            <span data-bind="text : getCartSummaryItemsCount() === 1 ? 'Item : ' : 'Items : '">
+            </span>
+            <span class="cart-items-total" data-bind="text: getCartItemTotals()"></span>
+        </div>
+
+        <div class="minicart-items-wrapper">
+            <ol class="minicart-items">
+                <each args="items()">
+                    <li class="product-item">
+                        <div class="product">
+                            <each args="$parent.elems()" render=""></each>
+                        </div>
+                    </li>
+                </each>
+            </ol>
+        </div>
+    </div>
+</div>

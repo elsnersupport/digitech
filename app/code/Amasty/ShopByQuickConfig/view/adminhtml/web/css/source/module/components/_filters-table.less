@@ -1,0 +1,203 @@
+//
+//  Amasty Shop by Quick Filters Table
+//  ______________________________________________
+
+//
+//  Imports
+//  ----------------------------------------------
+
+@import '../_utils';
+
+//
+//  Variables
+//  ----------------------------------------------
+
+@amshopbyconfig-filter-button__size: 20px;
+@amshopbyconfig-edit-button__image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNC43NzIgM0wxMy4xOCA0LjYwMmwyLjIyOCAyLjI0TDE3IDUuMjQyIDE0Ljc3MiAzek00LjU4NiAxMy4yNDhsMi4yMjggMi4yNCA3LjY0LTcuNjg1LTIuMjI3LTIuMjQtNy42NCA3LjY4NXpNMyAxN2wyLjY5OC0uNzEyLTEuOTg4LTIuMDAxTDMgMTd6IiBmaWxsPSIjQTRCMEM3Ii8+PC9zdmc+);
+@amshopbyconfig-draggable-button__size: @amshopbyconfig-filter-button__size;
+@amshopbyconfig-draggable-button__background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik03LjA4MyAxNi4xMWgyLjIyM3YyLjIyM0g3LjA4M1YxNi4xMXptMy42MTItMTQuNDQ0aDIuMjIydjIuMjIyaC0yLjIyMlYxLjY2NnptMCAzLjYxMWgyLjIyMnYyLjIyMmgtMi4yMjJWNS4yNzd6bTAgMy42MTFoMi4yMjJ2Mi4yMjJoLTIuMjIyVjguODg4em0wIDMuNjExaDIuMjIydjIuMjIzaC0yLjIyMnYtMi4yMjN6bTAgMy42MTFoMi4yMjJ2Mi4yMjNoLTIuMjIyVjE2LjExek03LjA4MyAxLjY2NmgyLjIyM3YyLjIyMkg3LjA4M1YxLjY2NnptMCAzLjYxMWgyLjIyM3YyLjIyMkg3LjA4M1Y1LjI3N3ptMCAzLjYxMWgyLjIyM3YyLjIyMkg3LjA4M1Y4Ljg4OHptMCAzLjYxMWgyLjIyM3YyLjIyM0g3LjA4M3YtMi4yMjN6IiBmaWxsPSIjQTRCMEM3Ii8+PC9zdmc+) center/@amshopbyconfig-draggable-button__size no-repeat;
+
+@amshopbyconfig-filter-item__size: 192px;
+@amshopbyconfig-filter-item__background-color: #fff;
+@amshopbyconfig-filter-item__border-color: #bfc5da;
+@amshopbyconfig-filter-item__hover__color: #f1f7ff;
+@amshopbyconfig-filter-item__drag__color: #deedfc;
+@amshopbyconfig-filter-item__drag__border-color: #007bdb;
+@amshopbyconfig-filter-item__drag__border-width: 3px;
+
+//
+//  Common
+//  ----------------------------------------------
+
+& when (@media-common = true) {
+    .amshopbyconfig-filter-table {
+        & {
+            display: block;
+        }
+
+        .amshopbyconfig-col {
+            display: flex;
+            border: none;
+            background: transparent;
+        }
+
+        .amshopbyconfig-text {
+            .amshopbyconfig-word-break;
+
+            align-items: center;
+            flex-grow: 1;
+            padding: 6px 30px 6px 0;
+        }
+
+        .amshopbyconfig-text > .admin__field-value {
+            line-height: 1.2;
+        }
+
+        .amshopbyconfig-tbody {
+            display: flex;
+            flex-wrap: wrap;
+            box-sizing: border-box;
+            padding: 8px;
+            border: 1px dashed @amshopbyconfig-filter-item__border-color;
+            border-radius: 6px;
+        }
+
+        &:not(._dragged) .amshopbyconfig-tbody.-active {
+            border-color: @amshopbyconfig-filter-item__drag__border-color;
+            background-color: @amshopbyconfig-filter-item__hover__color;
+        }
+    }
+
+    .amshopbyconfig-filter-table._dragged {
+        .amshopbyconfig-tbody {
+            border: none;
+        }
+
+        .amshopbyconfig-filter-item {
+            border-color: @amshopbyconfig-filter-item__drag__border-color;
+            background: @amshopbyconfig-filter-item__hover__color;
+            box-shadow: 0 1px 3px rgba(55, 77, 166, .03), 0 2px 10px rgba(43, 72, 188, .21);
+        }
+
+        .amshopbyconfig-filter-item .amshopbyconfig-button.-edit {
+            background-position-x: 95%;
+            opacity: 1;
+        }
+    }
+
+    .amshopbyconfig-filter-items.-side .amshopbyconfig-tbody {
+        flex-direction: column;
+    }
+
+    .amshopbyconfig-filter-item {
+        & {
+            position: relative;
+            display: flex;
+            align-items: stretch;
+            flex-grow: 1;
+            box-sizing: border-box;
+            margin: 5px;
+            min-height: 34px;
+            max-width: @amshopbyconfig-filter-item__size;
+            width: @amshopbyconfig-filter-item__size;
+            border: 1px solid @amshopbyconfig-filter-item__border-color;
+            border-radius: 5px;
+            background: @amshopbyconfig-filter-item__background-color;
+        }
+
+        &.-active {
+            border-color: @amshopbyconfig-filter-item__drag__border-color;
+            background: @amshopbyconfig-filter-item__hover__color;
+        }
+
+        &:hover {
+            background: @amshopbyconfig-filter-item__hover__color;
+        }
+
+        &.-active,
+        &:hover {
+            .amshopbyconfig-button.-edit {
+                background-position-x: 95%;
+                opacity: 1;
+            }
+        }
+
+        .admin__field-value {
+            padding: 0;
+        }
+
+        .draggable-handle {
+            width: @amshopbyconfig-draggable-button__size * 2;
+            height: 100%;
+            background: @amshopbyconfig-draggable-button__background;
+            cursor: move;
+        }
+
+        .amshopbyconfig-button {
+            & {
+                margin: 0 0 0 10px;
+                padding: 0;
+                width: @amshopbyconfig-filter-button__size;
+                height: @amshopbyconfig-filter-button__size;
+                border: none;
+                background: transparent center/@amshopbyconfig-filter-button__size no-repeat;
+                font-size: 0;
+            }
+
+            &:hover,
+            &:focus {
+                border: none;
+                box-shadow: none;
+            }
+        }
+
+        .amshopbyconfig-button.-edit {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            margin: 0;
+            width: ~'calc(100% -  @{amshopbyconfig-draggable-button__size} * 2)';
+            height: 100%;
+            background-image: @amshopbyconfig-edit-button__image;
+            background-position-x: 100%;
+            opacity: 0;
+            transition: all .2s ease-in-out;
+        }
+
+        &._dragover-bottom {
+            border-bottom-width: @amshopbyconfig-filter-item__drag__border-width;
+            border-bottom-color: @amshopbyconfig-filter-item__drag__border-color;
+            border-radius: 0 0 5px 5px;
+        }
+
+        &._dragover-top {
+            border-top-width: @amshopbyconfig-filter-item__drag__border-width;
+            border-top-color: @amshopbyconfig-filter-item__drag__border-color;
+            border-radius: 5px 5px 0 0;
+        }
+
+        &._dragover-left {
+            border-left-width: @amshopbyconfig-filter-item__drag__border-width;
+            border-left-color: @amshopbyconfig-filter-item__drag__border-color;
+            border-radius: 5px 0 0 5px;
+        }
+
+        &._dragover-right {
+            border-right-width: @amshopbyconfig-filter-item__drag__border-width;
+            border-right-color: @amshopbyconfig-filter-item__drag__border-color;
+            border-radius: 0 5px 5px 0;
+        }
+    }
+
+    .amshopbyconfig-filter-item._dragged {
+        & {
+            border-color: @amshopbyconfig-filter-item__drag__color;
+            background: @amshopbyconfig-filter-item__drag__color;
+        }
+
+        > .amshopbyconfig-col {
+            display: none;
+        }
+    }
+}

@@ -1,0 +1,23 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Live Chat for Magento 2
+ */
+/** @var $block \Amasty\MessengerWidget\Block\Messenger\Widget */
+
+if ($block->isShowMessengers()): ?>
+    <div data-bind="scope: 'ammessenger-widget'">
+        <!-- ko template: getTemplate() --><!-- /ko -->
+    </div>
+
+    <script type="text/x-magento-init">
+    {
+        "*": {
+            "Magento_Ui/js/core/app": <?= /* @noEscape */$block->getJsLayout(); ?>
+        }
+    }
+
+    </script>
+<?php endif; ?>
+

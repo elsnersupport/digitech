@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'UAESymbol';
+    src: url('../fonts/uae-symbol.woff2') format('woff2'),
+         url('../fonts/uae-symbol.woff') format('woff'),
+         url('../fonts/uae-symbol.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}

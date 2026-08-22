@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:View/Layout:etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="ambrands.slider.js" remove="true"/>
+        <referenceContainer name="content">
+            <block class="Magento\Cms\Block\Block" name="homepage-top-section" before="-">
+                <arguments>
+                    <argument name="block_id" xsi:type="string">homepage-hyva-discount</argument>
+                </arguments>
+            </block>
+            <block class="Magento\Cms\Block\Block" name="homepage-section-1" after="homepage-top-section">
+                <arguments>
+                    <argument name="block_id" xsi:type="string">homepage-hyva-banner</argument>
+                </arguments>
+            </block>
+            <block class="Magento\Cms\Block\Block" name="homepage-section-2" after="homepage-section-1">
+                <arguments>
+                    <argument name="block_id" xsi:type="string">homepage-hyva-featured-seo</argument>
+                </arguments>
+            </block>
+            <block class="Magento\Cms\Block\Block" name="homepage-section-3" after="homepage-section-2">
+                <arguments>
+                    <argument name="block_id" xsi:type="string">homepage-hyva-product-categories</argument>
+                </arguments>
+            </block>
+            <block class="Magento\Cms\Block\Block" name="homepage-section-4" after="homepage-section-3">
+                <arguments>
+                    <argument name="block_id" xsi:type="string">homepage-hyva-banner-4</argument>
+                </arguments>
+            </block>
+            <block class="Magento\Cms\Block\Block" name="homepage-section-5" after="homepage-section-4">
+                <arguments>
+                    <argument name="block_id" xsi:type="string">homepage-hyva-monthly-best-seller</argument>
+                </arguments>
+            </block>
+            <block class="Magento\Cms\Block\Block" name="homepage-section-6" after="homepage-section-5">
+                <arguments>
+                    <argument name="block_id" xsi:type="string">homepage-hyva-feature-products</argument>
+                </arguments>
+            </block>
+            <block class="Mageplaza\Shopbybrand\Block\Brand\Featured" name="homepage-hyva-brand-slider"
+                    as="homepage-section-7" template="Mageplaza_Shopbybrand::hyva/brand/homepage_featured.phtml" after="homepage-section-6"/>
+            <block class="Magento\Cms\Block\Block" name="homepage-section-8" after="homepage-section-7">
+                <arguments>
+                    <argument name="block_id" xsi:type="string">homepage-hyva-about-us</argument>
+                </arguments>
+            </block>
+            <block class="Magento\Cms\Block\Block" name="homepage-section-9" after="homepage-section-8">
+                <arguments>
+                    <argument name="block_id" xsi:type="string">homepage-hyva-blog</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+        <referenceBlock name="hero" remove="true" />
+        <referenceBlock name="content-1" remove="true" />
+        <referenceBlock name="slider-1" remove="true" />
+        <referenceBlock name="slider-2" remove="true" />
+    </body>
+</page>

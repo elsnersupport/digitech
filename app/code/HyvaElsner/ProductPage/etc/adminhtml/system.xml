@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="elsner_recommend_product" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Recommended Product Popup</label>
+            <tab>elsnertech</tab>
+            <resource>HyvaElsner_ProductPage::config_recommended</resource>
+            <group id="recommend_product_popup" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Show Recommended Products</label>
+                <field id="suggest_product" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="suggest_title" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Title of Suggested Products Block]</label>
+                    <depends>
+                        <field id="*/*/suggest_product">1</field>
+                    </depends>
+                </field>
+                <field id="suggest_source" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Choose Suggested Products</label>
+                    <source_model>HyvaElsner\ProductPage\Model\Config\Source\Suggest</source_model>
+                    <depends>
+                        <field id="*/*/suggest_product">1</field>
+                    </depends>
+                </field>
+                <field id="suggest_limit" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Number of Suggested Products</label>
+                    <validate>required-entry validate-digits validate-greater-than-zero</validate>
+                    <depends>
+                        <field id="*/*/suggest_product">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

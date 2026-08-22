@@ -1,0 +1,206 @@
+<?php
+/** @var $block \Magento\Framework\View\Element\Template */
+$configs = $block->getConfigs();
+$currencySymbol = $configs['store']['currency']['symbol'];
+$currencyCode = $configs['store']['currency']['code'];
+$displayAddToCartButton = $configs['search']['addToCart']['display'];
+$displayAddToWishlistButton = $configs['search']['addToWishlist']['display'];
+?>
+
+<script type="text/template" id="wizzy-search-results-product">
+
+    <li class="item product product-item product-card product_addtocart_form product-card flex flex-col w-full wizzy-result-product wizzy-product-{{id}}
+        {{#groupId}}has-variations wizzy-group-product-{{groupId}}{{/groupId}}"
+            title="{{{ name }}}" data-id="{{id}}" {{#groupId}}data-groupId="{{groupId}}"{{/groupId}}>
+
+      <span class="wizzy-product-variation-loader-bg"></span>
+      <span class="wizzy-product-variation-loader"></span>
+
+      <div class="wizzy-result-product-item">
+        <div class="product-image-section wizzy-img-wrapper">
+            <div class="wishlist flex flex-wrap gap-2"> 
+                <form data-role="towishlist-form" class="wizzy-towishlist-form" 
+                    action="{{wishListAction}}" method="post">
+                    <input type="hidden" class="wizzy-towishlist-productid" name="product" value="{{id}}">
+                    <input type="hidden" class="wizzy-towishlist-uenc" name="uenc" value="{{uenc}}">
+                    <input type="hidden" class="wizzy-towishlist-groupid" name="groupid" value="{{#groupId}}{{groupId}}{{/groupId}}">
+                    <input name="form_key" type="hidden" value="{{formKey}}">
+                    <button type="submit" class="text-black-brand" 
+                            aria-label="Add to Wish List">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4" width="16" height="16" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+            {{#inStock}}
+            <div class="card-actions z-10">
+                <div class="wizzy-product-add-to-cart">
+                    <form data-role="tocart-form" class="wizzy-tocart-form"
+                            action="{{ cart.action }}" method="post">
+                        <input type="hidden"
+                                class="wizzy-tocart-productid" name="product" value="{{id}}">
+                        <input type="hidden"
+                                class="wizzy-tocart-uenc" name="uenc" value="{{ cart.uenc }}">
+                        <input type="hidden"
+                                class="wizzy-tocart-responseId"
+                                name="searchResponseId"
+                                value="{{ cart.searchResponseId }}">
+                        <input name="form_key" type="hidden" :value="hyva.getFormKey()">
+
+                        {{#inStock}}
+                        <button class="w-auto btn btn-primary justify-center text-sm
+                            mr-auto" aria-label="Add to Cart">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 25" fill="none" aria-hidden="true">
+                            <path d="M18.4 8.75H5.6C4.71634 8.75 4 9.46634 4 10.35V18.35C4 19.2337 4.71634 19.95 5.6 19.95H18.4C19.2837 19.95 20 19.2337 20 18.35V10.35C20 9.46634 19.2837 8.75 18.4 8.75Z" stroke="#262626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                            <path d="M15.2008 19.9498V7.1498C15.2008 6.72546 15.0322 6.31849 14.7322 6.01843C14.4321 5.71838 14.0251 5.5498 13.6008 5.5498H10.4008C9.97643 5.5498 9.56947 5.71838 9.26941 6.01843C8.96935 6.31849 8.80078 6.72546 8.80078 7.1498V19.9498" stroke="#262626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                            <span class="ml-2 inline add-to-cart-text md:ml-0 md:hidden lg:ml-2 lg:inline">
+                            Add to Cart                                
+                            </span>
+                        </button>
+                        {{/inStock}}
+                    </form>
+                </div>
+            </div>
+            {{/inStock}}
+
+        {{^inStock}}
+        {{#wzProductAvailibility}}
+        <div class="card-actions z-10">
+            <div class="wizzy-product-add-to-cart">
+                <form data-role="tocart-form" class="wizzy-tocart-form"
+                        action="{{ cart.action }}" method="post">
+                    <input type="hidden"
+                            class="wizzy-tocart-productid" name="product" value="{{id}}">
+                    <input type="hidden"
+                            class="wizzy-tocart-uenc" name="uenc" value="{{ cart.uenc }}">
+                    <input type="hidden"
+                            class="wizzy-tocart-responseId"
+                            name="searchResponseId"
+                            value="{{ cart.searchResponseId }}">
+                    <input name="form_key" type="hidden" :value="hyva.getFormKey()">
+
+                    <div class="card-actions z-10">
+                        <button class="w-auto btn btn-primary justify-center text-sm mr-auto" aria-label="Add to Cart">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 25" fill="none" aria-hidden="true">
+                        <path d="M18.4 8.75H5.6C4.71634 8.75 4 9.46634 4 10.35V18.35C4 19.2337 4.71634 19.95 5.6 19.95H18.4C19.2837 19.95 20 19.2337 20 18.35V10.35C20 9.46634 19.2837 8.75 18.4 8.75Z" stroke="#262626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M15.2008 19.9498V7.1498C15.2008 6.72546 15.0322 6.31849 14.7322 6.01843C14.4321 5.71838 14.0251 5.5498 13.6008 5.5498H10.4008C9.97643 5.5498 9.56947 5.71838 9.26941 6.01843C8.96935 6.31849 8.80078 6.72546 8.80078 7.1498V19.9498" stroke="#262626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                        <span class="ml-2 inline add-to-cart-text md:ml-0 md:hidden lg:ml-2 lg:inline"> Pre-Order </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {{/wzProductAvailibility}}
+        {{/inStock}}
+
+
+        <a href="{{{url}}}">
+         <div class="result-product-item-image">
+            <img src="{{ mainImage }}" class="product-item-image" />
+         </div><!-- ending of result-product-item-image -->
+         <div class="result-product-item-image hover-image">
+            {{#hoverImage}}
+                <img src="{{ hoverImage }}" class="product-item-image"/>
+            {{/hoverImage}}
+            {{^hoverImage}}
+                <img src="{{ mainImage }}" class="product-item-image"/>
+            {{/hoverImage}}
+        </div><!-- ending of result-product-item-image -->
+        </a>
+        </div>
+        <div class="result-product-item-info">
+
+        {{#wzProductAvailibility}}
+            {{^inStock}}
+            <div class="wizzy-product-availability-label"> {{{wzProductAvailibility}}} </div>
+            {{/inStock}}
+        {{/wzProductAvailibility}}
+        
+        {{#inStock}} 
+            <div class="wz-stock-available"><span>In stock</span></div> 
+        {{/inStock}}
+
+        {{^inStock}}
+            {{^wzProductAvailibility}}
+                <div class="wz-stock-unavailable"><span>Out of stock</span></div>
+            {{/wzProductAvailibility}}
+        {{/inStock}}
+         <p class="product-item-brand"> {{{ highLevelCategory }}} </p>
+            <a href="{{{url}}}"
+            <p class="product-item-title">{{{ name }}}</p>
+            </a>
+            {{#subTitle}}
+            <p class="product-item-sub-title">{{{subTitle}}}</p>
+            {{/subTitle}}
+            {{#swatches}}
+             <div class="product-item-swatch-group
+             {{#isPrimary}}swatch-group-primary{{/isPrimary}} swatch-group-{{key}}"
+                  data-swatchKey="{{key}}">
+               {{#values}}
+                 <div data-variationId="{{variationId}}" title="{{#value}}{{value}}{{/value}}"
+                      class="product-item-swatch-item
+                      {{#isSelected}}swatch-selected{{/isSelected}}
+                      {{#inStock}}swatch-in-stock{{/inStock}}">
+                    <?= $block->getReusableHTML('Wizzy_Search::common/swatch.phtml'); ?>
+               </div>
+               {{/values}}
+            </div><!-- ending of product-item-swatch-group -->
+            {{/swatches}}
+            <div class="wizzy-product-item-price-reviews-wrapper">
+
+               <div class="wizzy-product-item-reviews">
+                  {{#avgRatings}}
+                   <span class="product-item-reviews-avgRatings">{{avgRatings}}</span><span
+                           class="product-item-review-wrapper">&#x2605;</span>{{#totalReviews}}<span
+                           class="product-item-reviews-totalReviews">({{totalReviews}})</span>{{/
+                   totalReviews}}
+                  {{/avgRatings}}
+               </div>
+
+               <div class="wizzy-product-item-price {{#hasSwatches}}with-swatches{{/hasSwatches}}">
+                
+                    {{#finalPrice}}
+                        <span class="wizzy-product-item-org-price-{{#price}}green{{/price}}"> 
+                        {{#hasToShowCurrencySymbol}} <?= $block->escapeHtmlAttr($currencySymbol); ?> {{/hasToShowCurrencySymbol}} {{^hasToShowCurrencySymbol}} <?= $block->escapeHtmlAttr($currencyCode); ?> {{/hasToShowCurrencySymbol}} {{ finalPrice }} </span>
+                    {{/finalPrice}}
+                    
+                    <br>
+    
+                    {{#price}} 
+                        <span class="topproduct-excl-txt green">
+                        <span class="excl-text">Excl. Tax: </span> 
+                        <span class="topproduct-excl-val">
+                        {{#hasToShowCurrencySymbol}} <?= $block->escapeHtmlAttr($currencySymbol); ?> {{/hasToShowCurrencySymbol}} {{^hasToShowCurrencySymbol}} <?= $block->escapeHtmlAttr($currencyCode); ?> {{/hasToShowCurrencySymbol}} {{ sellingPrice }} </span> </span>
+                    {{/price}}
+                        
+                    {{^price}} 
+                    <span class="product-item-excTaxPrice">
+                        <span class="topproduct-excl-txt">
+                        <span class="excl-text">Excl. Tax: </span> 
+                        <span class="topproduct-excl-val">
+                        {{#hasToShowCurrencySymbol}} <?= $block->escapeHtmlAttr($currencySymbol); ?> {{/hasToShowCurrencySymbol}} {{^hasToShowCurrencySymbol}} <?= $block->escapeHtmlAttr($currencyCode); ?> {{/hasToShowCurrencySymbol}} {{ sellingPrice }} </span> </span>
+                    </span>
+                    {{/price}} 
+
+                    {{#price}} 
+                    <span class="product-item-original-price">
+                    {{#hasToShowCurrencySymbol}} <?= $block->escapeHtmlAttr($currencySymbol); ?> {{/hasToShowCurrencySymbol}} {{^hasToShowCurrencySymbol}} <?= $block->escapeHtmlAttr($currencyCode); ?> {{/hasToShowCurrencySymbol}} {{ price }}
+                    </span>
+                    {{/price}}
+
+                    <span class="product-item-discount">
+                        {{#discountPercentage}}
+                            ({{discountPercentage}}% off)
+                        {{/discountPercentage}}
+                    </span>
+                
+               </div>
+            </div><!-- ending of wizzy-product-item-price-reviews-wrapper -->
+         </div><!-- ending of result-product-item-info -->
+      </div><!-- ending of wizzy-result-product-item -->
+   </li><!-- ending of wizzy-result-product -->
+
+</script>

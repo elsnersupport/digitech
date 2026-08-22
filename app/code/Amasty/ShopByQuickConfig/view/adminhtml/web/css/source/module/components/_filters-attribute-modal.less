@@ -1,0 +1,57 @@
+//
+//  Amasty Shop by Quick Filters Add attributes modal
+//  ______________________________________________
+
+//
+//  Variables
+//  ----------------------------------------------
+
+@amshopbyconfig-radio-color__active: #007bdb;
+@amshopbyconfig-radio-dot__color: #fff;
+@amshopbyconfig-radio__size: 6px;
+
+//
+//  Common
+//  ----------------------------------------------
+
+& when (@media-common = true) {
+    div[class*='amasty_shopby_filters_add_attribute'] {
+        .amshopbyconfig-attribute-name {
+            width: auto;
+            vertical-align: middle;
+        }
+
+        .amshopbyconfig-attribute-placeholder {
+            display: inline-block;
+            margin-right: 10px;
+            width: 26px;
+            vertical-align: middle;
+        }
+
+        .data-grid th,
+        .data-grid td {
+            font-size: 1.4rem;
+        }
+
+        .admin__control-radio {
+            &:checked + label:before {
+                border-color: @amshopbyconfig-radio-color__active;
+                background-color: @amshopbyconfig-radio-color__active;
+                color: @amshopbyconfig-radio-dot__color;
+            }
+
+            &:checked + label:after {
+                top: @amshopbyconfig-radio__size;
+                left: @amshopbyconfig-radio__size - 1px;
+                width: @amshopbyconfig-radio__size;
+                height: @amshopbyconfig-radio__size;
+                background-color: @amshopbyconfig-radio-dot__color;
+            }
+
+            &:checked:not([disabled]):hover + label:before,
+            &:checked:not(.disabled):hover + label:before {
+                border-color: @amshopbyconfig-radio-color__active;
+            }
+        }
+    }
+}

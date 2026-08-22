@@ -1,0 +1,18 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<div class="data table table-totals">
+    <caption class="table-caption" data-bind="i18n: 'Order Summary'"></caption>
+    <div class="tbody">
+        <!-- ko foreach: elems() -->
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <!-- /ko -->
+    </div>
+</div>
+<button class="action primary checkout checkout-placeorder" type="button" title="Place Order"
+    data-bind="click: placeOrder" title="Place Order">
+    <span data-bind="i18n: 'Place Order'"></span>
+</button>

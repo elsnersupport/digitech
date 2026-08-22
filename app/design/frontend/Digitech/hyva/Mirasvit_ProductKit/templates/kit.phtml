@@ -1,0 +1,727 @@
+<?php
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Mirasvit\Core\Service\SerializeService;
+use Mirasvit\ProductKit\Block\Kit;
+
+/**
+ * @var Kit     $block
+ * @var Escaper $escaper
+ */
+
+$offerId       = $block->getOfferId() ?: '';
+$offerKit      = $block->getOfferKit();
+$items         = $block->getItems();
+$firstItemId   = (int)$items[0]->getId();
+$lastItemId    = (int)$items[count($items) - 1]->getId();
+$baseId        = $escaper->escapeHtml($block->getBaseId());
+$kitSuffix     = str_replace('-', '_', $baseId . '_' . $offerId);
+$config        = $block->getJsonConfig();
+$key           = '#' . $baseId;
+$componentName = 'Mirasvit_ProductKit/js/kit';
+?>
+
+<div class="mst-product_kit__kit mb-0"
+     id="<?= /* @noEscape */ $baseId ?>"
+     data-items-count="<?= /* @noEscape */ count($items) ?>"
+     x-data="initKitWidget<?= /* @noEscape */ $kitSuffix ?>($el)"
+     @product-addtocart-form-click.window="setActiveData($event)"
+     @first-kit-activation="firstKitActivation($event)"
+     @update-product-final-price.window="refresh"
+     @click="refresh">
+    <?php if ($offerKit->getTitle()): ?>
+        <h3 class="kit-heading py-4 ml-4 text-gray-900 text-2xl title-font font-base text-center md:text-left w-full">
+            <?= $escaper->escapeHtml(__($offerKit->getTitle()), ['h3', 'p', 'a']) ?>
+        </h3>
+        <input type="hidden" data-element="kit-id"
+               value="<?= $escaper->escapeHtml($offerKit->getId()); ?>"/>
+    <?php endif ?>
+
+    <div class="kit-inner bg-white border border-gray-200 rounded-md">
+        <ul class="kit-list overflow-auto list-none p-0 m-0 flex relative flex-wrap w-full md:flex-nowrap"
+            x-show="!showCartContent<?= /* @noEscape */ $kitSuffix ?>">
+            <?php foreach ($items as $idx => $item): ?>
+                <?php
+                $idx       = (int)$idx;
+                $product   = $block->getLinkedProduct($item);
+                $isCurrent = $block->isCurrentProduct($product);
+                $classes   = implode(
+                    ' ',
+                    [
+                        'kit-item',
+                        $idx === count($items) - 1 ? '_last' : '',
+                        $idx === 0 ? '_first' : '',
+                        $isCurrent ? 'outline outline-blue-100 outline-2 m-0.5' : '',
+                        count($item->getItemVariations()) ? '_hasVariations' : '',
+                    ]
+                );
+
+                $item->setIsVisible(true);
+                ?>
+
+                <li class="<?= $escaper->escapeHtml($classes) ?> card p-0 m-0 flex flex-grow flex-shrink-0 border-r border-gray-200"
+                    data-element="kit-item"
+                    data-item="<?= $escaper->escapeHtml($item->getId()) ?>">
+
+                    <?= $block->getItemHtml($item); ?>
+
+                    <?php foreach ($item->getItemVariations() as $itemVariations): ?>
+                        <?php $item->setIsVisible(false); ?>
+                        <?= $block->getItemHtml($itemVariations); ?>
+                    <?php endforeach; ?>
+                </li>
+            <?php endforeach ?>
+        </ul>
+
+        <div class="kit-footer p-4 border-t border-gray-200 flex items-center"
+             data-element="footer"
+             x-show="!showCartContent<?= /* @noEscape */ $kitSuffix ?>">
+            <div class="kit-footer-price ml-auto mr-8 flex flex-wrap items-center">
+                <div class="kit-footer-price-item _oldPrice price mr-4 line-through text-gray-500 font-normal text-xl"
+                     data-element="full-price"
+                     x-html="fullPrice<?= /* @noEscape */ $kitSuffix ?>">
+                </div>
+                <div class="kit-footer-price-item price text-2xl"
+                     data-element="price"
+                     x-html="price<?= /* @noEscape */ $kitSuffix ?>">
+                </div>
+            </div>
+
+            <button type="submit"
+                    title="<?= $escaper->escapeHtml(__('Add to Cart')) ?>"
+                    class="action primary btn btn-primary"
+                    :class="{ 'opacity-50 cursor-not-allowed pointer-events-none': disableCartButton<?= /* @noEscape */ $kitSuffix ?> }"
+                    data-element="cartButton"
+                    @click="addToCart">
+                <span><?= $escaper->escapeHtml(__('Add to Cart')) ?></span>
+            </button>
+        </div>
+
+        <div class="kit-footer kit-footer-cart p-4 border-t border-gray-200 items-center"
+             x-show="showCartContent<?= /* @noEscape */ $kitSuffix ?>">
+
+            <div data-element="cartContent" id="cartContent<?= /* @noEscape */ $kitSuffix ?>"></div>
+
+            <div class="kit-footer-cart-footer pt-4 border-t border-gray-200 flex justify-end">
+                <button type="button"
+                        title="<?= $escaper->escapeHtml(__('Cancel')) ?>"
+                        class="action primary btn btn-primary"
+                        :class="{ 'opacity-50 cursor-not-allowed pointer-events-none': disableCartButton<?= /* @noEscape */ $kitSuffix ?> }"
+                        data-element="cancelButton"
+                        @click="returnToSelect">
+                    <span><?= $escaper->escapeHtml(__('Cancel')) ?></span>
+                </button>
+                <button type="submit"
+                        title="<?= $escaper->escapeHtml(__('Add to Cart')) ?>"
+                        class="action primary btn btn-primary ml-4"
+                        data-element="cartButton"
+                        @click="addToCart">
+                    <span><?= $escaper->escapeHtml(__('Add to Cart')) ?></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function initKitWidget<?= /* @noEscape */ $kitSuffix ?>(el) {
+        return {
+            el,
+
+            hasMainProduct: false,
+            mainProductId: '',
+            showCartContent<?= /* @noEscape */ $kitSuffix ?>: false,
+            disableCartButton<?= /* @noEscape */ $kitSuffix ?>: false,
+            price<?= /* @noEscape */ $kitSuffix ?>: '',
+            discountPrice<?= /* @noEscape */ $kitSuffix ?>: '',
+            fullPrice<?= /* @noEscape */ $kitSuffix ?>: '',
+            firstItemId: <?= /* @noEscape */ $firstItemId ?>,
+            lastItemId: <?= /* @noEscape */ $lastItemId ?>,
+
+            itemDiscountSelector: '[data-element=kit-item-discount]',
+            itemNewPriceSelector: '[data-element=kit-item-newPrice]',
+            productBlockSelector: '[data-element=product-block]',
+
+            options: {
+                kit_id:          '<?= /* @noEscape */ $config[$key][$componentName]['kit_id'] ?? '' ?>',
+                title:           '<?= /* @noEscape */ $config[$key][$componentName]['title'] ?? '' ?>',
+                label:           '<?= /* @noEscape */ $config[$key][$componentName]['label'] ?? '' ?>',
+                combinations:    <?= /* @noEscape */ SerializeService::encode($config[$key][$componentName]['combinations'] ?? []) ?>,
+                add_url:         '<?= /* @noEscape */ $config[$key][$componentName]['add_url'] ?? '' ?>',
+                action_name:     '<?= /* @noEscape */ $config[$key][$componentName]['action_name'] ?? '' ?>',
+                should_redirect: <?= (int)($config[$key][$componentName]['should_redirect'] ?? 0) ?>,
+                price_format:    <?= /* @noEscape */ SerializeService::encode($config[$key][$componentName]['price_format'] ?? []) ?>
+            },
+
+            init: function () {
+                let mainForm = document.querySelector('#product_addtocart_form');
+
+                if (mainForm !== null) {
+                    this.hasMainProduct = true;
+                    this.mainProductId = mainForm.querySelector(`[name="product"]`).value;
+                }
+
+                this.refresh();
+            },
+
+            refresh: function (timeout = 0) {
+                setTimeout(() => {
+                    this.reCalculate();
+
+                    this.itemsCount = this.getAllItemIds().length;
+
+                    this.getAllItemIds().forEach(id => {
+                        const item = this.getItem(id);
+
+                        if (this.isItemSelected(id)) {
+                            item.classList.remove('opacity-30');
+                        } else {
+                            item.classList.add('opacity-30');
+                        }
+                    });
+                }, timeout);
+            },
+
+            getCurrentCombination: function () {
+                const priceIndex = this.getSelectedCombinationHash();
+
+                if (this.options.combinations[priceIndex] === undefined) {
+                    this.disableCartButton<?= /* @noEscape */ $kitSuffix ?> = true;
+
+                    return false;
+                }
+
+                this.disableCartButton<?= /* @noEscape */ $kitSuffix ?> = false;
+
+                return this.options.combinations[priceIndex];
+            },
+
+            reCalculate: function () {
+                this.reset();
+
+                let combination = this.getCurrentCombination();
+
+                if (!combination) {
+                    combination = [];
+                    combination['discounted_price'] = 0;
+                    combination['full_price'] = 0;
+                }
+
+                const finalPrice = combination.discounted_price;
+                const fullPrice = combination.full_price;
+                const discountPrice = fullPrice - finalPrice;
+
+                if (finalPrice !== fullPrice) {
+                    this.fullPrice<?= /* @noEscape */ $kitSuffix ?> = hyva.formatPrice(fullPrice, false);
+                }
+                this.price<?= /* @noEscape */ $kitSuffix ?> = hyva.formatPrice(finalPrice, false);
+                this.discountPrice<?= /* @noEscape */ $kitSuffix ?> = hyva.formatPrice(discountPrice, false);
+
+                for (let item in combination.items) {
+                    const productId = combination.items[item].product_id;
+
+                    this.el
+                        .querySelectorAll('.kit-item-oldPrice .price-wrapper .price')
+                        .forEach(elem =>
+                            elem.classList.add('price', 'line-through', 'text-gray-500', 'font-bold', 'text-xl')
+                        );
+
+                    let finalPriceNumeric = this.el.querySelector('.final-price-numeric-kit-' + productId);
+                    finalPriceNumeric = (finalPriceNumeric !== null) ? finalPriceNumeric.textContent : null;
+
+                    let newPriceHtml = (
+                        (finalPriceNumeric !== null)
+                        && !isNaN(finalPriceNumeric)
+                        && !isNaN(parseFloat(finalPriceNumeric))
+                    )
+                        ? '<span class="price">'
+                        + hyva.formatPrice(this.getKitPrice(combination.items[item], finalPriceNumeric))
+                        + '</span>'
+                        : combination.items[item].discounted_price_html;
+
+                    this.el.querySelectorAll('.kit-item-newPrice-' + productId)
+                        .forEach(elem => elem.innerHTML = newPriceHtml);
+
+                    // Restore grouped product kit price
+                    if (this.showCartContent<?= /* @noEscape */ $kitSuffix ?> && combination.items[item].grouped_prod_discount_htmls) {
+                        Object.entries(combination.items[item].grouped_prod_discount_htmls)
+                            .forEach(([childId, discountHtml]) => {
+                                this.el.querySelectorAll(`label[for="super_group[${childId}]"] .kit-item-newPrice-${productId}`)
+                                    .forEach(elem => elem.innerHTML = discountHtml);
+                            });
+                    }
+
+                    this.el.querySelectorAll('.kit-item-discount-' + productId)
+                        .forEach(elem => elem.innerHTML = combination.items[item].discount_html);
+                }
+            },
+
+            getKitPrice: function (combinationItem, finalPrice) {
+                let kitPrice;
+
+                if (combinationItem.discount_type === 'fixed') {
+                    kitPrice = finalPrice - combinationItem.discount_amount;
+                } else if (combinationItem.discount_type === 'final_price') {
+                    let itemPrice = combinationItem.discount_amount * this.getQty();
+
+                    kitPrice = finalPrice > itemPrice ? itemPrice : finalPrice;
+                } else {
+                    kitPrice = finalPrice - (finalPrice * combinationItem.discount_amount / 100);
+                }
+
+                return kitPrice > 0 ? kitPrice : 0;
+            },
+
+            reset: function () {
+                this.price<?= /* @noEscape */ $kitSuffix ?> = '';
+                this.fullPrice<?= /* @noEscape */ $kitSuffix ?> = '';
+                this.discountPrice<?= /* @noEscape */ $kitSuffix ?> = '';
+
+                this.el.querySelectorAll(this.itemDiscountSelector).forEach(elem => elem.innerHTML = '');
+                this.el.querySelectorAll(this.itemNewPriceSelector).forEach(elem => elem.innerHTML = '');
+            },
+
+            kitAddToCart: function () {
+                this.setInnerHtml(this.el.querySelector('.content-<?= /* @noEscape */ $baseId ?>'), '');
+
+                this.addToCart();
+            },
+
+            returnToSelect: function () {
+                this.showCartContent<?= /* @noEscape */ $kitSuffix ?> = false;
+            },
+
+            addToCart: function () {
+                const combination = this.getCurrentCombination();
+                if (!combination) {
+                    return false;
+                }
+
+                const requestData = new URLSearchParams();
+                requestData.append('selectedCombination', this.getSelectedCombinationHash());
+                requestData.append('selectedQuoteCombination', this.getSelectedCombinationQuoteHash());
+
+                const kitId = this.options.kit_id;
+                let kitData = {};
+
+                for (let item in combination.items) {
+                    const kitItem = combination.items[item];
+                    const productId = kitItem['product_id'];
+
+                    kitData[productId] = {
+                        'kit_id':     kitId,
+                        'product_id': productId,
+                        'item_id':    item,
+                        'position':   kitItem['position']
+                    }
+                }
+
+                const productForms = this.el.querySelectorAll('[data-element=cartContent] form');
+
+                if (!productForms.length) {
+                    let productsData = {};
+                    productsData[kitId] = kitData;
+                    requestData.append('products', JSON.stringify(productsData));
+
+                    this.options.hash = btoa(this.options.kit_id + Date.now());
+                } else {
+                    for (let index = 0; index < productForms.length; index++) {
+                        if (productForms[index] !== undefined) {
+                            let key = 'forms[' + this.options.kit_id + '][' + index + ']';
+
+                            requestData.set(key + '[kit_id]', this.options.kit_id);
+
+                            let productElement = productForms[index].querySelector('[name="product"]');
+                            if (productElement) {
+                                let productId = productElement.value;
+
+                                requestData.set(key + '[item_id]', kitData[productId]['item_id']);
+                                requestData.set(key + '[position]', kitData[productId]['position']);
+                            }
+
+                            let fields = new FormData(productForms[index]);
+                            fields.forEach((value, name) => {
+                                requestData.set(key + '[' + escape(name) + ']', value);
+                            });
+
+                            let fileFields = productForms[index].querySelectorAll('input[type="file"]');
+                            fileFields.forEach((field) => {
+                                requestData.set(field.name, field.files[0]);
+                            });
+                        }
+                    }
+                }
+
+                requestData.set('hash', this.options.hash);
+                requestData.set('form_key', hyva.getFormKey());
+
+                fetch(this.options.add_url, {
+                    method:      'POST',
+                    headers:     {contentType: 'application/x-www-form-urlencoded; charset=UTF-8'},
+                    body:        requestData,
+                    mode:        'cors',
+                    credentials: 'include'
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        const dispatchClickOnKitElement
+                                  = `$dispatch('product-addtocart-form-click', {source: $el, isKitForm: true});`;
+                        const dispatchClickOnMainElement
+                                  = `$dispatch('product-addtocart-form-click', {source: $el, isKitForm: false});`;
+                        const dispatchKitActivation
+                                  = `$dispatch('first-kit-activation', {source: $el});`;
+
+                        if (data.success) {
+                            window.location = this.options.should_redirect
+                                ? '<?= $escaper->escapeUrl($block->getUrl('checkout/cart')) ?>'
+                                : window.location;
+                        }
+
+                        let htmlContent = data.html
+                            .replace(/initConfigurableSwatchOptions/g, 'initConfigurableSwatchOptions_<?= /* @noEscape */ $kitSuffix ?>');
+
+                        // remove kit product custom options from final price calculations
+                        htmlContent = htmlContent.replace(/x-on:change="updateCustomOptionValue[^"]*"/g, '');
+
+                        if (this.hasMainProduct) {
+                            let productPrice = [];
+
+                            const optionedSimple
+                                      = /data-product-id="(\d*)"[\s\S]*?options-list[^<]*<\w*/g.exec(htmlContent);
+                            if (optionedSimple && optionedSimple[1]) {
+                                htmlContent = htmlContent
+                                    // Prepare product kit simple options
+                                    .replace(
+                                        /(options-list[^<]*<\w*)/g,
+                                        function (match) {
+                                            return match
+                                                + ` x-on:mousedown="$dispatch('product-addtocart-form-click', {source: $el, isKitForm: true, productId: ${optionedSimple[1]}});"`
+                                        });
+                            }
+
+                            htmlContent = htmlContent
+                                // Prepare product kit swatches
+                                .replace(
+                                    /(label[^>]*attribute-option-(\d*)-[^>]*)(class="[^"]*swatch-option[\s|"]+)/g,
+                                    function (match, prefix, productId, suffix) {
+                                        return prefix
+                                            + `x-on:mousedown="$dispatch('product-addtocart-form-click', {source: $el, isKitForm: true, productId: ${productId}});" `
+                                            + `x-on:mouseup="${dispatchKitActivation}" `
+                                            + suffix;
+                                    })
+                                // Prepare configurable dropdowns
+                                .replace(
+                                    /("initConfigurableDropdownOptions_(\d*)[\s\S]*?)(class="[^"]*super-attribute-select[\s|"]+)/g,
+                                    function (match, prefix, productId, suffix) {
+                                        return prefix
+                                            + `x-on:mousedown="$dispatch('product-addtocart-form-click', {source: $el, isKitForm: true, productId: ${productId}});" `
+                                            + `x-on:mouseup="${dispatchKitActivation}" `
+                                            + suffix;
+                                    })
+                                // Prepare product kit price block
+                                .replace(
+                                    /(id="product-price-)(\d*)("[^<]*<span[^>]*class="[^"]*price[^>]*)(x-html="getFormattedFinalPrice\(\)")\s*([^>]*>)[\s*<span class="price">\s*]+([^<]*)\s*/g,
+                                    function (match, group1, productId, group3, xHtml, group5, currentPrice) {
+                                        productPrice[productId] = productPrice[productId]
+                                            ? productPrice[productId]
+                                            : currentPrice.replace(/\s/g, '');
+
+                                        return 'id="product-price-<?= /* @noEscape */ $kitSuffix ?>'
+                                            + productId
+                                            + group3
+                                            + group5
+                                            + productPrice[productId];
+                                    });
+                        }
+
+                        this.setInnerHtml(
+                            this.el.querySelector('#cartContent<?= /* @noEscape */ $kitSuffix ?>'),
+                            this.renderJSFromContent(htmlContent)
+                        );
+
+                        if (this.hasMainProduct) {
+                            let mainForm = document.querySelector('#product_addtocart_form');
+                            if (mainForm !== null) {
+                                // Prepare main product simple options
+                                mainForm.querySelectorAll('div.options-list').forEach(elem => {
+                                    let optionListChildren = [].slice.call(elem.children);
+                                    optionListChildren.forEach(childElem =>
+                                        childElem.setAttribute('x-on:mousedown', dispatchClickOnMainElement)
+                                    );
+                                });
+
+                                // Prepare main product swatches
+                                mainForm.querySelectorAll('label.swatch-option').forEach(elem =>
+                                    elem.setAttribute('x-on:mousedown', dispatchClickOnMainElement)
+                                );
+
+                                // Prepare main product configurable dropdowns
+                                mainForm.querySelectorAll('select.super-attribute-select').forEach(elem =>
+                                    elem.setAttribute('x-on:mousedown', dispatchClickOnMainElement)
+                                );
+                            }
+                        }
+
+                        this.getItems().forEach(dataItem => {
+                            const itemId = dataItem.getAttribute('data-item');
+                            const mainBlock = dataItem.querySelector('.active' + this.productBlockSelector);
+                            const productId = mainBlock.getAttribute('data-product-id');
+
+                            let elBlock = document.querySelector(
+                                `#cartContent<?= /* @noEscape */ $kitSuffix ?> #cart_item_${productId}.mst-product_kit__cart-item`
+                            );
+
+                            let firstsPriceBox = elBlock.querySelector('.price-box[data-product-id]');
+                            if (firstsPriceBox) {
+                                firstsPriceBox.remove();
+                            }
+
+                            elBlock.querySelectorAll('h2').forEach(elem => elem.remove());
+                            elBlock.querySelectorAll('.cart-item-image').forEach(elem => elem.classList.add('mb-4'));
+                            elBlock.querySelectorAll('.cart-item-name')
+                                .forEach(elem => elem.classList.add('font-semibold', 'text-gray-700', 'text-lg'));
+
+                            if (mainBlock.querySelectorAll('.kit-item-oldPrice').length > 0) {
+                                let discountPriceHtml = mainBlock.querySelector(this.itemNewPriceSelector).outerHTML;
+
+                                elBlock.querySelectorAll('.price-box').forEach(priceBox => {
+                                    priceBox.classList.add('kit-item-oldPrice');
+                                    priceBox.querySelectorAll('span .price')
+                                        .forEach(elem => elem.classList.add('line-through', 'text-gray-500'));
+
+                                    priceBox.insertAdjacentHTML(
+                                        'beforeend',
+                                        `<span class="price final-price-numeric-kit-${productId} hidden"`
+                                        +'x-html="calculatedFinalPrice || initialFinalPrice"'
+                                        +'></span>'
+                                    );
+
+                                    priceBox.insertAdjacentHTML('beforeend', discountPriceHtml);
+                                });
+
+                                // Handle grouped product
+                                for (let item in combination.items) {
+                                    if (
+                                        typeof combination.items[item].grouped_prod_discount_htmls !== 'undefined'
+                                        && combination.items[item].grouped_prod_discount_htmls
+                                    ) {
+                                        Object.entries(combination.items[item].grouped_prod_discount_htmls)
+                                            .forEach(([childId, discountHtml]) => {
+                                                let newEl = mainBlock.querySelector(this.itemNewPriceSelector)
+                                                    .cloneNode(true);
+                                                newEl.querySelector('.price').innerHTML = discountHtml;
+
+                                                let priceBoxChild
+                                                        = elBlock.querySelector(`.price-box[data-product-id="${childId}"]`);
+                                                if (priceBoxChild) {
+                                                    priceBoxChild.querySelectorAll(this.itemNewPriceSelector)
+                                                        .forEach(elem => elem.remove());
+                                                    priceBoxChild.insertAdjacentElement('afterend', newEl);
+                                                }
+                                            });
+                                    }
+                                }
+                            }
+                        });
+
+                        this.showCartContent<?= /* @noEscape */ $kitSuffix ?> = true;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            },
+
+            isItemSelected: function (itemId) {
+                const checkbox = this.getItem(itemId).querySelector('[data-element=checkbox]');
+
+                return !checkbox || checkbox.checked;
+            },
+
+            getAllItemIds: function () {
+                return Array.from(this.getItems()).map(elem => elem.getAttribute('data-item'));
+            },
+
+            getSelectedCombinationHash: function () {
+                const selector = '.active' + this.productBlockSelector;
+
+                return this.getAllItemIds()
+                    .filter(id => this.isItemSelected(id))
+                    .map(id => `${id}-${this.getItem(id).querySelector(selector).getAttribute('data-product-id')}`)
+                    .join('/');
+            },
+
+            getSelectedCombinationQuoteHash: function () {
+                return this.getAllItemIds()
+                    .filter(id => this.isItemSelected(id))
+                    .join('/');
+            },
+
+            getItems: function (itemId) {
+                return this.el.querySelectorAll('[data-item]');
+            },
+
+            getItem: function (itemId) {
+                return this.el.querySelector(`[data-item="${itemId}"]`);
+            },
+
+            changeProduct: function (elem) {
+                const productBlock = elem.closest(this.productBlockSelector);
+                const itemBlock = productBlock.closest('[data-item]');
+
+                productBlock.classList.remove('active');
+                productBlock.classList.add('hidden');
+
+                if (elem.classList.contains('up')) {
+                    const nextBlock = productBlock.nextElementSibling
+                        || itemBlock.querySelector(this.productBlockSelector);
+                    nextBlock.classList.add('active');
+                    nextBlock.classList.remove('hidden');
+                    nextBlock.querySelectorAll('.arrow').forEach(elem => elem.classList.remove('hidden'));
+                } else {
+                    const prevBlock = productBlock.previousElementSibling
+                        || itemBlock.querySelector(`${this.productBlockSelector}:last-child`);
+                    prevBlock.classList.add('active');
+                    prevBlock.classList.remove('hidden');
+                    prevBlock.querySelectorAll('.arrow').forEach(elem => elem.classList.remove('hidden'));
+                }
+
+                this.refresh();
+            },
+
+            // activates price changes for the main product or for the product in the by together kit
+            setActiveData: function (event) {
+                const isKitFormClick = event.detail.isKitForm;
+
+                if (isKitFormClick) {
+                     if (!event.detail.productId) {
+                        return;
+                    }
+                    this.activateKitProduct(event.detail.productId);
+                } else {
+                    this.activateMainProduct();
+                }
+            },
+
+            // for price block activation for configurable products
+            firstKitActivation: function (elem) {
+                setTimeout(() => {
+                    let mainPrices = document.querySelectorAll(`.final-price #product-price-${this.mainProductId} .price`);
+
+                    if (mainPrices.length > 1) {
+                        mainPrices[1].innerHTML = mainPrices[0].innerHTML;
+
+                        const lastLabel = mainPrices[0].parentNode.parentNode.querySelector('.price-label');
+                        let updatedLabel = mainPrices[1].parentNode.parentNode.querySelector('.price-label');
+
+                        if (lastLabel && updatedLabel) {
+                            updatedLabel.outerHTML = lastLabel.outerHTML;
+                        }
+
+                        elem.detail.source.removeAttribute('x-on:mouseup');
+                        this.activateKitProduct();
+                    }
+                }, 300);
+            },
+
+            activateKitProduct: function (productId) {
+                if (this.hasMainProduct) {
+                    document.querySelectorAll(`#product-price-${productId} .price`)
+                        .forEach(elem => elem.removeAttribute('x-html'));
+                    document.querySelector('#product_addtocart_form').parentNode.querySelectorAll('.price-label')
+                        .forEach(elem => elem.removeAttribute(':class'));
+                }
+
+                document.querySelectorAll(`.final-price #product-price-<?= /* @noEscape */ $kitSuffix ?>${productId} .price`)
+                    .forEach(elem => elem.setAttribute('x-html', 'hyva.formatPrice(calculatedFinalPrice || initialFinalPrice)'));
+                document.querySelectorAll(`.final-price-numeric-kit-${productId}`)
+                    .forEach(elem => elem.setAttribute('x-html', 'calculatedFinalPrice || initialFinalPrice'));
+                document.querySelectorAll(`#cart_item_${productId} .price-label`)
+                    .forEach(elem => elem.setAttribute(':class', "{ 'invisible' : !showRegularPriceLabel }"));
+            },
+
+            activateMainProduct: function () {
+                document.querySelectorAll(`.final-price #product-price-<?= /* @noEscape */ $kitSuffix ?>${this.mainProductId} .price`)
+                    .forEach(elem => elem.removeAttribute('x-html'));
+                document.querySelectorAll(`.final-price-numeric-kit-${this.mainProductId}`)
+                    .forEach(elem => elem.removeAttribute('x-html'));
+                document.querySelectorAll(`#cart_item_${this.mainProductId} .price-label`)
+                    .forEach(elem => elem.removeAttribute(':class'));
+
+                document.querySelectorAll(`#product-price-${this.mainProductId} .price`)
+                    .forEach(elem => elem.setAttribute('x-html', 'getFormattedFinalPrice()'));
+                document.querySelector('#product_addtocart_form').parentNode.querySelectorAll('.price-label')
+                    .forEach(elem => elem.setAttribute(':class', "{ 'invisible' : !showRegularPriceLabel }"));
+            },
+
+            getInnerHtml: function (elem) {
+                if ((typeof elem !== 'undefined') && elem !== null) {
+                    return elem.innerHTML;
+                }
+
+                return '';
+            },
+
+            setInnerHtml: function (elem, html) {
+                if ((typeof elem !== 'undefined') && elem !== null) {
+                    elem.innerHTML = html;
+                }
+            },
+
+            renderJSFromContent: function (content) {
+                const scriptBeginTag = '<script';
+                const scriptEndTag = '</scr' + 'ipt>';
+
+                let startIndex = 0;
+                let scripts = [];
+
+                while (content.indexOf(scriptBeginTag, startIndex) >= 0) {
+                    const scriptStartPos = content.indexOf(scriptBeginTag, startIndex);
+                    const scriptEndPos = content.indexOf(scriptEndTag, startIndex) + 9;
+
+                    scripts.push(content.slice(scriptStartPos, scriptEndPos));
+
+                    startIndex = scriptEndPos;
+                }
+
+                if (!scripts.length) {
+                    return content;
+                }
+
+                scripts.forEach(function (script) {
+                    if (script.indexOf('initConfigurableOptions') >= 0) {
+                        // remove images from configurable products config to avoid main product image changes
+                        const match = script.match(/initConfigurableOptions\([^{]*({[^\)]*)\);/);
+
+                        if (match) {
+                            let origText = match[0];
+                            let jsonConfig = match[1].trim();
+
+                            let decoded = JSON.parse(jsonConfig);
+
+                            decoded.images = {};
+
+                            let replacement = origText.replace(jsonConfig, JSON.stringify(decoded));
+
+                            script = script.replace(origText, replacement);
+                        }
+                    }
+
+                    let scriptContent = '';
+
+                    if (script.indexOf('magento-init') < 0) {
+                        scriptContent = script.replace(/<script([^>]*)>/m, '').replace(scriptEndTag, '');
+                    }
+
+                    let scriptElement = document.createElement('script');
+                    scriptElement.innerHTML = scriptContent;
+
+                    document.body.append(scriptElement);
+                });
+
+                return content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+            }
+        }
+    }
+</script>
+

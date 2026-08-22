@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Meetanshi_OrderTracking::advance_tracking" title="Order Tracking" module="Meetanshi_OrderTracking" sortOrder="120" parent="Magento_Reports::report" resource="Meetanshi_OrderTracking::advance_tracking"/>
+        <add id="Meetanshi_OrderTracking::manage_advance_tracking" title="Manage Tracking Carriers" module="Meetanshi_OrderTracking" sortOrder="10" parent="Meetanshi_OrderTracking::advance_tracking" action="ordertracking/carrier/index" resource="Meetanshi_OrderTracking::manage_advance_tracking"/>
+		<add id="Meetanshi_OrderTracking::ordertracking_config" title="Configuration" module="Meetanshi_OrderTracking" sortOrder="15" parent="Meetanshi_OrderTracking::advance_tracking" action="adminhtml/system_config/edit/section/ordertracking" resource="Meetanshi_OrderTracking::ordertracking"/>
+    </menu>
+</config>

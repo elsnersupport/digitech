@@ -1,0 +1,275 @@
+//
+//  Amasty Messenger Widget Positions
+//  ___________________________________________
+
+//
+//  Variables
+//  -------------------------------------------
+
+@ammessenger-widget__offset: 25px;
+@ammessenger-widget__center__offset: @ammessenger-widget__size / 2;
+@ammessenger-scale-correction: (@ammessenger-messenger-icon__size * @ammessenger-messenger-icon__opened__scale - @ammessenger-messenger-icon__size) / 2;
+
+// 4+ messengers
+@ammessenger-position__4-5__opened__offset__level-1: -47px - @ammessenger-scale-correction;
+@ammessenger-position__4-5__opened__offset__level-2: -43px - @ammessenger-scale-correction;
+@ammessenger-position__4-5__opened__offset__level-3: -28px - @ammessenger-scale-correction;
+@ammessenger-position__4-5__opened__offset__level-4: 17px - @ammessenger-scale-correction;
+@ammessenger-position__4-5__opened__offset__level-5: 65px - @ammessenger-scale-correction;
+
+// 2-3 messengers
+@ammessenger-position__2-3__opened__offset__level-1: -31px - @ammessenger-scale-correction;
+@ammessenger-position__2-3__opened__offset__level-2: -15px - @ammessenger-scale-correction;
+@ammessenger-position__2-3__opened__offset__level-3: 45px - @ammessenger-scale-correction;
+
+@ammessenger-animation__drop-line__base-duration: .03s;
+@ammessenger-animation__drop-line__duration-step: .01s;
+@ammessenger-animation__drop-line__position-step: @ammessenger-messenger-icon__size * @ammessenger-messenger-icon__opened__scale + 10px;
+
+//
+//  Common
+//  -------------------------------------------
+
+& when (@media-common = true) {
+    .ammessenger-widget-container {
+        &.-top {
+            top: @ammessenger-widget__offset;
+        }
+
+        &.-center {
+            top: ~'calc(50% - @{ammessenger-widget__size} / 2)';
+        }
+
+        &.-bottom {
+            bottom: @ammessenger-widget__offset;
+        }
+
+        &.-left {
+            left: @ammessenger-widget__offset;
+        }
+
+        &.-right {
+            right: @ammessenger-widget__offset;
+        }
+    }
+
+    .ammessenger-widget-component:not(.-drop-line.-opened) .ammessenger-messengers-container {
+        .ammessenger-widget-container.-center.-left &,
+        .ammessenger-widget-container.-top.-left &,
+        .ammessenger-widget-container.-bottom.-left & {
+            &,
+            .ammessenger-item {
+                transform: scale(-1, 1);
+            }
+        }
+    }
+
+    .ammessenger-widget-component.-opened.-drop-circle .ammessenger-messengers-container {
+        .ammessenger-widget-container.-top.-left &,
+        .ammessenger-widget-container.-bottom.-left & {
+            .ammessenger-item {
+                transform: scale(@ammessenger-messenger-icon__opened__scale * -1, @ammessenger-messenger-icon__opened__scale);
+            }
+
+            .ammessenger-item:hover {
+                transform: scale(@ammessenger-messenger-icon__opened__scale * -1.25, @ammessenger-messenger-icon__opened__scale * 1.25);
+            }
+        }
+    }
+
+    // Messengers Count: 2-3
+    .ammessenger-widget-component.-items-2 .ammessenger-messengers-container,
+    .ammessenger-widget-component.-items-3 .ammessenger-messengers-container {
+        .ammessenger-widget-container & .ammessenger-item {
+            &:nth-child(1) {
+                &:extend(.-deg90);
+            }
+
+            &:nth-child(2) {
+                &:extend(.-deg45);
+            }
+
+            &:nth-child(3) {
+                &:extend(.-deg0);
+            }
+        }
+    }
+
+    .ammessenger-widget-component.-opened.-drop-circle.-items-2 .ammessenger-messengers-container,
+    .ammessenger-widget-component.-opened.-drop-circle.-items-3 .ammessenger-messengers-container {
+        .ammessenger-widget-container & .ammessenger-item {
+            &:nth-child(1) {
+                top: @ammessenger-position__2-3__opened__offset__level-1;
+                left: @ammessenger-position__2-3__opened__offset__level-3;
+            }
+
+            &:nth-child(2) {
+                top: @ammessenger-position__2-3__opened__offset__level-2;
+                left: @ammessenger-position__2-3__opened__offset__level-2;
+            }
+
+            &:nth-child(3) {
+                top: @ammessenger-position__2-3__opened__offset__level-3;
+                left: @ammessenger-position__2-3__opened__offset__level-1;
+            }
+        }
+    }
+    // (END) Messengers Count: 2-3
+
+    // Messengers Count: 4+
+    .ammessenger-widget-component.-items-4 .ammessenger-messengers-container,
+    .ammessenger-widget-component.-items-5 .ammessenger-messengers-container {
+        .ammessenger-item {
+            &:nth-child(1) {
+                &:extend(.-deg135);
+            }
+
+            &:nth-child(2) {
+                &:extend(.-deg90);
+            }
+
+            &:nth-child(3) {
+                &:extend(.-deg45);
+            }
+
+            &:nth-child(4) {
+                &:extend(.-deg0);
+            }
+
+            &:nth-child(5) {
+                &:extend(.-deg315);
+            }
+        }
+    }
+
+    .ammessenger-widget-component.-opened.-drop-circle.-items-4 .ammessenger-messengers-container,
+    .ammessenger-widget-component.-opened.-drop-circle.-items-5 .ammessenger-messengers-container {
+        .ammessenger-item {
+            &:nth-child(1) {
+                top: @ammessenger-position__4-5__opened__offset__level-2;
+                left: @ammessenger-position__4-5__opened__offset__level-5;
+            }
+
+            &:nth-child(2) {
+                top: @ammessenger-position__4-5__opened__offset__level-1;
+                left: @ammessenger-position__4-5__opened__offset__level-4;
+            }
+
+            &:nth-child(3) {
+                top: @ammessenger-position__4-5__opened__offset__level-3;
+                left: @ammessenger-position__4-5__opened__offset__level-3;
+            }
+
+            &:nth-child(4) {
+                top: @ammessenger-position__4-5__opened__offset__level-4;
+                left: @ammessenger-position__4-5__opened__offset__level-1;
+            }
+
+            &:nth-child(5) {
+                top: @ammessenger-position__4-5__opened__offset__level-5;
+                left: @ammessenger-position__4-5__opened__offset__level-2;
+            }
+        }
+    }
+    // (END) Messengers Count: 4+
+
+    // Drop Line Opened
+    .ammessenger-widget-component.-opened.-drop-line .ammessenger-messengers-container {
+        .ammessenger-item {
+            left: 50% !important;
+            transform: translateX(-50%) scale(@ammessenger-messenger-icon__opened__scale);
+        }
+
+        .ammessenger-item:hover {
+            transform: translateX(-50%) scale(@ammessenger-messenger-icon__opened__scale * 1.25);
+        }
+
+        .ammessenger-widget-container & .ammessenger-item {
+            &:nth-child(1) {
+                top: -30px;
+            }
+
+            .generate-icons-positions(19);
+        }
+    }
+    // (END) Drop Line Opened
+}
+
+//
+// Mobile
+//  -------------------------------------------
+
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
+    .ammessenger-widget-container {
+        &.-top,
+        &.-center {
+            top: unset;
+            bottom: @ammessenger-widget__offset;
+            transform: none;
+        }
+    }
+}
+
+//
+// Tablet +
+//  -------------------------------------------
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+    .ammessenger-widget-component:not(.-drop-line.-opened) .ammessenger-messengers-container {
+        .ammessenger-widget-container.-center.-right &,
+        .ammessenger-widget-container.-top.-right & {
+            &,
+            .ammessenger-item {
+                transform: scale(1, -1);
+            }
+        }
+
+        .ammessenger-widget-container.-center.-left &,
+        .ammessenger-widget-container.-top.-left & {
+            &,
+            .ammessenger-item {
+                transform: scale(-1);
+            }
+        }
+    }
+
+    .ammessenger-widget-component.-opened.-drop-circle .ammessenger-messengers-container {
+        .ammessenger-widget-container.-top.-right & {
+            .ammessenger-item {
+                transform: scale(@ammessenger-messenger-icon__opened__scale, @ammessenger-messenger-icon__opened__scale * -1);
+            }
+
+            .ammessenger-item:hover {
+                transform: scale(@ammessenger-messenger-icon__opened__scale * 1.25, @ammessenger-messenger-icon__opened__scale * -1.25);
+            }
+        }
+
+        .ammessenger-widget-container.-top.-left & {
+            .ammessenger-item {
+                transform: scale(@ammessenger-messenger-icon__opened__scale * -1);
+            }
+
+            .ammessenger-item:hover {
+                transform: scale(@ammessenger-messenger-icon__opened__scale * -1.25);
+            }
+        }
+    }
+
+    .ammessenger-widget-component.-opened.-drop-line .ammessenger-messengers-container {
+        .ammessenger-widget-container.-top &,
+        .ammessenger-widget-container.-center & {
+            transform: scale(1, -1);
+        }
+
+        .ammessenger-widget-container.-top & .ammessenger-item,
+        .ammessenger-widget-container.-center & .ammessenger-item {
+            & {
+                transform: translateX(-50%) scale(@ammessenger-messenger-icon__opened__scale, @ammessenger-messenger-icon__opened__scale * -1);
+            }
+
+            &:hover {
+                transform: translateX(-50%) scale(@ammessenger-messenger-icon__opened__scale * 1.25, @ammessenger-messenger-icon__opened__scale * 1.25 * -1);
+            }
+        }
+    }
+}

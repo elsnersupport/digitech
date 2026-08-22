@@ -1,0 +1,21 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Magento\Theme\Block\Html\Footer;
+use Magento\Framework\Escaper;
+
+/** @var Footer $block */
+/** @var Escaper $escaper */
+?>
+<div class="footer-copyright">
+<small class="text-gray-500 text-xs sm:text-sm">
+    <span><?= $escaper->escapeHtml($block->getCopyright()) ?></span>
+</small>
+</div>

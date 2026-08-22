@@ -1,0 +1,168 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<div class="step-item">
+    <div class="step-item-label">
+        <div class="step-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20" width="2rem" height="2rem"
+                class="Step_StepTitleIcon__cr4hM SvgIcon_SvgIcon__XZVZw">
+                <path fill="currentColor" fill-rule="evenodd"
+                    d="M8.459 9.763h-.001c-.416.453-1.03.66-1.803.66h-.247c-.773 0-1.387-.207-1.803-.66C4.19 9.314 4 8.654 4 7.827V6.58c0-.828.19-1.485.606-1.931.416-.446 1.03-.65 1.802-.65h.247c.773 0 1.386.207 1.802.659.416.445.606 1.1.606 1.922v1.228c0 .833-.19 1.497-.604 1.954Zm6.936 5.254-.001.001c-.416.446-1.03.65-1.802.65h-.248c-.772 0-1.385-.204-1.8-.65-.417-.446-.607-1.103-.607-1.93v-1.246c0-.837.19-1.499.607-1.94.416-.44 1.029-.64 1.8-.64h.248c.772 0 1.386.203 1.802.65.416.445.606 1.103.606 1.93v1.228c0 .833-.19 1.496-.605 1.947Zm-9.789-.224c.03-.091.069-.175.117-.248l.004-.006 7.14-10.129c.174-.234.404-.36.679-.36.231 0 .433.09.594.268a.89.89 0 0 1 .25.636c0 .094-.014.188-.039.281a.893.893 0 0 1-.122.273l-.002.003-7.141 10.128c-.174.235-.404.361-.678.361a.792.792 0 0 1-.594-.268.909.909 0 0 1-.25-.637c0-.097.013-.194.038-.289l.004-.013Zm1.855-6.096c-.135.138-.403.208-.806.208h-.247c-.403 0-.671-.07-.805-.208-.135-.144-.202-.434-.202-.871V6.58c0-.432.067-.717.202-.855.134-.138.402-.207.805-.207h.247c.403 0 .671.069.806.207.134.138.2.423.2.855v1.228c0 .448-.066.744-.2.888Zm6.936 5.253c-.134.144-.402.216-.805.216h-.248c-.402 0-.67-.072-.805-.216-.134-.144-.2-.431-.2-.863v-1.245c0-.442.066-.733.2-.871.135-.138.403-.207.806-.207h.247c.403 0 .671.071.805.215.135.144.202.432.202.863v1.228c0 .438-.067.73-.202.88Z"
+                    clip-rule="evenodd"></path>
+            </svg>
+        </div>
+        <div class="step-label">
+            <span data-bind="i18n: 'Discount'" class="output-content"></span>
+        </div>
+    </div>
+    <div class="step-item-content">
+        <div class="step-item-action-label" data-trigger="trigger-discount" class="action">
+            <div id="couponCodeStepLabel" class="output-content">
+                <div data-bind="i18n: 'Coupon Code'"></div>
+                <div class="current-coupon-code-container">
+                    <div class="current-coupon-code" data-bind="i18n: 'User coupon code'"></div>
+                </div>
+            </div>
+            <div class="step-item-action-icon" style="display: none;">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20" width="2rem" height="2rem"
+                    class="SvgIcon_SvgIcon__XZVZw initial-icon">
+                    <path fill="currentColor" fill-rule="evenodd"
+                        d="M6.793 3.043a1 1 0 0 1 1.414 0l6.25 6.25a1 1 0 0 1 0 1.414l-6.25 6.25a1 1 0 0 1-1.414-1.414L12.336 10 6.793 4.457a1 1 0 0 1 0-1.414Z"
+                        clip-rule="evenodd"></path>
+                </svg>
+                <div class="change-data" style="display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="2.4rem"
+                        height="2.4rem" class="SvgIcon_SvgIcon__XZVZw">
+                        <path fill="currentColor" fill-rule="evenodd"
+                            d="M14.376 4.211a1.404 1.404 0 0 1 1.985 0L19.79 7.64m0 0a1.404 1.404 0 0 1 0 1.985l-9.426 9.426a1 1 0 0 1-.534.278l-4.855.857a1 1 0 0 1-1.159-1.159l.857-4.855a1 1 0 0 1 .278-.534l9.426-9.426m.992 1.836-8.781 8.782-.554 3.138 3.138-.554 8.782-8.781-2.585-2.585Z"
+                            clip-rule="evenodd"></path>
+                        <path fill="currentColor" fill-rule="evenodd"
+                            d="M11.665 6.92a1 1 0 0 1 1.414 0l3.999 3.999a1 1 0 0 1-1.414 1.414l-3.999-3.999a1 1 0 0 1 0-1.414Z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div data-bind="mageInit: {
+                'Magento_Ui/js/modal/modal':{
+                    'type': 'popup',
+                    'title': jQuery.mage.__('Coupon Code'),
+                    'trigger': '[data-trigger=trigger-discount]',
+                    'responsive': true,
+                    'buttons':[],
+                    'modalClass':'checkout-modal'
+                }}" style="display: none;" id="coupon-code-popup">
+            <div class="content">
+                <!-- ko foreach: getRegion('afterMethods') -->
+                <!-- ko template: getTemplate() --><!-- /ko -->
+                <!-- /ko -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="step-item">
+    <div class="step-item-label">
+        <div class="step-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20" width="2rem" height="2rem"
+                class="Step_StepTitleIcon__cr4hM SvgIcon_SvgIcon__XZVZw">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"
+                    d="M16.546 4H3.455C2.65 4 2 4.651 2 5.455v8.727c0 .803.651 1.454 1.455 1.454h13.09c.804 0 1.455-.65 1.455-1.454V5.455C18 4.65 17.349 4 16.546 4ZM2 8.363h16M13.217 13.034h2.756">
+                </path>
+            </svg>
+        </div>
+        <div class="step-label">
+            <span data-bind="i18n: 'Payment Method'" class="output-content"></span>
+        </div>
+    </div>
+    <div class="step-item-content">
+
+        <div class="step-item-action-label" data-trigger="trigger-payment-method" class="action">
+            <div class="mobile-label-after-change" style="display: none;">
+                Payment Method
+            </div>
+            <div data-bind="i18n: 'Select Payment Method'" id="billingMethodSelectStepLabel" class="output-content">
+            </div>
+            <div class="step-item-action-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20" width="2rem" height="2rem"
+                    class="SvgIcon_SvgIcon__XZVZw initial-icon">
+                    <path fill="currentColor" fill-rule="evenodd"
+                        d="M6.793 3.043a1 1 0 0 1 1.414 0l6.25 6.25a1 1 0 0 1 0 1.414l-6.25 6.25a1 1 0 0 1-1.414-1.414L12.336 10 6.793 4.457a1 1 0 0 1 0-1.414Z"
+                        clip-rule="evenodd"></path>
+                </svg>
+                <div class="change-data" style="display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="2.4rem"
+                        height="2.4rem" class="SvgIcon_SvgIcon__XZVZw">
+                        <path fill="currentColor" fill-rule="evenodd"
+                            d="M14.376 4.211a1.404 1.404 0 0 1 1.985 0L19.79 7.64m0 0a1.404 1.404 0 0 1 0 1.985l-9.426 9.426a1 1 0 0 1-.534.278l-4.855.857a1 1 0 0 1-1.159-1.159l.857-4.855a1 1 0 0 1 .278-.534l9.426-9.426m.992 1.836-8.781 8.782-.554 3.138 3.138-.554 8.782-8.781-2.585-2.585Z"
+                            clip-rule="evenodd"></path>
+                        <path fill="currentColor" fill-rule="evenodd"
+                            d="M11.665 6.92a1 1 0 0 1 1.414 0l3.999 3.999a1 1 0 0 1-1.414 1.414l-3.999-3.999a1 1 0 0 1 0-1.414Z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div data-bind="mageInit: {
+                'Magento_Ui/js/modal/modal':{
+                    'type': 'popup',
+                    'title': jQuery.mage.__('Select Payment Method'),
+                    'responsive': true,
+                    'buttons':[],
+                    'modalClass':'checkout-modal'
+                }}" style="display: none;" id="payment-method-popup">
+            <div class="content">
+                <div id="payment" role="presentation" class="checkout-payment-method" data-bind="fadeVisible: true">
+                    <div id="checkout-step-payment" class="step-content" data-role="content" role="tabpanel"
+                        aria-hidden="false">
+                        <!-- ko if: (quoteIsVirtual) -->
+                        <!-- ko foreach: getRegion('customer-email') -->
+                        <!-- ko template: getTemplate() --><!-- /ko -->
+                        <!--/ko-->
+                        <!--/ko-->
+                        <form id="co-payment-form" class="form payments" novalidate="novalidate">
+                            <input data-bind='attr: {value: getFormKey()}' type="hidden" name="form_key">
+                            <fieldset class="fieldset">
+                                <legend class="legend">
+                                    <span data-bind="i18n: 'Payment Information'"></span>
+                                </legend>
+                                <!-- ko foreach: getRegion('place-order-captcha') -->
+                                <!-- ko template: getTemplate() --><!-- /ko -->
+                                <!-- /ko -->
+                                <!-- ko foreach: getRegion('beforeMethods') -->
+                                <!-- ko template: getTemplate() --><!-- /ko -->
+                                <!-- /ko -->
+                                <div id="checkout-payment-method-load" class="opc-payment"
+                                    data-bind="visible: isPaymentMethodsAvailable">
+                                    <!-- ko foreach: getRegion('payment-methods-list') -->
+                                    <!-- ko template: getTemplate() --><!-- /ko -->
+                                    <!-- /ko -->
+                                </div>
+                                <div class="no-quotes-block" data-bind="visible: isPaymentMethodsAvailable() == false">
+                                    <!-- ko i18n: 'No Payment method available.'--><!-- /ko -->
+                                </div>
+                            </fieldset>
+                            <div class="actions-toolbar" id="payment-method-buttons-container"
+                                data-bind="visible: isPaymentMethodsAvailable() == true">
+                                <div class="primary">
+                                    <button type="button"
+                                        class="button action continue primary payment-method-selection-close"
+                                        data-bind="click:()=>{window.dispatchEvent(new CustomEvent('place-order'))}">
+                                        <span>Place Order</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="opc-summary-mobile">
+</div>

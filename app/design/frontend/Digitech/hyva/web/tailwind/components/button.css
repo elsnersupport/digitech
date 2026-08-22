@@ -1,0 +1,153 @@
+@layer components {
+    .btn {
+        @apply inline-flex bg-primary rounded-[5px] px-3 py-2 text-white text-base font-medium items-center justify-center uppercase transition-all;
+
+        svg {
+            @apply inline-flex;
+        }
+
+        span {
+            vertical-align: middle;
+        }
+
+        &:hover {
+            @apply bg-primary-darker;
+        }
+
+        &:focus {
+            @apply outline-none border-transparent ring-0;
+        }
+
+        &.btn-outline {
+            @apply bg-transparent border border-current;
+            &.white {
+                @apply text-white border-white;
+            }
+        }
+
+        &.icon-right {
+            &:after {
+                @apply content-[""] bg-arrow-up-right bg-no-repeat bg-center bg-contain w-6 h-6 ml-2;
+            }
+        }
+
+        &.btn-primary.icon-right,
+        &.btn-black.icon-right {
+            &:after {
+                @apply bg-arrow-up-right-white;
+            }
+        }
+
+        &.btn-icon {
+            @apply w-10 h-10 flex items-center justify-center rounded-[50%] border border-gray-light bg-transparent p-0 relative;
+            svg {
+                @apply w-6 h-6;
+            }
+        }
+        &.btn-link {
+            &:hover {
+                @apply bg-transparent;
+            }
+        }
+    }
+
+    .btn-link {
+        @apply bg-transparent p-0 text-primary font-medium;
+        &.black {
+            @apply text-black-brand underline;
+        }
+        &:hover {
+            @apply bg-transparent;
+        }
+    }
+
+    .btn-primary    {
+        @apply bg-primary text-white;
+        &.no-hover {
+            &:hover,
+            &:focus {
+                @apply bg-primary text-white;
+            }
+        }
+        &:hover {
+            @apply bg-black-brand text-white;
+        }
+        
+    }
+
+    .btn-secondary {
+        @apply bg-white border-2 border-primary-lighter text-black;
+
+        &:hover {
+            @apply bg-white border-primary-darker;
+        }
+
+        &:focus {
+            @apply border-2 border-transparent;
+        }
+
+        &.no-hover {
+            &:hover,
+            &:focus {
+                @apply bg-white border-primary-darker;
+            }
+        }
+    }
+
+    .btn {
+        &.btn-white {
+            @apply bg-white text-black-brand;
+            &:hover {
+                @apply bg-black-brand text-white;
+            }
+
+            &.no-hover {
+                &:hover,
+                &:focus {
+                    @apply bg-white text-black-brand;
+                }
+            }
+        }
+    
+        &.btn-black {
+            @apply bg-black-brand text-white;
+            &:hover {
+                @apply bg-primary text-white;
+            }
+        }
+
+        &.btn-size-lg {
+            @apply px-5 py-4 text-lg;
+        }
+
+        &.btn-size-sm {
+            @apply px-3 py-3 text-sm;
+        }
+
+        &.btn-size-md {
+            @apply px-4 py-3 text-sm;
+        }
+
+        &.btn-size-xs {
+            @apply px-3 py-1.5 text-xs;
+        }
+    }
+}
+
+@screen max-xl {
+    .btn {
+        @apply text-sm;
+        &.btn-size-lg {
+            @apply text-base p-3;
+        }
+    }
+}
+
+@screen max-sm {
+    .btn {
+        @apply text-xs font-bold;
+        &.icon-right:after {
+            @apply w-4 h-4;
+        }
+    }
+}

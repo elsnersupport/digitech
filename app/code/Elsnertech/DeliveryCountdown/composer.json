@@ -1,0 +1,40 @@
+{
+    "name": "elsnertech/delivery-countdown",
+    "description": "Magento 2 Hyva extension for Amazon-style delivery countdown timer on product pages",
+    "type": "magento2-module",
+    "version": "1.0.0",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Elsnertech",
+            "email": "support@elsner.com",
+            "homepage": "https://www.elsner.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4.0",
+        "magento/framework": ">=103.0.0",
+        "magento/module-catalog": ">=104.0.0",
+        "magento/module-store": ">=101.1.0",
+        "hyva-themes/magento2-default-theme": "*"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Elsnertech\\DeliveryCountdown\\": ""
+        }
+    },
+    "keywords": [
+        "magento2",
+        "hyva",
+        "delivery",
+        "countdown",
+        "timer",
+        "shipping",
+        "amazon",
+        "same-day-delivery",
+        "next-day-delivery"
+    ]
+}

@@ -1,0 +1,54 @@
+<!--
+/**
+* Mageplaza
+*
+* NOTICE OF LICENSE
+*
+* This source file is subject to the Mageplaza.com license that is
+* available through the world-wide-web at this URL:
+* https://www.mageplaza.com/LICENSE.txt
+*
+* DISCLAIMER
+*
+* Do not edit or add to this file if you wish to upgrade this extension to newer
+* version in the future.
+*
+* @category    Mageplaza
+* @package     Mageplaza_GoogleTagManager
+* @copyright   Copyright (c) Mageplaza (https://www.mageplaza.com/)
+* @license     https://www.mageplaza.com/LICENSE.txt
+*/
+-->
+
+.mp-custom-name input {
+    width: 100px !important;
+}
+
+.mp-custom-index input {
+    width: 50px !important;
+}
+
+#row_googletagmanager_googletag_ga4_popup_content .action-add-widget,
+#row_googletagmanager_googletag_ga4_popup_content .action-add-image,
+#row_googletagmanager_googletag_ga4_popup_content .add-variable {
+    display: none !important;
+}
+
+#row_googletagmanager_googletag_ga4_popup_content button.tox-tbtn[title="Formats"],
+#row_googletagmanager_googletag_ga4_popup_content button.tox-tbtn[title="Insert/edit link"],
+#row_googletagmanager_googletag_ga4_popup_content button.tox-tbtn[title="Insert/edit image"],
+#row_googletagmanager_googletag_ga4_popup_content button.tox-tbtn[title="Table"],
+#row_googletagmanager_googletag_ga4_popup_content button.tox-tbtn[title="Special character"],
+#row_googletagmanager_googletag_ga4_popup_content button.tox-tbtn[title="Insert Widget"],
+#row_googletagmanager_googletag_ga4_popup_content button.tox-tbtn[title="Insert Variable"] {
+    display: none;
+}
+
+#row_googletagmanager_googletag_ga4_popup_content .tox .tox-tbtn {
+    font-size: 10px !important;
+    width: 25px !important;
+}
+
+#row_googletagmanager_googletag_ga4_popup_content .tox .tox-tbtn--select {
+    width: 56.5px !important;
+}

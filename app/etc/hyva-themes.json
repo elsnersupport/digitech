@@ -1,0 +1,43 @@
+{
+    "extensions": [
+        {
+            "src": "vendor\/bsscommerce\/hyva-compat-base\/src"
+        },
+        {
+            "src": "vendor\/hyva-themes\/magento2-theme-module\/src"
+        },
+        {
+            "src": "vendor\/amasty\/module-shop-by-brand-hyva-compatibility"
+        },
+        {
+            "src": "vendor\/amasty\/module-shopby-hyva-compatibility"
+        },
+        {
+            "src": "vendor\/hyva-themes\/magento2-bsscommerce-pre-order\/src"
+        },
+        {
+            "src": "vendor\/amasty\/module-shop-by-base-hyva-compatibility"
+        },
+        {
+            "src": "vendor\/amasty\/module-shop-by-brand-subscription-functionality-hyva"
+        },
+        {
+            "src": "vendor\/magefan\/hyva-theme-blog"
+        },
+        {
+            "src": "vendor\/mirasvit\/module-product-kit-hyva\/src\/MirasvitProductKit"
+        },
+        {
+            "src": "vendor\/amasty\/module-shop-by-filter-highlight-hyva"
+        },
+        {
+            "src": "vendor\/hyva-themes\/magento2-mirasvit-seo\/src"
+        },
+        {
+            "src": "app\/code\/HyvaElsner\/HomeCustomization"
+        },
+        {
+            "src": "vendor\/hyva-themes\/magento2-hyva-widgets\/src"
+        }
+    ]
+}

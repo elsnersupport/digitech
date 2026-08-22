@@ -1,0 +1,9 @@
+<div class="amshopbyconfig-messages-block messages" data-bind="visible: isVisible">
+    <!-- ko fastForEach: { data: messageList, as: '$message'} -->
+    <div class="message"
+         data-bind="css: $message.classes, click: element.handleClick.bind(element, $message.uid),
+                    attr: {'id': $message.uid}">
+        <div data-bind="html: $message.message"></div>
+    </div>
+    <!--/ko-->
+</div>

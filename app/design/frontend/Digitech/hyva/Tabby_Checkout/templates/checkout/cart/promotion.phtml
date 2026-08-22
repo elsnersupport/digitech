@@ -1,0 +1,34 @@
+<?php
+if ($block->isPromotionsActiveForCart()) :
+    ?>
+    <script>
+        var tabbyConfig = <?php echo $block->getJsonConfigTabby('#tabbyPromo'); ?>;
+        function initTabbyCheckout() {
+            return {
+                totalsData: window.checkoutConfig.totalsData,
+                init() {
+                    this.updateTabbyTotal();
+                },
+                updateTabbyTotal() {
+                    let totals = this.totalsData;
+                    let grandTotal = parseFloat(totals.grand_total) || 0;
+                    this.totalPrice = grandTotal;
+                    this.updateTabbyPromotions(this.totalPrice);
+                },
+                updateTabbyPromotions(price) {
+                    if (price != tabbyConfig.price) {
+                        tabbyConfig.price = price * tabbyConfig.currencyRate;
+                        new window.TabbyPromo(tabbyConfig);
+                    }
+                }
+            }
+        }
+    </script>
+    <section
+        x-data="initTabbyCheckout()"
+        x-init="init()"
+    >
+        <div id="tabbyPromo">
+        </div>
+    </section>
+<?php endif; ?>

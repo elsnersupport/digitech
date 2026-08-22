@@ -1,0 +1,58 @@
+<?php
+/**
+ * Blog recent posts widget
+ *
+ * @var $block \Magefan\Blog\Block\Widget\Recent
+ */
+?>
+
+<?php $_postCollection = $block->getPostCollection(); ?>
+<?php if ($_postCollection->count()) { ?>
+<div class="post-list-wrapper blog-widget-recent _card py-5 lg:py-[30px] xl:py-10">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="title mb-3"><?= $block->escapeHtml($block->getTitle()) ?></h2>
+        <a href="<?= $block->getUrl('blog') ?>" class="btn btn-link black">
+            <?= __('View All') ?>
+        </a>
+    </div>
+    <ul class="flex flex-nowrap overflow-x-auto lg:grid lg:grid-cols-4 gap-3 xl:gap-6 post-list">
+        <?php foreach ($_postCollection as $_post) { ?>
+            <?php
+                $_postUrl = $block->escapeUrl($_post->getPostUrl());
+                $_postName = $block->escapeHtml($_post->getTitle());
+                $featuredImage = $_post->getFeaturedListImage() ?: $_post->getFeaturedImage();
+                $featuredImgAlt = $_post->getData('featured_list_img_alt') ?: $_post->getData('featured_img_alt');
+                $featuredImgAlt = $featuredImgAlt ?: $_postName;
+            ?>
+            <li class="post-holder post-holder-<?= (int)$_post->getId() ?> bg-white border rounded-lg overflow-hidden transition hover:shadow-lg">
+                <a href="<?= /*@noEscape*/ $_postUrl ?>" class="block px-3 pt-3 pb-10 rounded-lg overflow-hidden relative h-full">
+                    <?php if ($featuredImage) { ?>
+                        <div class="post-image">
+                            <img src="<?= $block->escapeHtml($featuredImage) ?>" 
+                                 alt="<?= $block->escapeHtml($featuredImgAlt) ?>" 
+                                 class="full-cover-image"
+                                 width="265"
+                                 height="178" />
+                        </div>
+                    <?php } ?>
+                    <div class="post-content pt-4">
+                        <div class="post-info text-xs sm:text-sm text-gray-500 mb-2">
+                            <?php if ($_post->isPublishDateEnabled()) { ?>
+                                <span><?= $block->escapeHtml($_post->getPublishDate()) ?></span>
+                            <?php } ?>
+                            <span class="mx-1">|</span>
+                            <span><?= $block->escapeHtml($_post->getReadingTime()) ?> <?= __('min read') ?></span>
+                        </div>
+                        <h3 class="post-title font-medium text-black-brand mb-4 text-base xl:text-lg">
+                            <?= $block->escapeHtml($_postName) ?>
+                        </h3>
+                        <span class="post-read-more absolute top-auto bottom-3 left-3 btn btn-link icon-right primary max-sm:!text-sm">
+                            <?= $block->escapeHtml(__('Read More')) ?>
+                        </span>
+                    </div>
+                </a>
+            </li>
+        <?php } ?>
+    </ul>
+</div>
+<?php } ?>

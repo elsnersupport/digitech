@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2022 Amasty (https://www.amasty.com)
+ * @package ILN Quick Config for Magento 2 (System)
+ */-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Amasty_ShopByQuickConfig::navigation"
+             title="Improved Layered Navigation"
+             translate="title"
+             module="Amasty_ShopByQuickConfig"
+             sortOrder="45"
+             parent="Magento_Backend::stores"
+             resource="Amasty_ShopByQuickConfig::navigation_attributes"/>
+        <add id="Amasty_ShopByQuickConfig::navigation_attributes"
+             title="Manage Navigation Filters"
+             translate="title"
+             module="Amasty_ShopByQuickConfig"
+             sortOrder="10"
+             parent="Amasty_ShopByQuickConfig::navigation"
+             action="amasty_shopbyconfig/filters/"
+             resource="Amasty_ShopByQuickConfig::navigation_attributes"/>
+    </menu>
+</config>

@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2022 Amasty (https://www.amasty.com)
+ * @package ILN Quick Config for Magento 2 (System)
+ */-->
+
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd"
+      component="Amasty_ShopByQuickConfig/js/view/form">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider"
+                  xsi:type="string">amasty_shopby_filters.amasty_shopby_filters_data_source
+            </item>
+        </item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+    </argument>
+    <settings>
+        <namespace>amasty_shopby_filters</namespace>
+        <ajaxSave>true</ajaxSave>
+        <ajaxSaveType>simple</ajaxSaveType>
+        <dataScope>data</dataScope>
+        <deps>
+            <dep>amasty_shopby_filters.amasty_shopby_filters_data_source</dep>
+        </deps>
+        <imports>
+            <link name="reloadUrl">${ $.provider }:update_url</link>
+        </imports>
+        <buttons>
+            <button name="add_filter" class="Amasty\ShopByQuickConfig\Ui\Component\AddButton" />
+        </buttons>
+    </settings>
+    <dataSource name="amasty_shopby_filters_data_source" component="Amasty_ShopByQuickConfig/js/view/provider">
+        <settings>
+            <submitUrl path="amasty_shopbyconfig/filters/save"/>
+            <updateUrl path="mui/index/render">
+                <param name="namespace">amasty_shopby_filters</param>
+            </updateUrl>
+        </settings>
+        <aclResource>Amasty_ShopByQuickConfig::navigation_attributes</aclResource>
+        <dataProvider class="Amasty\ShopByQuickConfig\Ui\DataProvider\QuickForm"
+                      name="amasty_shopby_filters_data_source">
+            <settings>
+                <primaryFieldName>id</primaryFieldName>
+                <requestFieldName>id</requestFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+
+    <component name="messages" component="Amasty_ShopByQuickConfig/js/view/messages"/>
+
+    <fieldset name="general">
+        <settings>
+            <label/>
+            <collapsible>false</collapsible>
+            <additionalClasses>
+                <class name="amshopbyconfig-form-wrapper">true</class>
+            </additionalClasses>
+        </settings>
+
+        <dynamicRows name="side_items" sortOrder="10" template="Amasty_ShopByQuickConfig/default"
+                     component="Amasty_ShopByQuickConfig/js/view/dynamic-rows/dynamic-rows">
+            <settings>
+                <dndConfig>
+                    <param name="component" xsi:type="string">Amasty_ShopByQuickConfig/js/view/dynamic-rows/dnd-margin
+                    </param>
+                    <param name="enabled" xsi:type="boolean">true</param>
+                </dndConfig>
+                <label translate="true">Sidebar Block</label>
+                <identificationProperty>filter_code</identificationProperty>
+                <columnsHeader>false</columnsHeader>
+                <addButton>false</addButton>
+                <deleteProperty/>
+                <labelVisible>false</labelVisible>
+                <defaultRecord>false</defaultRecord>
+                <componentType>dynamicRows</componentType>
+                <recordTemplate>side_items_record</recordTemplate>
+                <additionalClasses>
+                    <class name="amshopbyconfig-filter-items">true</class>
+                    <class name="-side">true</class>
+                </additionalClasses>
+                <pageSize>200</pageSize>
+            </settings>
+            <container name="side_items_record" component="Amasty_ShopByQuickConfig/js/view/dynamic-rows/record">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="positionProvider" xsi:type="string">position</item>
+                        <item name="isTemplate" xsi:type="boolean">true</item>
+                        <item name="is_collection" xsi:type="boolean">true</item>
+                        <item name="showFallbackReset" xsi:type="boolean">false</item>
+                        <item name="componentType" xsi:type="string">container</item>
+                    </item>
+                </argument>
+                <text name="label" template="ui/form/element/text">
+                    <settings>
+                        <dataScope>label</dataScope>
+                        <dataType>string</dataType>
+                        <imports>
+                            <link name="inputName">dataScope</link>
+                        </imports>
+                    </settings>
+                </text>
+                <button name="edit" component="Amasty_ShopByQuickConfig/js/view/filter-actions">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="formName" xsi:type="string">index = filter_edit_form</item>
+                            <item name="actions" xsi:type="array">
+                                <item name="0" xsi:type="array">
+                                    <item name="targetName"
+                                          xsi:type="string">${ $.formName }
+                                    </item>
+                                    <item name="actionName" xsi:type="string">render</item>
+                                </item>
+                                <item name="1" xsi:type="array">
+                                    <item name="targetName"
+                                          xsi:type="string">index = catalog_placeholder
+                                    </item>
+                                    <item name="actionName" xsi:type="string">visible</item>
+                                    <item name="params" xsi:type="array">
+                                        <item name="0" xsi:type="boolean">false</item>
+                                    </item>
+                                </item>
+                            </item>
+                            <item name="title" xsi:type="string" translate="true">Edit</item>
+                            <item name="buttonClasses" xsi:type="string">amshopbyconfig-button -edit</item>
+                        </item>
+                    </argument>
+                </button>
+                <field name="position" formElement="input">
+                    <settings>
+                        <dataType>number</dataType>
+                        <visible>false</visible>
+                        <dataScope>position</dataScope>
+                    </settings>
+                </field>
+            </container>
+        </dynamicRows>
+
+        <fieldset name="main_content">
+            <settings>
+                <label/>
+                <collapsible>false</collapsible>
+                <additionalClasses>
+                    <class name="amshopbyconfig-main-content">true</class>
+                </additionalClasses>
+            </settings>
+            <dynamicRows name="top_items" sortOrder="10" template="Amasty_ShopByQuickConfig/default"
+                         component="Amasty_ShopByQuickConfig/js/view/dynamic-rows/dynamic-rows">
+                <settings>
+                    <dndConfig>
+                        <param name="component"
+                               xsi:type="string">Amasty_ShopByQuickConfig/js/view/dynamic-rows/dnd-top
+                        </param>
+                        <param name="enabled" xsi:type="boolean">true</param>
+                    </dndConfig>
+                    <label translate="true">Top Block</label>
+                    <identificationProperty>filter_code</identificationProperty>
+                    <columnsHeader>false</columnsHeader>
+                    <addButton>false</addButton>
+                    <deleteProperty/>
+                    <labelVisible>false</labelVisible>
+                    <defaultRecord>false</defaultRecord>
+                    <componentType>dynamicRows</componentType>
+                    <recordTemplate>top_items_record</recordTemplate>
+                    <additionalClasses>
+                        <class name="amshopbyconfig-filter-items">true</class>
+                        <class name="-top">true</class>
+                    </additionalClasses>
+                    <pageSize>200</pageSize>
+                </settings>
+                <container name="top_items_record" component="Amasty_ShopByQuickConfig/js/view/dynamic-rows/record">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="positionProvider" xsi:type="string">position</item>
+                            <item name="isTemplate" xsi:type="boolean">true</item>
+                            <item name="is_collection" xsi:type="boolean">true</item>
+                            <item name="showFallbackReset" xsi:type="boolean">false</item>
+                            <item name="componentType" xsi:type="string">container</item>
+                        </item>
+                    </argument>
+                    <text name="label" template="ui/form/element/text">
+                        <settings>
+                            <dataScope>label</dataScope>
+                            <dataType>string</dataType>
+                            <imports>
+                                <link name="inputName">dataScope</link>
+                            </imports>
+                        </settings>
+                    </text>
+                    <button name="edit" component="Amasty_ShopByQuickConfig/js/view/filter-actions">
+                        <argument name="data" xsi:type="array">
+                            <item name="config" xsi:type="array">
+                                <item name="formName" xsi:type="string">index = filter_edit_form</item>
+                                <item name="actions" xsi:type="array">
+                                    <item name="0" xsi:type="array">
+                                        <item name="targetName"
+                                              xsi:type="string">${ $.formName }
+                                        </item>
+                                        <item name="actionName" xsi:type="string">render</item>
+                                    </item>
+                                    <item name="1" xsi:type="array">
+                                        <item name="targetName"
+                                              xsi:type="string">index = catalog_placeholder
+                                        </item>
+                                        <item name="actionName" xsi:type="string">visible</item>
+                                        <item name="params" xsi:type="array">
+                                            <item name="0" xsi:type="boolean">false</item>
+                                        </item>
+                                    </item>
+                                </item>
+                                <item name="title" xsi:type="string" translate="true">Edit</item>
+                                <item name="buttonClasses" xsi:type="string">amshopbyconfig-button -edit</item>
+                            </item>
+                        </argument>
+                    </button>
+                    <field name="position" formElement="input">
+                        <settings>
+                            <dataType>number</dataType>
+                            <visible>false</visible>
+                            <dataScope>position</dataScope>
+                        </settings>
+                    </field>
+                </container>
+            </dynamicRows>
+            <container name="content_container" sortOrder="20">
+                <container name="catalog_placeholder" sortOrder="10"
+                           component="Amasty_ShopByQuickConfig/js/view/visibility-element"
+                           template="Amasty_ShopByQuickConfig/products-placeholder"/>
+                <container name="filter_edit_form_container" sortOrder="20">
+                    <insertForm name="filter_edit_form" component="Amasty_ShopByQuickConfig/js/view/insert"
+                                template="Amasty_ShopByQuickConfig/insert">
+                        <settings>
+                            <formSubmitType>ajax</formSubmitType>
+                            <renderUrl path="amasty_shopbyconfig/filters/edit"/>
+                            <autoRender>false</autoRender>
+                            <ns>filter_edit_form</ns>
+                        </settings>
+                    </insertForm>
+                </container>
+            </container>
+        </fieldset>
+    </fieldset>
+
+    <modal name="add_attribute_modal" component="Amasty_ShopByQuickConfig/js/view/modal">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="saveUrl" path="amasty_shopbyconfig/filters/changefilterable" xsi:type="url"/>
+            </item>
+        </argument>
+        <settings>
+            <componentType>modal</componentType>
+            <onCancel>closeModalConfirm</onCancel>
+            <options>
+                <option name="title" xsi:type="string" translate="true">Add/Remove Filters</option>
+                <option name="buttons" xsi:type="array">
+                    <item name="0" xsi:type="array">
+                        <item name="text" xsi:type="string" translate="true">Back</item>
+                        <item name="class" xsi:type="string">action-back</item>
+                        <item name="actions" xsi:type="array">
+                            <item name="0" xsi:type="array">
+                                <item name="targetName" xsi:type="string">${ $.name }</item>
+                                <item name="actionName" xsi:type="string">closeModalConfirm</item>
+                            </item>
+                        </item>
+                    </item>
+                    <item name="1" xsi:type="array">
+                        <item name="text" xsi:type="string" translate="true">Save and Continue Edit</item>
+                        <item name="actions" xsi:type="array">
+                            <item name="0" xsi:type="array">
+                                <item name="targetName" xsi:type="string">${ $.name }</item>
+                                <item name="actionName" xsi:type="string">actionSaveAndContinue</item>
+                            </item>
+                        </item>
+                    </item>
+                    <item name="2" xsi:type="array">
+                        <item name="text" xsi:type="string" translate="true">Save Changes</item>
+                        <item name="class" xsi:type="string">action-primary</item>
+                        <item name="actions" xsi:type="array">
+                            <item name="0" xsi:type="array">
+                                <item name="targetName" xsi:type="string">${ $.name }</item>
+                                <item name="actionName" xsi:type="string">actionDone</item>
+                            </item>
+                        </item>
+                    </item>
+                </option>
+            </options>
+        </settings>
+        <insertListing name="add_attribute_listing">
+            <settings>
+                <dataLinks>
+                    <exports>false</exports>
+                    <imports>false</imports>
+                </dataLinks>
+                <autoRender>false</autoRender>
+                <externalFilterMode>false</externalFilterMode>
+                <externalProvider>${ $.ns }.${ $.ns }_data_source</externalProvider>
+                <selectionsProvider>${ $.ns }.${ $.ns }.filter_columns.is_filterable</selectionsProvider>
+                <ns>amasty_shopby_add_attributes</ns>
+            </settings>
+        </insertListing>
+    </modal>
+</form>

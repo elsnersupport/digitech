@@ -1,0 +1,70 @@
+//
+//  Amasty Messenger Widget Utils
+//  ___________________________________________
+
+//
+//  Variables
+//  -------------------------------------------
+
+@ammessenger-position__offset__level-1: 0;
+@ammessenger-position__offset__level-2: 8px;
+@ammessenger-position__offset__level-3: 30px;
+@ammessenger-position__offset__level-4: 52px;
+@ammessenger-position__offset__level-5: 60px;
+
+//
+//  Mixins
+//  -------------------------------------------
+
+.generate-icons-positions(@n, @i: 2) when (@i =< @n) {
+    &:nth-child(@{i}) {
+        top: (-30px - @ammessenger-animation__drop-line__position-step * (@i - 1));
+        transition: scale @ammessenger-animation__drop-line__base-duration, top (@ammessenger-animation__drop-line__base-duration + @ammessenger-animation__drop-line__duration-step * (@i - 1));
+    }
+
+    .generate-icons-positions(@n, (@i + 1));
+}
+
+//
+//  Circle Positions
+//  -------------------------------------------
+
+.-deg0 {
+    top: @ammessenger-position__offset__level-3;
+    left: @ammessenger-position__offset__level-1;
+}
+
+.-deg45 {
+    top: @ammessenger-position__offset__level-2;
+    left: @ammessenger-position__offset__level-2;
+}
+
+.-deg90 {
+    top: @ammessenger-position__offset__level-1;
+    left: @ammessenger-position__offset__level-3;
+}
+
+.-deg135 {
+    top: @ammessenger-position__offset__level-2;
+    left: @ammessenger-position__offset__level-4;
+}
+
+.-deg180 {
+    top: @ammessenger-position__offset__level-3;
+    left: @ammessenger-position__offset__level-5;
+}
+
+.-deg225 {
+    top: @ammessenger-position__offset__level-4;
+    left: @ammessenger-position__offset__level-4;
+}
+
+.-deg270 {
+    top: @ammessenger-position__offset__level-5;
+    left: @ammessenger-position__offset__level-3;
+}
+
+.-deg315 {
+    top: @ammessenger-position__offset__level-4;
+    left: @ammessenger-position__offset__level-2;
+}

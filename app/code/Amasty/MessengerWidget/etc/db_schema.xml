@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Live Chat for Magento 2
+ */-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="amasty_messenger_widget_messenger" resource="default" engine="innodb"
+           comment="Amasty Messenger Widget Messenger Table">
+        <column xsi:type="int" name="messenger_id" padding="10" unsigned="true" nullable="false" identity="true"
+                comment="Messenger ID"/>
+        <column xsi:type="boolean" name="is_active" nullable="false" comment="Is Active"/>
+        <column xsi:type="varchar" name="code" nullable="false" length="255" comment="Messenger Code"/>
+        <column xsi:type="varchar" name="custom_name" nullable="false" length="255" comment="Custom Name"/>
+        <column xsi:type="varchar" name="link" nullable="false" length="255" comment="Link"/>
+        <column xsi:type="varchar" name="comment" nullable="false" length="255" comment="Comment"/>
+        <column xsi:type="varchar" name="tooltip" nullable="false" length="255" comment="Tooltip"/>
+        <column xsi:type="int" name="sort_order" nullable="false" default="0" comment="Sort Order"/>
+        <column xsi:type="varchar" name="icon" nullable="false" length="255" comment="Icon path"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="messenger_id"/>
+        </constraint>
+    </table>
+
+    <table name="amasty_messenger_widget_messenger_store" resource="default" engine="innodb"
+           comment="Amasty Messenger Widget Messenger To Store Relation Table">
+        <column xsi:type="int" name="id" padding="10" unsigned="true" nullable="false" identity="true"
+                comment="Scope ID"/>
+        <column xsi:type="int" name="messenger_id" padding="10" unsigned="true" nullable="false" identity="false"
+                comment="Messenger ID"/>
+        <column xsi:type="smallint" name="store_id" padding="5" unsigned="true" nullable="false" identity="false"
+                comment="Store View ID"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="AM_MES_WID_MES_STORE_MES_ID_AM_MES_WID_MES_ID"
+                    table="amasty_messenger_widget_messenger_store" column="messenger_id"
+                    referenceTable="amasty_messenger_widget_messenger" referenceColumn="messenger_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="AM_MES_WID_MES_STORE_STORE_ID_STORE_ID"
+                    table="amasty_messenger_widget_messenger_store" column="store_id" referenceTable="store"
+                    referenceColumn="store_id" onDelete="CASCADE"/>
+        <index referenceId="AM_MES_WID_MES_STORE_MES_ID" indexType="btree">
+            <column name="messenger_id"/>
+        </index>
+        <index referenceId="AM_MES_WID_MES_STORE_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+    </table>
+</schema>

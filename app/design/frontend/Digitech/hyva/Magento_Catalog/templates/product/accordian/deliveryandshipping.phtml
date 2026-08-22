@@ -1,0 +1,10 @@
+<?php
+/** @var \Magento\Catalog\Model\Product $product */
+    $product = $block->getProduct();
+?>
+<div class="delivery-shipping-content">
+    <?= $this->getLayout()
+             ->createBlock('Magento\Cms\Block\Block')
+             ->setBlockId('deliveryandshipping')
+             ->toHtml(); ?>
+</div>

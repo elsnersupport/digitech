@@ -1,0 +1,91 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+ declare(strict_types=1);
+
+ use Hyva\Theme\ViewModel\SvgIcons;
+
+/** @var SvgIcons $hyvaicons */
+$hyvaicons = $viewModels->require(SvgIcons::class);
+
+
+ $catalogHelper = $this->helper('Magento\Catalog\Helper\Data');   
+?>
+<?php if ($catalogHelper->getCategory()->getCategoryFaq()): ?>
+    <div class="block-container">
+        <div class="faq-section flex flex-col items-center mx-auto mb-12 py-8">
+            <div class="faq-heading text-[26px] font-semibold mb-6">
+                <?= $escaper->escapeHtml('Frequently Asked Questions') ?>
+            </div>
+            <div x-data="accordion()" x-init="initAccordion()" class="w-full">
+                <?php
+                if ($catalogHelper->getCategory()->getCategoryFaq()) {
+                    $description = $this->helper(Magento\Catalog\Helper\Output::class)->categoryAttribute(
+                        $catalogHelper->getCategory(),
+                        $catalogHelper->getCategory()->getCategoryFaq(),
+                        'category_faq'
+                    );
+                    echo $description;
+                }
+                ?>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+<script>
+    function accordion() {
+        return {
+            activeIndex: null,
+
+            initAccordion() {
+                this.addAccordionBehavior();
+            },
+            addAccordionBehavior() {
+                const accordionItems = document.querySelectorAll('.accordion-item');
+                
+
+                accordionItems.forEach((item, index) => {
+                    const title = item.querySelector('.accordion-title');
+                    const content = item.querySelector('.accordion-content');
+                    const arrow = document.createElement('div');
+                    arrow.className = 'arrow';
+                    arrow.innerHTML = `<?= $hyvaicons->downArrowHtml("w-4 h-4", 12, 12, ['aria-hidden' => 'true']) ?>`;
+                    title.appendChild(arrow);
+
+                    item.classList.add('border-b', 'border-gray-light', 'py-4');
+                    title.classList.add('flex', 'justify-between', 'font-medium', 'cursor-pointer', 'relative');
+                    content.classList.add('pt-4', 'text-sm', 'text-[#262626]');
+                    arrow.classList.add('inline-flex', 'items-center');
+                    
+
+                    title.addEventListener('click', () => {
+                        const isActive = this.activeIndex === index;
+
+                        this.activeIndex = isActive ? null : index;
+
+                        const arrowSVG = title.querySelector('.arrow');
+                        arrowSVG.innerHTML = isActive
+                            ? `<?= $hyvaicons->downArrowHtml("w-4 h-4", 12, 12, ['aria-hidden' => 'true']) ?>`
+                            : `<?= $hyvaicons->upArrowHtml("w-4 h-4", 12, 12, ['aria-hidden' => 'true']) ?>`;
+
+                        content.style.display = isActive ? 'none' : 'block';
+                    });
+
+                    if (content) {
+                        content.style.display = 'none';
+                    }
+                });
+            },
+
+            isActive(index) {
+                return this.activeIndex === index;
+            }
+        };
+    }
+</script>
+

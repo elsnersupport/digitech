@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2022 Amasty (https://www.amasty.com)
+ * @package ILN Quick Config for Magento 2 (System)
+ */-->
+<layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/layout_generic.xsd">
+    <container name="root">
+        <block class="Amasty\ShopByQuickConfig\Block\Adminhtml\EditForm" name="attribute_edit_content"
+               template="Amasty_ShopByQuickConfig::form.phtml">
+            <arguments>
+                <argument name="additional_class" xsi:type="string">admin__scope-old</argument>
+            </arguments>
+            <container name="form" label="Form fields" htmlTag="div"
+                       htmlId="product_attribute_tabs_amasty_shopby_content">
+                <block class="Amasty\ShopByQuickConfig\Block\Adminhtml\Attribute\Fields" as="amshopby">
+                    <arguments>
+                        <argument name="attribute_provider"
+                                  xsi:type="object">Amasty\ShopByQuickConfig\Block\Adminhtml\Attribute\DataProvider
+                        </argument>
+                    </arguments>
+                </block>
+            </container>
+        </block>
+    </container>
+</layout>

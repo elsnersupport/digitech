@@ -1,0 +1,10 @@
+<?php
+/** @var \Magento\Catalog\Model\Product $product */
+$product = $block->getProduct();
+$inbox = $product->getData('inbox');
+
+if ($inbox): ?>
+    <div class="in-the-box-content">
+        <?=/* @noEscape */ $inbox; ?>
+    </div>
+<?php endif; ?>

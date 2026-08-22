@@ -1,0 +1,10 @@
+<?php
+/** @var \Magento\Catalog\Model\Product $product */
+$product = $block->getProduct();
+$tech = $product->getData('tech');
+
+if ($tech): ?>
+    <div class="tech-specification-content">
+        <?=/** @noEscape  */ $tech; ?>
+    </div>
+<?php endif; ?>

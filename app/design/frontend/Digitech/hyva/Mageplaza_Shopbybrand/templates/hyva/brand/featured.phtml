@@ -1,0 +1,138 @@
+<?php
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_Shopbybrand
+ * @copyright   Copyright (c) Mageplaza (https://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+
+use Magento\Swatches\Model\Swatch;
+
+$timeId = time();
+/** @var \Mageplaza\Shopbybrand\Block\Brand\Featured $block */
+$featureBrands = $block->getFeaturedBrand();
+$style = $block->getStyleDisplayFeature();
+?>
+<?php if (!empty($featureBrands)) : ?>
+    <div class="block-brand-feature widget bg-gray-100 rounded-md py-6 mt-2 mb-2">
+        <div class="block-content">
+            <?php if (!empty($featureBrands) &&
+            $style === \Mageplaza\Shopbybrand\Model\Config\Source\FeatureStyle::DISPLAY_SLIDER) : ?>
+            <section class="brand-carousel splide w-full"
+                 id="feature-brand-carousel-<?= /** @noEscape */ $timeId ?>"
+                 data-mage-init='{"brandSlider": {}}' style="width: calc(100%)"
+                 x-defer='intersect'>
+                <div class="splide__track">
+                    <ul class="splide__list gap-3">
+
+            <?php endif; ?>
+                <?php foreach ($featureBrands as $brand) : ?>
+                    <?php if ($style === \Mageplaza\Shopbybrand\Model\Config\Source\FeatureStyle::DISPLAY_SLIDER) : ?>
+                    <li class="relate-content item splide__slide">
+                    <?php else : ?>
+                    <li class="relate-content item mp-2 mp-sm-4 mp-xs-6 col-mp" style="float: left; padding: 10px 0;list-style: none">
+                    <?php endif; ?>
+                        <a href="<?= /** @noEscape */ $block->helper()->getBrandUrl($brand) ?>" class="brand-image flex flex-col justify-center items-center hover:underline">
+                            <?php if ($brand->getSwatchType() == Swatch::SWATCH_TYPE_VISUAL_COLOR): ?>
+                                <img class="img-responsive"
+                                     style="background-color: <?= /** @noEscape */ $brand->getSwatchValue() ?>"
+                                     width="<?= /** @noEscape */ $block->getLogoWidth() ?>"
+                                     height="<?= /** @noEscape */ $block->getLogoHeight() ?>">
+                            <?php else: ?>
+                                <img class="img-responsive"
+                                     src="<?= /** @noEscape */ $block->helper()->getBrandImageUrl($brand) ?>"
+                                     width="<?= /** @noEscape */ $block->getLogoWidth() ?>"
+                                     height="<?= /** @noEscape */ $block->getLogoHeight() ?>"
+                                     alt="<?= /** @noEscape */ $brand->getValue() ?>">
+                            <?php endif; ?>
+                            <?php if ($block->showLabel()) : ?>
+                                <span class="font-semibold"><?= /** @noEscape */ $brand->getValue() ?></span>
+                            <?php endif; ?>
+                        </a>
+                    </li>
+
+                <?php endforeach; ?>
+            </div>
+                </section>
+                </div>
+
+        </div>
+
+<?php endif; ?>
+<div style="clear: both"></div>
+
+<style>
+    .block-brand-feature .block-content {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding-inline: 25px;
+    }
+   .block-brand-feature .block-content .brand-image {
+        width: 140px;
+        padding: 12px;
+        height: 140px;
+        border-radius: 8px;
+        display: inline-flex;
+        vertical-align: middle;
+        object-fit: contain;
+        border: 1px solid #D4D4D4;
+   }
+   .block-brand-feature .block-content .brand-image:hover {
+        border-radius: 8px;
+        border: 1px solid #D4D4D4;
+   }
+   .splide__list .item {
+        text-align: center;
+   }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (document.getElementById('feature-brand-carousel-<?= /** @noEscape */ $timeId ?>')) {
+            new Splide('#feature-brand-carousel-<?= /** @noEscape */ $timeId ?>', {
+                autoStart: true,
+                start: 1,
+                perPage: 6,
+                perMove: 1,
+                gap: 10,
+                type: 'loop',
+                drag: 'free',
+                omitEnd: true,
+                snap: false,
+                interval: 2000,
+                pagination: false,
+                rewind: true,
+                rewindByDrag: true,
+                lazyLoad: true,
+                autoplay: true,
+                autoScroll: {
+                    speed: 2
+                },
+                arrows: false,
+                breakpoints: {
+                    768: {
+                        perPage: 1,
+                        snap: true
+                    },
+                    1028: {
+                        perPage: 2,
+                        snap: true
+                    }
+                }
+            }).mount();
+        }
+    });
+</script>

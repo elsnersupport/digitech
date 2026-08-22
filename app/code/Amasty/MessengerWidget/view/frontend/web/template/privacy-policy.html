@@ -1,0 +1,37 @@
+<!-- ko if: (isPrivacyPolicyEnabled) -->
+<div class="ammessenger-privacy-policy"
+     data-bind="{visible: isPopupOpened}">
+    <div class="ammessenger-popup">
+        <h2 class="ammessenger-title" data-bind="i18n: 'Privacy Policy'"></h2>
+        <div class="ammessenger-content" data-bind="html: privacyPolicyContent"></div>
+        <!-- ko foreach: getRegion('ammessenger-after-privacy-policy') -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+        <!--/ko-->
+        <div class="ammessenger-actions">
+            <button class="ammessenger-button -accept"
+                    data-bind="
+                        i18n: 'I have read and accept',
+                        click: acceptPrivacyPolicy,
+                        attr: {
+                            title: $t('I have read and accept'),
+                            'aria-label': $t('I have read and accept')
+                        }
+            "></button>
+            <button class="ammessenger-button -reject"
+                    data-bind="
+                        i18n: 'Reject',
+                        click: closePopup,
+                        attr: {
+                            title: $t('Reject'),
+                            'aria-label': $t('Reject')
+                        }
+                    "></button>
+        </div>
+    </div>
+    <div class="ammessenger-overlay" data-bind="{click: closePopup}"></div>
+</div>
+
+<each args="data:elems(), as: 'element'">
+    <render if="hasTemplate()"></render>
+</each>
+<!--/ko-->

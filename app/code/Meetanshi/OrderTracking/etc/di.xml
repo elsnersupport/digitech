@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Meetanshi\OrderTracking\Api\OrderTrackingInterface" type="Meetanshi\OrderTracking\Model\Api\OrderTracking"/>
+
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="ordertracking_listing_data_source" xsi:type="string">Meetanshi\OrderTracking\Model\ResourceModel\Carrier\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Meetanshi\OrderTracking\Model\ResourceModel\Carrier\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">meetanshi_custom_carrier</argument>
+            <argument name="eventPrefix" xsi:type="string">meetanshi_custom_carrier_collection</argument>
+            <argument name="eventObject" xsi:type="string">meetanshi_custom_carrier_collection</argument>
+            <argument name="resourceModel" xsi:type="string">Meetanshi\OrderTracking\Model\ResourceModel\Carrier</argument>
+        </arguments>
+    </type>
+
+    <preference for="Magento\Sales\Block\Order\Email\Shipment\Items"
+                type="Meetanshi\OrderTracking\Block\SendTrackinglink"/>
+    <preference for="Magento\Sales\Block\Order\Email\Items" type="Meetanshi\OrderTracking\Block\OrderSendlink"/>
+
+    <type name="Magento\SalesGraphQl\Model\Resolver\Shipment\ShipmentTracking">
+        <plugin name="OrderTrackingGraphql" type="Meetanshi\OrderTracking\Plugin\ShipmentTracking"/>
+    </type>
+
+</config>

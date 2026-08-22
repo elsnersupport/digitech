@@ -1,0 +1,9 @@
+<?php ?>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const script = document.createElement('script');
+        script.src = '<?= $escaper->escapeUrl($block->getViewFileUrl('Wizzy_Search::/core/wizzyFrontend.min.js')) ?>';
+        script.async = true;
+        // document.body.appendChild(script);
+    });
+</script>

@@ -1,0 +1,102 @@
+<?php
+?>
+<script type="text/javascript">
+    var wizzyConfigUpdated = true;
+    require(['jquery'], function ($) {
+        
+        if (window.wizzyConfig.events !== null && window.wizzyConfig.events !== undefined) {
+            WizzyCustomInit();
+        } else {
+            window.onWizzyLoaded = [];
+            window.onWizzyLoaded.push(function () {
+                WizzyCustomInit();
+            });
+        }
+
+        
+        function checkAutocompleteDisplay() {
+            const autocompleteWrapper = $('.wizzy-autocomplete-wrapper');
+            if (autocompleteWrapper.length && autocompleteWrapper.css('display') === 'flex') {
+                $('body').addClass('wz-ac-opened');
+                $('html').addClass('wz-ac-opened');
+            } else {
+                $('body').removeClass('wz-ac-opened');
+                $('html').removeClass('wz-ac-opened');
+            }
+        }
+
+        function WizzyCustomInit() {
+
+            setInterval(checkAutocompleteDisplay, 20);
+            
+            // customerData.initStorage();
+
+            // $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+            //         if (options.url.includes('/ajaxcart/')) {
+            //             jqXHR.done(function (response) {
+            //                 var sections = ['cart'];
+            //                 customerData.invalidate(sections);
+            //                 customerData.reload(sections, true);
+            //             });
+            //         }
+            // });
+
+            window.wizzyConfig.events.registerEvent(
+                window.wizzyConfig.events.allowedEvents.BEFORE_AUTOCOMPLETE_EXECUTED,
+                function (payload) {
+                    // payload.showOOSProductsInOrder = "true";
+                    payload.minLastWordLength = 2;
+                    return payload;
+                }
+            );
+            window.wizzyConfig.events.registerEvent(
+                window.wizzyConfig.events.allowedEvents.BEFORE_SEARCH_EXECUTED,
+                function (payload) {
+                    // payload.showOOSProductsInOrder = "true";
+                    payload.minLastWordLength = 2;
+                    return payload;
+                }
+            );
+            window.wizzyConfig.events.registerEvent(
+                window.wizzyConfig.events.allowedEvents.AFTER_PRODUCTS_TRANSFORMED,
+                function (payload) {
+                    payload.forEach((product) => {
+                        product.wishListAction = window.wizzyConfig.search.addToWishlist.postData.action;
+                        product.uenc = window.wizzyConfig.search.addToWishlist.postData.data.uenc;
+                        product.wzQuickViewUrl = window.location.origin + "/alothemes/product/view/id/" + product.id + "/";
+                        var attributes = product.attributes;
+                        attributes.forEach((attribute)=>{
+                            if(attribute.id == "availability_message") {
+                                product.wzProductAvailibility = attribute.values[0].value[0];
+                            }
+                            if(attribute.id == "special_price") {
+                                var specialPrice = attribute.values[0].value[0];
+                                product.specialPrice = Number(specialPrice).toFixed(2);
+                            }
+                        })
+                        product.sku = product.sku[0];
+                    });
+                    return payload;
+                }
+            );
+            // window.wizzyConfig.events.registerEvent(
+            //     window.wizzyConfig.events.allowedEvents.VIEW_RENDERED,
+            //     function (payload) {
+            //         var sections = ['cart'];
+            //         customerData.invalidate(sections);
+            //         customerData.reload(sections, true);
+            //         return payload;
+            //     }
+            // );
+            window.wizzyConfig.events.registerEvent(
+                window.wizzyConfig.events.allowedEvents.PRODUCTS_CACHED_RESULTS_RENDERED,
+                function (payload) {
+                    // var sections = ['cart'];
+                    // customerData.invalidate(sections);
+                    // customerData.reload(sections, true);
+                    return payload;
+                }
+            );
+        }
+    });
+</script>

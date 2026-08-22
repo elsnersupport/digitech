@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Live Chat for Magento 2
+ */-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Amasty\MessengerWidget\Model\Icon\ResizerInterface" type="Amasty\MessengerWidget\Model\Icon\Resizer"/>
+    <type name="Amasty\MessengerWidget\Model\Icon\Uploader">
+        <arguments>
+            <argument name="resizer" xsi:type="object">Amasty\MessengerWidget\Model\Icon\ResizerPool</argument>
+        </arguments>
+    </type>
+    <type name="Amasty\MessengerWidget\Model\Icon\ResizerPool">
+        <arguments>
+            <argument name="resizers" xsi:type="array">
+                <item name="retina_resizer" xsi:type="object">Amasty\MessengerWidget\Model\Icon\Resizers\RetinaResizer</item>
+                <item name="base_resizer" xsi:type="object">Amasty\MessengerWidget\Model\Icon\Resizers\BaseResizer</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="Amasty\MessengerWidget\Model\Icon\Resizers\BaseResizer" type="Amasty\MessengerWidget\Model\Icon\Resizers\DefaultResizer">
+        <arguments>
+            <argument name="destinationDirectory" xsi:type="const">Amasty\MessengerWidget\Model\Icon\ResizerInterface::UPLOAD_DIR</argument>
+            <argument name="sourceDirectory" xsi:type="const">Amasty\MessengerWidget\Model\Icon\ResizerInterface::UPLOAD_DIR</argument>
+            <argument name="imageSize" xsi:type="const">Amasty\MessengerWidget\Model\Icon\ResizerInterface::BASE_IMAGE_SIZE</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Amasty\MessengerWidget\Model\Icon\Resizers\RetinaResizer" type="Amasty\MessengerWidget\Model\Icon\Resizers\DefaultResizer">
+        <arguments>
+            <argument name="destinationDirectory" xsi:type="const">Amasty\MessengerWidget\Model\Icon\ResizerInterface::UPLOAD_DIR_RETINA</argument>
+            <argument name="sourceDirectory" xsi:type="const">Amasty\MessengerWidget\Model\Icon\ResizerInterface::UPLOAD_DIR</argument>
+            <argument name="imageSize" xsi:type="const">Amasty\MessengerWidget\Model\Icon\ResizerInterface::RETINA_IMAGE_SIZE</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Amasty\MessengerWidget\Model\Messenger\Form\DataProvider">
+        <arguments>
+            <argument name="pool" xsi:type="object">Amasty\MessengerWidget\Ui\DataProvider\Messenger\Form\Modifier\Pool</argument>
+        </arguments>
+    </type>
+    <virtualType name="Amasty\MessengerWidget\Ui\DataProvider\Messenger\Form\Modifier\Pool" type="Magento\Ui\DataProvider\Modifier\Pool">
+        <arguments>
+            <argument name="modifiers" xsi:type="array">
+                <item name="advancedInventory" xsi:type="array">
+                    <item name="class" xsi:type="string">Amasty\MessengerWidget\Ui\DataProvider\Messenger\Form\Modifier\MessengerFormModifier</item>
+                    <item name="sortOrder" xsi:type="number">10</item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+</config>

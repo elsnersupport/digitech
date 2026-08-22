@@ -1,0 +1,410 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Hyva\Theme\ViewModel\HeroiconsSolid;
+use Hyva\Theme\ViewModel\BlockJsDependencies;
+use Hyva\Theme\ViewModel\ProductCompare;
+use Hyva\Theme\ViewModel\ProductListItem;
+use Hyva\Theme\ViewModel\ProductPage;
+use Hyva\Theme\ViewModel\Wishlist;
+use Magento\Catalog\Block\Product\AbstractProduct;
+use Magento\Catalog\Helper\Output as CatalogOutputHelper;
+use Magento\Catalog\ViewModel\Product\OptionsData as ProductOptionsData;
+use Magento\Framework\Escaper;
+use HyvaElsner\CategoryListing\ViewModel\CategoryData;
+use HyvaElsner\CategoryListing\ViewModel\ProductStock;
+use Hyva\Theme\ViewModel\SvgIcons;
+use Bss\PreOrder\Helper\Data as BssPreOder;
+use Hyva\BssPreOrder\ViewModels\Helper as ModuleViewModel;
+use Bss\HyvaCompatBase\ViewModel\Base;
+
+// phpcs:disable Magento2.Templates.ThisInTemplate.FoundThis
+// phpcs:disable Magento2.Templates.ThisInTemplate.FoundHelper
+// phpcs:disable Generic.Files.LineLength.TooLong
+
+/** @var AbstractProduct $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+/**  @var BssPreOder $preOrderHelper */
+/**  @var Base $baseViewModel */
+
+
+
+$hyvaicons = $viewModels->require(SvgIcons::class);
+$baseViewModel = $viewModels->require(Base::class);
+
+
+/** @var ProductPage $productViewModel */
+$productViewModel = $viewModels->require(ProductPage::class);
+
+/** @var ProductListItem $productListItemViewModel */
+$productListItemViewModel = $viewModels->require(ProductListItem::class);
+
+/** @var CatalogOutputHelper $catalogOutputHelper */
+$catalogOutputHelper = $this->helper(CatalogOutputHelper::class);
+
+/** @var ProductCompare $compareViewModel */
+$compareViewModel = $viewModels->require(ProductCompare::class);
+/** @var Wishlist $wishlistViewModel */
+$wishlistViewModel = $viewModels->require(Wishlist::class);
+
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+
+/** @var HeroiconsSolid $heroiconsSolid */
+$heroiconsSolid = $viewModels->require(HeroiconsSolid::class);
+
+$productOptionsViewmodel = $viewModels->require(ProductOptionsData::class);
+
+/** @var CategoryData $productViewModel */
+$categoryDataViewModel = $viewModels->require(CategoryData::class);
+
+/** @var ProductStock $productViewModel */
+$productStockViewModel = $viewModels->require(ProductStock::class);
+
+/** @var ModuleViewModel $moduleViewModel */
+$moduleViewModel = $viewModels->require(ModuleViewModel::class);
+$preOrderHelper = $moduleViewModel->getHelper();
+
+
+/** @var Magento\Catalog\Model\Product $product */
+if (! ($product = $block->getData('product'))) {
+    return;
+}
+
+$imageDisplayArea = $block->getData('image_display_area');
+$templateType = $block->getData('template_type');
+$viewMode = $block->getData('view_mode');
+$showDescription = $block->getData('show_description');
+$showAddToWishlist = $wishlistViewModel->isEnabled();
+$showAddToCompare = $compareViewModel->showInProductList();
+$viewIsGrid = $viewMode === 'grid';
+$productType = $product->getTypeId();
+$isProductGroupedOrBundle = $productType === 'bundle' || $productType === "grouped";
+$productId = $product->getId();
+$options   = $productOptionsViewmodel->getOptionsData($product);
+
+$hideDetails       = $block->getData('hide_details') ?: false;
+$hideRatingSummary = $block->getData('hide_rating_summary') ?: false;
+
+$uniqueId = '_' . uniqid();
+
+$imageCustomAttributes = $product->getData('image_custom_attributes')
+    ?? $block->getData('image_custom_attributes')
+    ?? [];
+$productName = $catalogOutputHelper->productAttribute($product, $product->getName(), 'name');
+
+// Ensure the required JS is rendered on the page
+$viewModels->require(BlockJsDependencies::class)->setBlockTemplateDependency($block, 'Magento_Catalog::product/list/js/price-box.phtml');
+$categoryIds = $product->getCategoryIds(); // Returns an array of category IDs
+if (!empty($categoryIds)) {
+    $categoryId = reset($categoryIds);
+    $categoryName = $categoryDataViewModel->getCategoryNameById((int)$categoryId);
+}
+$isInStock = $productStockViewModel->isProductInStock((int)$productId);
+$isPreOder = $moduleViewModel->getIsPreOrder($product);
+$availabilityMess = $preOrderHelper->getAvailabilityMessage($product);
+?>
+
+<?php if ($product->isSaleable()): ?>
+<form method="post"
+    action="<?= $escaper->escapeUrl($productViewModel->getAddToCartUrl($product, ['useUencPlaceholder' => true])) ?>"
+    class="item product product-item product_addtocart_form product-card flex flex-col w-full <?= $viewIsGrid ? '' : 'md:flex-row' ?>"
+    <?php if ($product->getOptions()): ?>
+    enctype="multipart/form-data"
+    <?php endif; ?>
+    x-data="getConfigInCategory()" @configurable-selection-changed<?= $product->getId() ?>.window="showInput = checkIsMix($event.detail.productIndex)"
+>
+    <?= /** @noEscape */ $block->getBlockHtml('formkey') ?>
+    <template x-if="showInput">
+        <input type="hidden" name="is_preorder" value="1">
+    </template>
+    <input type="hidden" name="product" value="<?= (int)$productId ?>"/>
+    <?php foreach ($options as $optionItem): ?>
+    <input type="hidden"
+           name="<?= $escaper->escapeHtml($optionItem['name']) ?>"
+           value="<?= $escaper->escapeHtml($optionItem['value']) ?>">
+    <?php endforeach; ?>
+    <?php else: ?>
+<div class="item product product-item product-card flex flex-col w-full <?= $viewIsGrid ? '' : 'md:flex-row' ?>">
+<?php endif; ?>
+    <script>
+        function initPriceBox_<?= /** @noEscape */ $uniqueId ?>() {
+            return {
+                updatePrice(priceData) {
+                    const regularPriceLabel = this.$el.querySelector('.normal-price .price-label');
+                    const regularPriceElement = this.$el.querySelector('.normal-price .price-wrapper .price');
+
+                    if (priceData.finalPrice.amount < priceData.oldPrice.amount) {
+                        regularPriceLabel?.classList.add('hidden');
+                    } else {
+                        regularPriceLabel?.classList.remove('hidden');
+                    }
+                    regularPriceElement.innerText = hyva.formatPrice(priceData.finalPrice.amount);
+                },
+                moveOldPrice() {
+                    const oldPriceElement = this.$el.querySelector('.old-price');
+                    const specialPriceElement = this.$el.querySelector('.special-price');
+
+                    if (specialPriceElement && oldPriceElement) {
+                        specialPriceElement.appendChild(oldPriceElement);
+                    }
+                }
+            };
+        }
+    </script>
+    <?php /* Product Image */ ?>
+    <div class="product-image-section <?= $viewIsGrid ? '' : 'block mb-3 md:w-2/6 md:mb-0 md:mr-5 md:shrink-0' ?>">
+        <div class="wishlist flex flex-wrap gap-2">
+            <?php if ($showAddToWishlist): ?>
+            <button x-data="initWishlist()"
+                    x-defer="intersect"
+                    @click.prevent="addToWishlist(<?= (int)$productId ?>)"
+                    aria-label="<?= $escaper->escapeHtmlAttr(__('Add to Wish List') . ' ' . $productName) ?>"
+                    type="button"
+                    class="text-black-brand"
+                    data-addto="wishlist"
+            >
+                <?= $heroiconsSolid->heartHtml("w-4 h-4", 16, 16, ['aria-hidden' => 'true']) ?>
+            </button>
+            <?php endif; ?>
+            <?php if ($addToBlock = $block->getChildBlock('addto')): ?>
+                <?= $addToBlock->setProduct($product)->getChildHtml() ?>
+            <?php endif; ?>
+        </div>
+        <div class="image">
+            <a href="<?= $escaper->escapeUrl($product->getProductUrl()) ?>"
+                title="<?= $escaper->escapeHtmlAttr($product->getName()) ?>"
+                class="product photo product-item-photo block mx-auto mb-3"
+                tabindex="-1"
+            >
+                <?= $block->getImage($product, $imageDisplayArea)
+                    ->setTemplate('Magento_Catalog::product/list/image.phtml')
+                    ->setData('custom_attributes', $imageCustomAttributes)
+                    ->setProductId($productId)
+                    ->toHtml(); ?>
+            </a>
+        </div>
+        <div class="card-actions <?= $viewIsGrid ? '' : 'md:justify-center' ?>">
+            <?php if ($product->isSaleable()): ?>
+                <?php if ($isProductGroupedOrBundle): ?>
+                    <a
+                        href="<?= $escaper->escapeUrl($product->getProductUrl()) ?>"
+                        class="w-auto btn btn-primary justify-center text-sm <?= $viewIsGrid ? 'mr-auto' : 'mr-auto md:mr-0' ?>"
+                        title="<?= $escaper->escapeHtmlAttr(__('Configure %1 on the product page')) ?>"
+                        aria-label="<?= $escaper->escapeHtmlAttr(__('Configure %1 on the product page', $productName)) ?>"
+                    >
+                        <?= $heroicons->pencilAltHtml('', 24, 24, ['aria-hidden' => 'true']) ?>
+                        <span class="ml-2 inline <?= $viewIsGrid ? 'md:ml-0 md:hidden lg:ml-2 lg:inline' : '' ?>">
+                            <?= $escaper->escapeHtml(__('Configure')) ?>
+                        </span>
+                    </a>
+                <?php else: ?>
+                    <?php
+                        if ($product->getTypeId() === 'configurable') {
+                            $simpleIndex = $moduleViewModel->getSimpleIndexConfigurable($product);
+                    ?>
+                        <script>
+                            function productATC_<?=$product->getId()?>() {
+                                return {
+                                    childProductsId: <?= $baseViewModel->serialize($simpleIndex) ?>,
+                                    productChildPreOder: <?= $baseViewModel->serialize($simpleIndex) ?>,
+                                    show: false,
+                                    preOder(superAtt, productIndex, addtoCartButton) {
+                                        let mess = document.querySelector('.mess-preorder-<?=$product->getId()?>');
+                                        if (superAtt.length >= 1 && Object.keys(this.productChildPreOder).includes(productIndex)) {
+                                            addtoCartButton.textContent = this.productChildPreOder[productIndex]['button'];
+                                            this.show = true;
+                                            mess.textContent = this.productChildPreOder[productIndex]['mess'];
+                                            mess.classList.remove("hidden");
+                                        } else {
+                                            this.show = false;
+                                            mess.classList.add("hidden");
+                                        }
+                                    }
+                                }
+                            }
+                        </script>
+                        <button x-data="productATC_<?= $product->getId() ?>()"
+                                @configurable-selection-changed<?= $product->getId() ?>.window="preOder(Object.keys($event.detail.selectedValues),$event.detail.productIndex,$refs.addtoCart_<?= $product->getId() ?>)"
+                                class="w-auto btn btn-primary justify-center text-sm
+                                <?= $viewIsGrid ? 'mr-auto' : 'mr-auto md:mr-0' ?>"
+                                aria-label="<?= $escaper->escapeHtmlAttr(__('Add to Cart')) ?>"
+                        >
+                            <?= $hyvaicons->minicartHtml('', 24, 24, ['aria-hidden' => 'true']) ?>
+                            <span x-show="!show"
+                                class="ml-2 inline add-to-cart-text <?= $viewIsGrid ? 'md:ml-0 md:hidden lg:ml-2 lg:inline' : '' ?>">
+                                <?= $escaper->escapeHtml(__('Add to Cart')) ?>
+                            </span>
+                            <span x-show="show" x-ref="addtoCart_<?= $product->getId() ?>"
+                                class="ml-2 inline <?= $viewIsGrid ? 'md:ml-0 md:hidden lg:ml-2 lg:inline' : '' ?>">
+                                <?= $escaper->escapeHtml(__('Add to Cart')) ?>
+                            </span>
+                        </button>
+                    <?php } else { ?>
+                    <?php
+                    if ($product->getTypeId() === 'simple' || $product->getTypeId() === 'grouped'){
+                        $isPreOder = $moduleViewModel->getIsPreOrder($product);
+                    ?>
+                        <button class="w-auto btn btn-primary justify-center text-sm
+                            <?= $viewIsGrid ? 'mr-auto' : 'mr-auto md:mr-0' ?>"
+                            aria-label="<?= $escaper->escapeHtmlAttr(__('Add to Cart')) ?>"
+                        >
+                            <?= $hyvaicons->minicartHtml('', 24, 24, ['aria-hidden' => 'true']) ?>
+                            <?php if ($isPreOder) : ?>
+                                <span class="ml-2 inline add-to-cart-text <?= $viewIsGrid ? 'md:ml-0 md:hidden lg:ml-2 lg:inline' : '' ?>">
+                                    <?= $escaper->escapeHtml($preOrderHelper->getButton()) ?>
+                                </span>
+                            <?php else: ?>
+                                <span class="ml-2 inline add-to-cart-text <?= $viewIsGrid ? 'md:ml-0 md:hidden lg:ml-2 lg:inline' : '' ?>">
+                                    <?= $escaper->escapeHtml(__('Add to Cart')) ?>
+                                </span>
+                            <?php endif; ?>
+                        </button>
+                    <?php } else { ?>
+                        <button class="w-auto btn btn-primary justify-center text-sm
+                                <?= $viewIsGrid ? 'mr-auto' : 'mr-auto md:mr-0' ?>"
+                                aria-label="<?= $escaper->escapeHtmlAttr(__('Add to Cart')) ?>"
+                        >
+                            <?= $hyvaicons->minicartHtml('', 24, 24, ['aria-hidden' => 'true']) ?>
+                            <span class="ml-2 inline <?= $viewIsGrid ? 'md:ml-0 md:hidden lg:ml-2 lg:inline' : '' ?>">
+                                <?= $escaper->escapeHtml(__('Add to Cart')) ?>
+                            </span>
+                        </button>
+                    <?php } ?>
+                    <?php } ?>
+                <?php endif;  ?>
+            <?php endif;  ?>
+
+            <?= $block->getChildHtml('product.info.actions.after') ?>
+        </div>
+    </div>
+    
+    <div class="product-info flex flex-col grow">
+        <div class="stock-status-section">
+            <?php if($isInStock): ?>
+                <span class="stock-status in-stock"> <?= $escaper->escapeHtml(__('In Stock')) ?></span>
+            <?php elseif($isPreOder): ?>
+                <?php if($availabilityMess):?>
+                    <span class="stock-status pre-order text-blue-700"> <?= $escaper->escapeHtml($availabilityMess) ?></span>
+                <?php else:?>
+                    <span class="stock-status pre-order text-blue-700"> <?= $escaper->escapeHtml(__('Available in 2 to 3 weeks')) ?></span>
+                <?php endif; ?>
+            <?php else: ?>
+                <span class="stock-status out-of-stock"> <?= $escaper->escapeHtml(__('Out Of Stock')) ?></span>
+            <?php endif; ?>
+        </div>
+        <div class="category-name"> <?= htmlspecialchars($categoryName); ?> </div>
+        <div class="">
+            <a
+                class="product-item-link text-black-brand text-sm font-medium my-2 leading-[1.4] block"
+                href="<?= $escaper->escapeUrl($product->getProductUrl()) ?>"
+                :id="`slide-desc-<?= $escaper->escapeHtmlAttr($product->getId()) ?>-${$id('slider-id')}`"
+            >
+                <?= /* @noEscape */ $productName ?>
+            </a>
+        </div>
+
+        <?php if (!$hideRatingSummary): ?>
+        <div class="py-1 <?= $viewIsGrid ? '' : 'md:mx-0 md:w-auto' ?>">
+            <?= $block->getReviewsSummaryHtml($product, 'short') ?>
+        </div>
+        <?php endif; ?>
+
+        <?php if ($product->isAvailable() && !$hideDetails): ?>
+            <?= $block->getProductDetailsHtml($product) ?>
+        <?php endif; ?>
+
+        <?php if ($showDescription): ?>
+        <div class="mt-2 mb-1 items-center justify-center text-primary text-center <?= $viewIsGrid ? '' : 'md:text-left' ?>">
+            <?= /* @noEscape */ $productViewModel->getShortDescriptionForProduct($product) ?>
+        </div>
+        <?php endif; ?>
+
+        <?php if ($isProductGroupedOrBundle): ?>
+            <span class="sr-only">
+                <?= $escaper->escapeHtml(__('The price depends on the options chosen on the product page')) ?>
+            </span>
+        <?php endif; ?>
+
+        <?= $block->getChildHtml('product.info.prices.before') ?>
+        <div class=""
+            x-data="initPriceBox_<?= /** @noEscape */ $uniqueId ?>()"
+            x-init="moveOldPrice();"
+            @update-prices-<?= (int)$productId ?>.window="updatePrice($event.detail);"
+        >
+            <?= /* @noEscape */
+            $productListItemViewModel->getProductPriceHtml($product) ?>
+        </div>
+        <?= $block->getChildHtml('product.info.prices.after') ?>
+        <?php if ($preOrderHelper->isEnable()) : ?>
+            <?php if ($product->getTypeId() === 'grouped'): ?>
+                <?php
+                    $isPreOder = $moduleViewModel->getIsPreOrder($product);
+                ?>
+                <span class="mess-preorder text-sm text-neutral-600 <?= $isPreOder ? '' : 'hidden' ?>"><?= $preOrderHelper->getAvailabilityMessageByPid($productId) ?></span>
+            <input type="hidden" name="is_preorder_group_<?= $productId ?>" value="1">
+            <?php else : ?>
+                <script>
+                    <?php
+                    $message = $preOrderHelper->getAvailabilityMessageByPid($productId);
+                    $button = $preOrderHelper->getButton();
+                    ?>
+                    function preOderSimple() {
+                        return {
+                            <?php if ($block->getProduct()->getExtensionAttributes()->getStockItem()) : ?>
+                            stock_status: "<?= (int)$block->getProduct()->getExtensionAttributes()->getStockItem()->getIsInStock(); ?>",
+                            <?php endif; ?>
+                            buttonText: "<?= $button; ?>",
+                            init() {
+                                let buttonATC = this.$el.parentNode.parentNode.querySelector('.action.tocart');
+                                if (buttonATC) {
+                                    buttonATC.textContent = this.buttonText;
+                                }
+                            }
+                        }
+                    }
+                </script>
+                <div x-data="preOderSimple()" class="bss-pre-order">
+                    <span class="mess-preorder-<?= $productId ?>"></span>
+                </div>
+            <?php endif; ?>
+        <?php endif; ?>
+        <?= $block->getChildHtml('product.info.actions.before') ?>
+
+
+
+    </div>
+<?php if ($product->isSaleable()): ?>
+</form>
+<?php else: ?>
+</div>
+<?php endif; ?>
+<script>
+    function getConfigInCategory() {
+        return {
+            allProductChild: <?php echo json_encode($product->getTypeId() === 'configurable' ? $moduleViewModel->getAllProductChild() : []); ?>,
+            isMix: <?php echo $moduleViewModel->getIsMix() ? 'true' : 'false' ?> ,
+            showInput: false,
+            checkIsMix(productId) {
+                for(let childProduct of this.allProductChild)
+                {
+                    for (const [key, val] of Object.entries(childProduct.child)) {
+                        if(val.productId === productId && val.stock_status === false && this.isMix === false) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+</script>

@@ -1,0 +1,121 @@
+<?php
+
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_Shopbybrand
+ * @copyright   Copyright (c) Mageplaza (https://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+
+use Magento\Swatches\Model\Swatch;
+
+?>
+<?php /** @var \Mageplaza\Shopbybrand\Block\Brand\View $block */
+$brandName = $block->getBrand()->getValue(); ?>
+<div class="brand-information mb-10">
+    <div class="brand-detail">
+        <?php if ($image = $block->getBrandImage()) : ?>
+            <div class="brand-image-container">
+                <?php if ($block->getBrand()->getSwatchType() == Swatch::SWATCH_TYPE_VISUAL_COLOR): ?>
+                    <img class="brand-image-photo"
+                        style="background-color: <?=
+                                                    /** @noEscape */
+                                                    $block->getBrand()->getSwatchValue() ?>">
+                <?php else: ?>
+                    <img class="brand-image-photo"
+                        src="<?=
+                                /** @noEscape */
+                                $block->getBrandImage() ?>"
+                        alt="<?= $escaper->escapeHtml($brandName) ?>" title="<?= $escaper->escapeHtml($brandName) ?>">
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
+        <?php if ($description = $block->getBrandDescription()) : ?>
+            <div
+                x-data="{ 
+                    expanded: false, 
+                    height: 0, 
+                    minHeight: 450,
+                    isVisible: false, 
+                    showButton: false 
+                }"
+                x-init="
+                    $nextTick(() => {
+                        const observer = new IntersectionObserver((entries) => {
+                            entries.forEach(entry => {
+                                if (entry.isIntersecting) {
+                                    isVisible = true;
+                                    height = Math.max($refs.content.scrollHeight * 0.15, minHeight);
+                                    showButton = $refs.content.scrollHeight > minHeight;
+                                    if (!showButton) {
+                                        expanded = true;
+                                    }
+                                    observer.disconnect();
+                                }
+                            });
+                        });
+                        observer.observe($el);
+                    });
+                "
+                class="brand-description block-container">
+                <div class="brand-description description-content-wrapper bg-[#F5F5F5] rounded-xl p-8">
+                    <div class="brand description-content relative">
+                        <div
+                            x-ref="content"
+                            x-bind:style="`max-height: ${expanded ? $refs.content.scrollHeight + 'px' : height + 'px'}; overflow: hidden; transition: max-height 0.3s ease;`"
+                            class="markdown">
+                            <?= $description = preg_replace(
+                                '/<h1>(.*?)<\/h1>/i', // Match <h1>...</h1>
+                                '<h2 class="text-3xl font-bold">$1</h2>', // Replace with <h2> and add the class
+                                $description ?? ""
+                            ) ?>
+                        </div>
+                    </div>
+                    <template x-if="showButton">
+                        <button
+                            :aria-expanded="expanded"
+                            @click="expanded = !expanded"
+                            class="block font-semibold w-fit bg-[#F5F5F5] text-primary hover:text-primary-darker rounded-md mx-auto mt-4 px-5 py-2"
+                            x-show="isVisible">
+                            <span x-text="expanded ? 'Read Less' : 'Read more'"><?= $escaper->escapeHtml('Read more') ?></span>
+                            <span x-text="expanded ? '↑' : '↓'"><?= $escaper->escapeHtml('↓') ?></span>
+                        </button>
+                    </template>
+                </div>
+            </div>
+        <?php endif; ?>
+    </div>
+    <?php if ($blockHtml = $block->getStaticContent()) : ?>
+        <div class="brand-cms-container">
+            <div class="brand-static-block">
+                <?=
+                /** @noEscape */
+                $blockHtml ?>
+            </div>
+        </div>
+    <?php endif; ?>
+</div>
+
+<style type="text/css">
+    .brand-information .brand-detail .brand-image-photo {
+        width: <?=
+                /** @noEscape */
+                $block->getLogoWidth() . 'px' ?>;
+        height: <?=
+                /** @noEscape */
+                $block->getLogoHeight() . 'px' ?>
+    }
+</style>

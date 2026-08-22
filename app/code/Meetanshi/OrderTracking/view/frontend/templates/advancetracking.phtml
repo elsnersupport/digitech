@@ -1,0 +1,77 @@
+<style type="text/css">
+    .info{
+        margin: 0px;
+    }
+</style>
+<?php if ($block->getHelper()->isEnabledExtension()): ?>
+    <form name="order_tracking" id="order_tracking" class="form form-orders-search" action="" method="post"
+          onsubmit="sendRequest('order_tracking', '<?=
+            $block->getUrl('ordertracking/ordertracking/track')?>'); return false;">
+        <?= $block->getBlockHtml('formkey') ?>
+        <fieldset class="fieldset create info">
+            <legend class="legend"><span>Order Information</span></legend>
+            <div class="field required">
+                <label for="order_id" class="label"><span><?= $block->escapeHtml(__('Order Id')) ?></span></label>
+                <div class="control">
+                    <input type="text" name="order_id" id="order_id" data-validate="{required:true}" value="" title=""
+                           class="input-text required-entry"/>
+                </div>
+            </div>
+            <div class="field required">
+                <label for="email_address" class="label"><?= $block->escapeHtml(__('Email Address')) ?></label>
+                <div class="control">
+                    <input type="email" name="email" id="email" data-validate="{required:true, 'validate-email':true}"
+                           value="" title="<?= $block->escapeHtml(__('Email Address')) ?>"
+                           class="input-text" aria-required="true"/>
+                </div>
+            </div>
+
+            <div class="buttons-set actions-toolbar">
+                <button type="submit" class="action submit primary" title="<?=
+                $block->escapeHtml(__('Track Order')) ?>" name="track"
+                        id="track">
+                    <span><?= $block->escapeHtml(__('Track Order')) ?></span>
+                </button>
+            </div>
+        </fieldset>
+    </form>
+    <div id="orderinfo" class="order-info-message"></div>
+<?php endif; ?>
+<script type="text/javascript">
+    require([
+        'jquery',
+        'mage/mage'
+    ], function ($) {
+
+        var dataForm = jQuery('#order_tracking');
+        var ignore = null;
+
+        dataForm.mage('validation', {
+            ignore: ignore ? ':hidden:not(' + ignore + ')' : ':hidden'
+        }).find('input:text').attr('autocomplete', 'off');
+        return false;
+    });
+</script>
+<script type="text/javascript">
+    function sendRequest(frmId, url) {
+        if (jQuery('#order_tracking').valid()) {
+
+            var data = jQuery('#' + frmId).serialize(this);
+            jQuery('body').loader('show');
+
+            jQuery.ajax({
+                url: url,
+                type: 'POST',
+                data: data,
+                showLoader: true,
+                success: function (request) {
+                    jQuery('#orderinfo').html(request);
+                }
+            });
+
+            jQuery('body').loader('hide');
+            return false;
+        }
+    }
+
+</script>

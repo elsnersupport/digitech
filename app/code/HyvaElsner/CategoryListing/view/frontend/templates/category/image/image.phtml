@@ -1,0 +1,45 @@
+<?php
+$category = $block->getCurrentCategory();
+$categoryImageUrl = $category->getImageUrl();
+$categoryName = $category->getName();
+$layout = $block->getLayout();
+if ($categoryImageUrl) {
+    $breadcrumbs = $layout->getBlock('breadcrumbs');
+    if ($breadcrumbs) {
+        $layout->unsetElement('breadcrumbs');
+        $breadcrumbs->setParentName('category.images')
+            ->setTemplate('Magento_Theme::html/listing-breadcrumbs.phtml');
+    }
+}
+?>
+
+<?php if ($categoryImageUrl): ?>
+    <div class="category-image relative">
+        <img src="<?= /** @noEscape  */ $categoryImageUrl; ?>" alt="<?= /** @noEscape  */ $categoryName; ?>" class="w-[100vw] h-64 object-cover">
+        <div class="title-wrapper title-ui-2 absolute inset-0 flex items-center justify-center">
+            <div class="title-inner text-center">
+                <h1 class="category-title page-title text-white"><?= /** @noEscape  */ $categoryName; ?></h1>
+                <?= $breadcrumbs->toHtml(); ?>
+            </div>
+        </div>
+    </div>
+<?php else: ?>
+    <div class="title-inner block-container flex flex-col md:flex-row flex-wrap font-bold text-3xl mb-0">
+        <h1 class="category-title text-gray-900 page-title title-font title-comp mb-0">
+            <span class="base">
+                <?= /** @noEscape  */ $categoryName; ?>
+            </span>
+        </h1>
+    </div>
+<?php endif; ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    <?php if ($categoryImageUrl): ?>
+        var topContainer = document.querySelector('.top-container');
+        if (topContainer) {
+            topContainer.classList.add('hidden');
+        }
+    <?php endif ; ?>
+});
+</script>

@@ -1,0 +1,89 @@
+Back,Back
+"Delete Messenger","Delete Messenger"
+"Are you sure you want to do this?","Are you sure you want to do this?"
+Save,Save
+"Save & Close","Save & Close"
+"Please update Amasty Base module. Re-upload it and replace all the files.","Please update Amasty Base module. Re-upload it and replace all the files."
+"We can't find messenger to delete.","We can't find messenger to delete."
+Content,Content
+Messengers,Messengers
+"Edit Messenger","Edit Messenger"
+"New Messenger","New Messenger"
+"A total of %1 record(s) have been deleted.","A total of %1 record(s) have been deleted."
+"No record(s) have been deleted.","No record(s) have been deleted."
+"A total of %1 record(s) have been updated.","A total of %1 record(s) have been updated."
+"No record(s) have been updated.","No record(s) have been updated."
+"You saved the messenger.","You saved the messenger."
+"Something went wrong while saving the messenger.","Something went wrong while saving the messenger."
+WhatsApp,WhatsApp
+"Facebook Messenger","Facebook Messenger"
+Snapchat,Snapchat
+Skype,Skype
+Discord,Discord
+Viber,Viber
+Telegram,Telegram
+Kik,Kik
+Line,Line
+WeChat,WeChat
+KakaoTalk,KakaoTalk
+Tango,Tango
+imo,imo
+Instagram,Instagram
+Twitter,Twitter
+QQ,QQ
+Threema,Threema
+Signal,Signal
+Wire,Wire
+Other,Other
+"All Store Views","All Store Views"
+"Bottom right","Bottom right"
+"Bottom left","Bottom left"
+"Middle right","Middle right"
+"Middle left","Middle left"
+"Top right","Top right"
+"Top left","Top left"
+"Please use images that have side ratio 1:1","Please use images that have side ratio 1:1"
+"Please use images that have minimal resolution of 120px x 120px.","Please use images that have minimal resolution of 120px x 120px."
+"Please use .png .jpg .svg images.","Please use .png .jpg .svg images."
+Inactive,Inactive
+Active,Active
+"Messenger with id %1 does not exists","Messenger with id %1 does not exists"
+"Problems with saving messenger","Problems with saving messenger"
+Edit,Edit
+"Browse to find or drag image here","Browse to find or drag image here"
+"Recommended SVG format, supports","Recommended SVG format, supports"
+formats,formats
+"Min size 120x120px","Min size 120x120px"
+"Privacy Policy","Privacy Policy"
+"I have read and accept","I have read and accept"
+Reject,Reject
+"Messenger Widget","Messenger Widget"
+Information,Information
+"Messenger Widget Enabled","Messenger Widget Enabled"
+Position,Position
+"Privacy Policy Enabled","Privacy Policy Enabled"
+"Policy Text","Policy Text"
+"Only 'a', 'b', 'br', 'em', 'i', 'li', 'ol', 'p', 'strong', 'sub', 'sup', 'ul' tags are allowed","Only 'a', 'b', 'br', 'em', 'i', 'li', 'ol', 'p', 'strong', 'sub', 'sup', 'ul' tags are allowed"
+"General Information","General Information"
+"Messenger Properties","Messenger Properties"
+"Is Active","Is Active"
+Messenger,Messenger
+"Messenger Name","Messenger Name"
+"Set a custom name for your messenger","Set a custom name for your messenger"
+"Messenger Icon","Messenger Icon"
+Link,Link
+"Set a link for customers to reach your messenger account. For more information please see User Guide.","Set a link for customers to reach your messenger account. For more information please see User Guide."
+"Store View","Store View"
+Comment,Comment
+"Add some information that will help you to manage this messenger","Add some information that will help you to manage this messenger"
+Tooltip,Tooltip
+"Set a tooltip for messenger icon","Set a tooltip for messenger icon"
+"Sort Order","Sort Order"
+"Add New Messenger","Add New Messenger"
+"Delete selected items?","Delete selected items?"
+"Delete items","Delete items"
+Delete,Delete
+"Change status","Change status"
+Icon,Icon
+Status,Status
+"Store Views","Store Views"

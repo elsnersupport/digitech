@@ -1,0 +1,215 @@
+<?php
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_Shopbybrand
+ * @copyright   Copyright (c) Mageplaza (https://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+
+/** @var \Mageplaza\Shopbybrand\Block\Brand\BrandList $block */
+
+use Magento\Swatches\Model\Swatch;
+use Mageplaza\Shopbybrand\Model\Config\Source\BrandListDisplay;
+
+$helper = $block->helper();
+if ($block->getRequest()->getParam('cat_id')) {
+    $brandCollection = $block->getCollection();
+} else {
+    $brandCollection = $block->getAllCollectionByChar();
+}
+$displayType = $helper->getBrandConfig('display');
+if (count($brandCollection)): ?>
+    <div class="brand-list-content">
+        <ol class="products list items product-items">
+            <?php foreach ($brandCollection as $brand): ?>
+                <?php if ($helper->isShowBrandsWithoutProducts()
+                    || (!$helper->isShowBrandsWithoutProducts() && $block->getProductQuantity($brand->getOptionId()) > 0)): ?>
+                <li class="item product product-item mix <?= /** @noEscape */ $block->getFilterClass($brand) ?> <?= /** @noEscape */ $block->getCatFilterClass($brand->getId()) ?>">
+                    <?php if ($displayType !== BrandListDisplay::DISPLAY_LABEL): ?>
+                        <div class="product-item-info" data-container="product-grid" style="width: 240px">
+                            <a title="<?= /** @noEscape */ $brand->getValue() ?>"
+                               href="<?= /** @noEscape */ $helper->getBrandUrl($brand) ?>"
+                               class="product photo product-item-photo"
+                               tabindex="-1">
+                                <span class="product-image-container" style="width:240px;">
+                                    <span class="product-image-wrapper" style="padding-bottom: 90%;">
+                                        <?php if ($brand->getSwatchType() == Swatch::SWATCH_TYPE_VISUAL_COLOR): ?>
+                                            <span class="product-image-photo" style="background-color: <?= /** @noEscape */ $brand->getSwatchValue() ?>"></span>
+                                        <?php else: ?>
+                                            <img class="product-image-photo"
+                                                 src="<?= /** @noEscape */ $helper->getBrandImageUrl($brand) ?>" alt="<?= /** @noEscape */ $brand->getValue() ?>">
+                                        <?php endif; ?>
+                                    </span>
+                                </span>
+                            </a>
+                            <div class="product details product-item-details">
+                                <div class="brand-info">
+                                    <?php if ($displayType !== BrandListDisplay::DISPLAY_LOGO): ?>
+                                        <strong class="product name product-item-name">
+                                            <a title="<?= /** @noEscape */ $brand->getValue() ?>" class="product-item-link"
+                                               href="<?= /** @noEscape */ $helper->getBrandUrl($brand) ?>">
+                                                <?= $block->showProductQty() ? /** @noEscape */ $brand->getValue() . ' (' . /** @noEscape */ $block->getProductQuantity($brand->getOptionId()) . ')' : /** @noEscape */ $brand->getValue() ?>
+                                            </a>
+                                        </strong>
+                                    <?php endif; ?>
+                                    <?php if ($block->showQuickView()): ?>
+                                        <div title="Quick View" class="changelog module-version quickview_popup">
+                                            <a class="fa fa-eye open_model"
+                                               id="<?= /** @noEscape */ $helper->getQuickview($brand) ?>"></a>
+                                        </div>
+                                    <?php endif; ?>
+                                    <?php if ($block->showDescription()): ?>
+                                        <div class="product description product-item-description">
+                                            <?= /** @noEscape */ $helper->getBrandDescription($brand, true) ?>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <div class="brand-name-type-label-only" data-container="product-grid">
+                            <strong class="product name product-item-name" style="margin: 0;">
+                                <a class="product-item-link" href="<?= /** @noEscape */ $helper->getBrandUrl($brand) ?>" style="float: left; padding-right: 10px;">
+                                    <?= $block->showProductQty() ? /** @noEscape */  $brand->getValue() . ' (' . /** @noEscape */ $block->getProductQuantity($brand->getOptionId()) . ')' : /** @noEscape */ $brand->getValue() ?>
+                                </a>
+                                <?php if ($block->showQuickView()): ?>
+                                    <div title="Quick View" class="changelog module-version quickview_popup">
+                                        <a class="fa fa-eye open_model"
+                                           id="<?= /** @noEscape */ $helper->getQuickview($brand) ?>"></a>
+                                    </div>
+                                <?php endif; ?>
+                            </strong>
+                            <?php if ($block->showDescription()): ?>
+                                <div class="product description product-item-description">
+                                    <?= /** @noEscape */ $helper->getBrandDescription($brand, true) ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
+                </li>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </ol>
+        <?php if ($block->isEnablePagination() && $block->getPagerHtml()): ?>
+            <div class="pagination-container toolbar bottom">
+                <?php $block->_prepareLayout($brandCollection) ?>
+                <?= $block->getPagerHtml() ?>
+            </div>
+            <style type="text/css">
+                .pagination-container {
+                    width: 100%;
+                    float: right;
+                    text-align: center;
+                }
+                .pagination-container .toolbar-amount {
+                    width: 100%;
+                    text-align: center;
+                }
+                .pages strong.page {
+                    border: 1px solid #006bb4;
+                    border-radius: 3px;
+                    color: #006bb4;
+                    background: none;
+                    line-height: 2rem;
+                    padding: 0 8px 0 7px;
+                }
+                .pages .item {
+                    margin: 0 !important;
+                    font-size: 1.5rem !important;
+                    color: #000;
+                    width: 35px !important;
+                }
+                .pages a.page {
+                    color: #000 !important;
+                    line-height: 2rem !important;
+                    padding: 0 7px 0 6px !important;
+                }
+                .pages a.page:hover {
+                    border: 1px solid #000;
+                    border-radius: 3px;
+                }
+                .pages .action {
+                    background: none !important;
+                    border: none;
+                    box-shadow: none;
+                    margin: 0;
+                    padding: 0 6px 0 4px;
+                    line-height: 2rem;
+                }
+                .pages .action:before {
+                    font-size: 13px !important;
+                    color: #000 !important;
+                }
+                .pages a.action:hover {
+                    border: 1px solid #000 !important;
+                    border-radius: 3px !important;
+                }
+                .toolbar-amount .toolbar-number {
+                    display: block !important;
+                }
+                .pagination-container .pages a.page {
+                    padding: 4px 9px 0 9px !important;
+                }
+                .pagination-container .limiter {
+                    display: none !important;
+                }
+                .brand-list-content ol {
+                    box-shadow: none;
+                }
+                .pagination-container .pages-item-previous a,  .pagination-container .pages-item-next a  {
+                    border: none;
+                    background-color: transparent;
+                    padding: 0.5rem 0.15rem !important;
+                }
+                .pagination-container > div {
+                    margin-top: 10px;
+                }
+            </style>
+        <?php endif ?>
+    </div>
+<?php else: ?>
+    <?= /** @noEscape */ __('There is no brand available.') ?>
+<?php endif; ?>
+
+<script>
+    document.addEventListener("DOMContentLoaded", (event) => {
+        let toolbarNumber = document.querySelector('.toolbar-number');
+        if(toolbarNumber) {
+            toolbarNumber.classList.add('text-gray-700','text-sm');
+            let containerPagination = document.querySelector('.pagination-container.toolbar');
+            containerPagination.prepend(toolbarNumber);
+        }
+        function handlePaginationClick(event) {
+            event.preventDefault();
+            let configSeo = '<?php echo /** @noEscape */ $block->getConfigSeo(); ?>';
+            var link = event.currentTarget;
+            var href = link.getAttribute('href');
+            var metaTag = document.querySelector('meta[name="robots"]');
+            window.location.href = href;
+            if (configSeo !== '0' && metaTag) {
+                if (href.indexOf('p=') !== -1) {
+                    metaTag.setAttribute('content', 'NOINDEX,NOFOLLOW');
+                } else {
+                    metaTag.setAttribute('content', 'INDEX,FOLLOW');
+                }
+            }
+        }
+
+        document.querySelectorAll('.pagination-container .item a').forEach(function(link) {
+            link.addEventListener('click', handlePaginationClick);
+        });
+    });
+</script>

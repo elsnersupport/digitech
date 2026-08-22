@@ -1,0 +1,24 @@
+<?php if ($block->getHelper()->isEnabledExtension() && $block->getHelper()->displayTopMenu()) : ?>
+    <div id="ordertracking_container" x-data="orderTrackingMenu">
+        <li id="ordertracking-menu" class="level0 nav-2 level-top" role="presentation">
+            <a href="<?= $escaper->escapeHtmlAttr($block->getUrl('ordertracking')) ?>"
+               class="level-top" role="menuitem" tabindex="-1">
+                <span><?= $escaper->escapeHtml(__('Track Your Order')) ?></span>
+            </a>
+        </li>
+    </div>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('orderTrackingMenu', () => ({
+                init() {
+                    const menu = document.querySelector('.navigation ul');
+                    if (menu) {
+                        const orderTrackingMenu = document.querySelector('#ordertracking_container').innerHTML;
+                        menu.innerHTML += orderTrackingMenu;
+                    }
+                }
+            }));
+        });
+    </script>
+<?php endif; ?>

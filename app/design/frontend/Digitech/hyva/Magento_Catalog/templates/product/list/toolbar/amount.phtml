@@ -1,0 +1,46 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\LocaleFormatter;
+use Magento\Catalog\Block\Product\ProductList\Toolbar;
+use Magento\Framework\Escaper;
+
+/** @var Toolbar $block */
+/** @var Escaper $escaper */
+/** @var LocaleFormatter $localeFormatter */
+?>
+<p class="toolbar-amount text-sm text-black m-0 order-3 gap-x-1 text-right" id="toolbar-amount">
+    <?php if ($block->getLastPageNum() > 1): ?>
+        <?= $escaper->escapeHtml(
+            __(
+                'Showing %1 of %2 Products',
+                '<span class="toolbar-number font-semibold">' . $localeFormatter->formatNumber($block->getLastNum()) . '</span>',
+                '<span class="toolbar-number font-semibold">' . $localeFormatter->formatNumber($block->getTotalNum()) . '</span>'
+            ),
+            ['span']
+        ) ?>
+    <?php elseif ($block->getTotalNum() == 1): ?>
+        <?= $escaper->escapeHtml(
+            __(
+                '%1 Showing',
+                '<span class="toolbar-number">' . $localeFormatter->formatNumber($block->getTotalNum()) . '</span>'
+            ),
+            ['span']
+        ) ?>
+    <?php else: ?>
+        <?= $escaper->escapeHtml(
+            __(
+                '%1 Showing',
+                '<span class="toolbar-number">' . $localeFormatter->formatNumber($block->getTotalNum()) . '</span>'
+            ),
+            ['span']
+        ) ?>
+    <?php endif; ?>
+</p>

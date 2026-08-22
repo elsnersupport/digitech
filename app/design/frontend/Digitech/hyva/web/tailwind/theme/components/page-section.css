@@ -1,0 +1,291 @@
+
+.section-home-banner {
+    .first-banner{
+        @apply bg-no-repeat bg-cover bg-center rounded-lg overflow-hidden;
+        .h1 + div {
+            @apply text-[20px] mb-16 max-xl:text-[18px] max-xl:mb-[3rem] leading-none;
+        }
+        .starts-from{
+            @apply text-[18px] mb-8 max-xl:text-[16px] max-xl:mb-[3rem] leading-none;
+        }
+
+        .btn {
+            font-size: 16px;
+            padding: 8px 20px;
+        }
+    }
+    .second-banner, 
+    .third-banner {
+        .btn {
+            font-size: 14px;
+            padding: 8px 12px;
+        }
+    }
+    .right-section {
+        .h3{
+            @apply text-[18px] mb-4 leading-[1.33] block max-xl:mb-3;
+        }
+        .starts-from{
+            @apply text-base mb-5 max-xl:text-base max-xl:mb-[1.5rem];
+        }
+        .text {
+            @apply w-[60%] max-xl:w-[70%];
+        }
+        .image {
+            @apply absolute left-auto right-4;
+        }
+    }
+}
+
+.feature-container{
+    .column {
+        @apply relative;
+        &:not(:last-child):after {
+            @apply content-[""] w-px h-full absolute left-auto -right-10 top-0 bg-gray-light max-xl:-right-[22px];
+        }
+        p {
+            @apply mb-0;
+        }
+    }
+}
+
+.card-banner {
+    @apply rounded-lg overflow-hidden relative px-11 py-10 max-sm:px-[22px] max-sm:py-[20px];
+    
+    > div {
+        @apply z-[2] relative;
+        img {
+            @apply max-sm:max-h-[130px] w-auto;
+        }
+    }
+}
+
+.pattern-black,
+.pattern-orange,
+.pattern-blue {
+    @apply relative z-[1];
+    &:after {
+        @apply content-[""] absolute z-[-1] bg-black-pattern2 bg-no-repeat bg-cover top-0 left-0 w-full h-full;
+    }
+}
+
+.pattern-orange {
+    &:after {
+        @apply bg-orange-pattern2;
+    }
+}
+
+.pattern-blue {
+    &:after {
+        @apply bg-blue-pattern2;
+    }
+}
+
+.bg-bleed-full {
+    @apply w-screen ml-[calc(-100vw_/_2_+_100%_/_2)] mr-[calc(-100vw_/_2_+_100%_/_2)] max-w-[100vw] overflow-hidden left-0 relative;
+    > div {
+        @apply mx-auto px-[15px] relative;
+    }
+}
+
+.post-list{
+    .post-image {
+        @apply relative overflow-hidden pb-[67%] rounded-lg;
+        img {
+            @apply w-full absolute w-full h-full object-cover left-0 top-0;
+        }
+    }
+}
+
+
+
+  
+.section-discount {
+    @apply mb-[25px];
+    p {
+        @apply mb-0;
+    }
+}
+
+.monthly-bestseller-wrapper{
+    .prod-image {
+        @apply max-w-[170px] pt-[60px] max-sm:pt-9;
+    }
+    .slider-nav{
+        @apply max-sm:top-[-68px];
+        button svg {
+            @apply max-sm:w-5 max-sm:h-5;
+        }
+    }
+}
+
+.wizzy-search-wrapper
+  .wizzy-search-results-container
+  .wizzy-search-results
+  .wizzy-search-results-list
+  .wizzy-result-product
+  .result-product-item-image
+  > img {
+  @apply absolute w-full h-full object-contain left-0 top-0;
+}
+.wizzy-search-wrapper
+  .wizzy-search-results-container
+  .wizzy-search-results
+  .wizzy-search-results-list
+  .wizzy-result-product
+  .result-product-item-image {
+  @apply relative pb-[100%];
+}
+
+
+@screen max-md {
+    
+    .post-list-wrapper.blog-widget-recent{
+        .post-holder {
+            flex-shrink: 0;
+            width: 296px;
+        }
+    }
+    .section-home-banner{
+        .left-section,
+        .right-section{
+            @apply w-full;
+        }
+        .right-section{
+            @apply flex;
+            > div {
+                @apply w-1/2 relative;
+            }
+            .text {
+                @apply pl-0;
+            }
+        }
+    }
+    .feature-container {
+        > div {
+            @apply flex-nowrap overflow-x-auto;
+        }
+        .column {
+            @apply shrink-0 min-w-[190px] px-3 py-0;
+            &:not(:last-child):after {
+                @apply right-0;
+            }
+        }
+    }
+
+    .homepage-section-3{
+        .banners{
+            @apply flex flex-wrap;
+            .card-banner{
+                @apply w-full;
+            }
+        }
+    }
+
+    .monthly-bestseller-wrapper{
+        .block-container > div {
+            .monthly-bestseller-slider{
+                @apply mt-10;
+            } 
+            > div {
+                @apply w-full;
+            }
+        }
+        .prod-image {
+            @apply pt-[80px];
+        }
+    }
+
+    div.section-image-content{
+        @apply flex-col;
+        .col-image,
+        .col-content {
+            @apply w-full;
+        }
+    }
+
+    
+
+    
+}
+
+@screen max-sm {
+    .first-banner .small-text {
+        @apply text-lg leading-none;
+      }
+      .first-banner h2.sku-code {
+        @apply text-2xl mb-3.5 leading-none;
+      }
+
+    .section-home-banner{
+        .first-banner {
+            @apply min-h-[244px];
+            .h1 + div {
+                @apply text-sm mb-5;
+            }
+            .starts-from {
+                @apply text-sm mb-5;
+            }
+            .image {
+                @apply w-[42%];
+            }
+            .text {
+                @apply w-[56%] m-0 p-0;
+            }
+        }
+        .btn {
+            @apply !text-black-brand text-[10px] [padding:10px_12px] bg-white leading-none;
+            &.btn-black {
+                @apply bg-black-brand !text-white;
+            }
+        }
+
+        .right-section {
+            @apply flex-col;
+            > div {
+                @apply w-full min-h-[198px];
+            }
+            .starts-from {
+                @apply text-sm;
+            }
+        }
+    }
+
+    .feature-container {
+        .column {
+            @apply p-0 min-w-[150px];
+            &:not(:last-child):after {
+                @apply hidden;
+            }
+            .icon {
+                @apply max-w-8;
+            }
+            p{
+                @apply text-xs;
+            }
+        }
+    }
+
+    .section-image-content{
+        h2 {
+            @apply text-base;
+        }
+    }
+    .post-list-wrapper.blog-widget-recent {
+        .post-holder {
+            @apply w-[296px];
+        }
+    }
+
+    .post-list{
+        @apply grid-cols-1;
+    }
+   
+    
+}
+
+@media screen and (max-width:1300px) {
+    .bg-bleed-full>div {
+        @apply px-[40px]
+    }
+}

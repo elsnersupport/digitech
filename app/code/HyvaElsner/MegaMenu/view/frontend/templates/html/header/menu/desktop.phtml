@@ -1,0 +1,222 @@
+<?php
+
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsSolid;
+use Hyva\Theme\ViewModel\Navigation;
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\Escaper;
+use HyvaElsner\MegaMenu\ViewModel\Menu;
+use Hyva\Theme\ViewModel\ProductListItem;
+use HyvaElsner\MegaMenu\ViewModel\MegaMenu as DynamicLinks;
+use Mageplaza\Shopbybrand\Block\Link\CategoryMenu;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var Navigation $viewModelNavigation */
+$viewModelNavigation = $viewModels->require(Navigation::class, $block);
+
+/** @var ProductListItem $productListItemViewModel */
+$productListItemViewModel = $viewModels->require(ProductListItem::class);
+
+/** @var HeroiconsSolid $heroiconsSolid */
+$heroiconsSolid = $viewModels->require(HeroiconsSolid::class);
+
+/** @var Menu $megaMenu */
+$megaMenuViewModel = $viewModels->require(Menu::class);
+$baseUrl = $megaMenuViewModel->getCategoryMediaUrl();
+
+$uniqueId = '_' . uniqid();
+
+$menuItems = $megaMenuViewModel->getNavigation(4);
+$block->setData('cache_tags', $viewModelNavigation->getIdentities());
+
+/** @var DynamicLinks $dynamicLinks */
+$dynamicLinks = $viewModels->require(DynamicLinks::class);
+$menuData = $dynamicLinks->getMenuData();
+?>
+<script>
+    'use strict';
+    const MegaMenu<?= $escaper->escapeHtml($uniqueId) ?> = () => ({
+        menuData: <?= json_encode(/* @noEscape */$menuData) ?>,
+    })
+</script>
+
+<div x-data="{...initMenuDesktop<?= $escaper->escapeHtml($uniqueId) ?>(),...MegaMenu<?= $escaper->escapeHtml($uniqueId) ?>()}"
+    class="z-20 navigation hidden lg:flex lg:justify-center border-b border-t border-[#D4D4D4] relative">
+    <!-- desktop -->
+    <div x-ref="nav-desktop"
+        @load.window="setActiveMenu($root)"
+        class="hidden lg:block block-container">
+        <nav
+            class=""
+            aria-label="<?= $escaper->escapeHtmlAttr(__('Main menu')) ?>">
+            <ul class="flex justify-between flex-wrap gap-x-2">
+                <?php foreach ($menuItems as $index => $menuItem): ?>
+                    <li class="relative level-0 border-b-2 border-transparent hover:border-primary data-[active]:border-primary <?= isset($menuItem['show_in_desktop_menu']) && $menuItem['show_in_desktop_menu'] ? 'mega-menu' : '' ?>"
+                        @mouseenter="hoverPanelActiveId = '<?= /* @noEscape */ (string) $index ?>'"
+                        @mouseleave="hoverPanelActiveId = 0"
+                        @keyup.escape="hoverPanelActiveId = 0">
+                        <span class="flex items-center text-md">
+                            <a class="w-full text-base text-black-brand level-0 py-[18px] flex items-center"
+                                href="<?= $escaper->escapeUrl($menuItem['url']) ?>"
+                                title="<?= $escaper->escapeHtmlAttr($menuItem['name']) ?>"
+                                @focus="hoverPanelActiveId = 0">
+                                <?= $escaper->escapeHtml($menuItem['name']) ?>
+                                <?php if (!empty($menuItem['childData']) || !empty($menuItem['products'])): ?>
+                                    <?= $heroiconsSolid->chevronDownHtml("flex self-center h-5 w-5", 25, 25, ['aria-hidden' => 'true']) ?>
+                                <?php endif; ?>
+                            </a>
+                            <?php /* if (!empty($menuItem['childData']) || !empty($menuItem['products'])): ?>
+                                <button
+                                    type="button"
+                                    data-sr-button-id="<?= $escaper->escapeHtmlAttr($index) ?>"
+                                    :aria-expanded="hoverPanelActiveId === '<?=  (string) $index ?>' ? 'true' : 'false'"
+                                    @click="openMenuOnClick('<?=  (string) $index ?>')"
+                                    class="rounded py-1 text-gray-500"
+                                >
+                                    <?= $heroiconsSolid->chevronDownHtml("flex self-center h-5 w-5", 25, 25, ['aria-hidden' => 'true']) ?>
+                                    <span class="sr-only">
+                                        <?= $escaper->escapeHtml(__('Show submenu for %1 category', $menuItem['name'])) ?>
+                                    </span>
+                                </button>
+                            <?php endif; */ ?>
+                        </span>
+                        <?php if (!empty($menuItem['products'])): ?>
+                            <div class="menu-wrapper absolute top-full z-10 hidden megamenu-products"
+                                :class="{
+                                    'hidden' : hoverPanelActiveId !== '<?= /* @noEscape */ (string) $index ?>',
+                                    'block' : hoverPanelActiveId === '<?= /* @noEscape */ (string) $index ?>'
+                                }">
+                                <div class="block-container">
+                                    <div class="menu-heading flex justify-between w-full mb-5">
+                                        <div class="title shrink-0">
+                                            <span class="text-xl text-black font-medium">Daily best deals products</span>
+                                        </div>
+                                        <div class="view-all"> <a class="btn btn-link text-primary underline" href="<?= $escaper->escapeUrl($menuItem['url']) ?>"><span class="text text-primary"> <?= $escaper->escapeHtml(__('View All')) ?></span> </a> </div>
+                                    </div>
+                                    <ul class="main-subitem  gap-[25px_0]">
+                                        <?php foreach ($menuItem['products'] as $productItem): ?>
+                                            <li>
+                                                <a href="<?= $escaper->escapeUrl($productItem->getProductUrl()) ?>"
+                                                    title="<?= $escaper->escapeHtmlAttr($productItem->getName()) ?>"
+                                                    class="block h-full w-full px-3 py-1 my-1 whitespace-nowrap first:mt-0 hover:underline aria-[current=page]:underline"
+                                                    @keyup.escape="$nextTick(() => document.querySelector('[data-sr-button-id=<?= $escaper->escapeJs($index) ?>]').focus())">
+                                                    <div class="megamenu-product-card" style="padding-bottom: 12px;display: flex;flex-direction: column;height: 100%;gap:14px;">
+                                                        <div class="product-image h-200">
+                                                            <span class="sale-label"> <?= $escaper->escapeHtml('SALE') ?> </span>
+                                                            <img src="<?= $baseUrl . 'media/catalog/product' . $productItem->getData('small_image') ?>" alt="<?= $productItem->getName() ?>" width="208" height="197" />
+                                                        </div>
+                                                        <div class="product-name-price" style="display: flex;flex-direction: column;justify-content: space-between;height: 100%;">
+                                                            <span class="product-item-name text-sm text-black-brand mb-[14px] block">
+                                                                <?= $escaper->escapeHtml($productItem->getName()) ?>
+                                                            </span>
+                                                            <div class="bottom-price !static"
+                                                                x-data="initPriceBox()"
+                                                                x-defer="intersect"
+                                                                @update-prices-<?= (int)$productItem->getId() ?>.window="updatePrice($event.detail);">
+                                                                <?= /* @noEscape */ $productListItemViewModel->getProductPriceHtml($productItem) ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                        <?php if (!empty($menuItem['childData'])): ?>
+                            <div class="menu-wrapper absolute top-full z-10 hidden"
+                                :class="{
+                                    'hidden' : hoverPanelActiveId !== '<?= /* @noEscape */ (string) $index ?>',
+                                    'block' : hoverPanelActiveId === '<?= /* @noEscape */ (string) $index ?>'
+                                }">
+                                <div class="block-container">
+                                    <ul class="main-subitem">
+                                        <?php foreach (array_slice($menuItem['childData'], 0, 10) as $subMenuItem): ?>
+                                            <li>
+                                                <a href="<?= $escaper->escapeUrl($subMenuItem['url']) ?>"
+                                                    title="<?= $escaper->escapeHtmlAttr($subMenuItem['name']) ?>"
+                                                    class="block w-full px-3 py-1 my-1 whitespace-nowrap first:mt-0 hover:underline aria-[current=page]:underline"
+                                                    @keyup.escape="$nextTick(() => document.querySelector('[data-sr-button-id=<?= $escaper->escapeJs($index) ?>]').focus())">
+                                                    <span class="submenu-item">
+                                                        <div class="prod-image h-[110px] block mb-[14px] p-2 dsdhs">
+                                                            <?php if (isset($subMenuItem['menu_image']) && $subMenuItem['menu_image']): ?>
+                                                                <img src="<?= $baseUrl . $subMenuItem['menu_image'] ?>" alt="<?= $subMenuItem['name'] ?>" class="w-full h-full object-cover" />
+                                                            <?php endif; ?>
+                                                        </div>
+                                                        <span class="block text-center leading-[1.4]"><?= $escaper->escapeHtml($subMenuItem['name']) ?></span>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                        <?php endforeach; ?>
+                                        <div class="view-all"> <a class="btn btn-link primary underline" href="<?= $escaper->escapeUrl($menuItem['url']) ?>"><span class="text"> <?= $escaper->escapeHtml(__('View All')) ?></span> </a> </div>
+                                    </ul>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                    </li>
+                <?php endforeach; ?>
+                <?= $this->getLayout()->createBlock(CategoryMenu::class)->setTemplate('Mageplaza_Shopbybrand::hyva/position/topmenu.phtml')->toHtml(); ?>
+                <template x-for="row in menuData">
+                    <li class="row.html_class relative level-0 border-b-2 border-transparent hover:border-primary data-[active]:border-primary">
+                        <span class="flex items-center text-md">
+                            <template x-if="row.svg_image_name && row.svg_image_name.length">
+                                <a :href="row.url"
+                                    :title="row.label"
+                                    :class="row.html_class ? row.html_class : ''"
+                                    class="">
+                                    <div class="inline-flex items-center rounded-full bg-yellow-50 w-full text-xs text-black-brand level-0 py-1 px-2 my-3">
+                                        <span x-html="row.svg_image_name"></span>
+                                        <span x-text="row.label"></span>
+                                    </div>
+                                </a>
+                            </template>
+                            <template x-if="!row.svg_image_name || (row.svg_image_name && !row.svg_image_name.length)">
+                                <a :href="row.url"
+                                    :title="row.label"
+                                    :class="row.html_class ? row.html_class : ''"
+                                    class="w-full text-base text-black-brand level-0 py-[18px]">
+                                    <span x-text="row.label"></span>
+                                </a>
+                            </template>
+                        </span>
+                    </li>
+                </template>
+            </ul>
+        </nav>
+    </div>
+</div>
+<script>
+    'use strict';
+
+    const initMenuDesktop<?= $escaper->escapeHtml($uniqueId) ?> = () => {
+        return {
+            hoverPanelActiveId: null,
+            setActiveMenu(menuNode) {
+                Array.from(menuNode.querySelectorAll('a')).filter(link => {
+                    return link.href === window.location.href.split('?')[0];
+                }).map(item => {
+                    item.setAttribute('aria-current', 'page');
+                    item.closest('li.level-0').setAttribute('data-active', 'true');
+                });
+            },
+            openMenuOnClick(menuNode) {
+                if (menuNode === this.hoverPanelActiveId) {
+                    this.hoverPanelActiveId = 0;
+                } else {
+                    this.hoverPanelActiveId = menuNode
+                }
+            }
+        }
+    }
+</script>

@@ -1,0 +1,46 @@
+<?php
+
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+
+/** @var $block \Magento\Framework\View\Element\Template */
+
+$helper = $block->getSearchDataHelper();
+$configs = $block->getConfigs();
+$placeholder = $configs['search']['input']['placeholder'];
+
+?>
+<div class="w-full block-search wizzy-search-mini-block">
+    <div class="block block-content">
+        <form class="form minisearch" id="search_mini_form" action="<?= $block->escapeUrl($helper->getResultUrl()) ?>"
+              method="get">
+            <div class="">
+                <div class="wizzy-search-form-mobile-wrapper"></div>
+                <div class="wizzy-search-form">
+                    <input id="search"
+                           type="text"
+                           name="<?= $block->escapeHtmlAttr($helper->getQueryParamName()) ?>"
+                           placeholder="<?= $block->escapeHtmlAttr($placeholder) ?>"
+                           class="input-text wizzy-search-input w-full p-2 text-lg leading-normal transition appearance-none text-grey-800
+                                  focus:outline-none focus:border-transparent lg:text-xl"
+                           spellcheck="false"
+                           autocomplete="off"
+                           autocorrect="off"
+                           autocapitalize="off"
+                        />
+                    <div class="action">
+                        <button
+                                id="menu-search-icon"
+                                class=""
+                            >
+                                <?= $heroicons->searchHtml("md:h-6 md:w-6", 24, 24, ["aria-hidden" => "true"]) ?>
+                                <?= $escaper->escapeHtml(__('Search')) ?>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

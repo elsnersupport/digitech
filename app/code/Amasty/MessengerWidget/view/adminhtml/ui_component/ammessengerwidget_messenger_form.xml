@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Live Chat for Magento 2
+ */-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">ammessengerwidget_messenger_form.messenger_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">General Information</item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+    </argument>
+    <settings>
+        <buttons>
+            <button name="save" class="Amasty\MessengerWidget\Block\Adminhtml\Messenger\Edit\SaveButton"/>
+            <button name="delete" class="Amasty\MessengerWidget\Block\Adminhtml\Messenger\Edit\DeleteButton"/>
+            <button name="back" class="Amasty\MessengerWidget\Block\Adminhtml\Messenger\Edit\BackButton"/>
+        </buttons>
+        <namespace>ammessengerwidget_messenger_form</namespace>
+        <dataScope>data</dataScope>
+        <deps>
+            <dep>ammessengerwidget_messenger_form.messenger_form_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="messenger_form_data_source">
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+        <settings>
+            <submitUrl path="ammessengerwidget/messenger/save"/>
+        </settings>
+        <dataProvider class="Amasty\MessengerWidget\Model\Messenger\Form\DataProvider" name="messenger_form_data_source">
+            <settings>
+                <requestFieldName>messenger_id</requestFieldName>
+                <primaryFieldName>messenger_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <fieldset name="general">
+        <settings>
+            <label translate="true">Messenger Properties</label>
+        </settings>
+        <field name="messenger_id" formElement="input">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">messenger</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <visible>false</visible>
+                <dataScope>messenger_id</dataScope>
+            </settings>
+        </field>
+        <field name="is_active" sortOrder="10" formElement="checkbox">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">messenger</item>
+                    <item name="default" xsi:type="number">0</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>boolean</dataType>
+                <label translate="true">Is Active</label>
+                <dataScope>is_active</dataScope>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <valueMap>
+                            <map name="false" xsi:type="number">0</map>
+                            <map name="true" xsi:type="number">1</map>
+                        </valueMap>
+                        <prefer>toggle</prefer>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
+        <field name="code" formElement="select" sortOrder="20" component="Amasty_MessengerWidget/js/form/element/messenger-code">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">messenger</item>
+                    <item name="iconElement" xsi:type="string">ammessengerwidget_messenger_form.ammessengerwidget_messenger_form.general.icon</item>
+                    <item name="customNameElement" xsi:type="string">ammessengerwidget_messenger_form.ammessengerwidget_messenger_form.general.custom_name</item>
+                    <item name="defaultIconsField" xsi:type="string">ammessengerwidget_messenger_form.ammessengerwidget_messenger_form.general.default_icon</item>
+                </item>
+            </argument>
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Messenger</label>
+                <dataScope>code</dataScope>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="Amasty\MessengerWidget\Model\Config\Source\MessengerCode"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+
+        <field name="custom_name" sortOrder="40" formElement="input">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">messenger</item>
+                    <item name="visible" xsi:type="boolean">false</item>
+                </item>
+            </argument>
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Messenger Name</label>
+                <dataScope>custom_name</dataScope>
+                <notice translate="true">Set a custom name for your messenger</notice>
+            </settings>
+        </field>
+        <field name="icon" sortOrder="50" formElement="imageUploader"
+               template="Amasty_MessengerWidget/form/element/uploader/image">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <visible>false</visible>
+                <label translate="true">Messenger Icon</label>
+                <componentType>imageUploader</componentType>
+            </settings>
+            <formElements>
+                <imageUploader>
+                    <settings>
+                        <allowedExtensions>jpg jpeg png svg</allowedExtensions>
+                        <maxFileSize>4194304</maxFileSize>
+                        <uploaderConfig>
+                            <param xsi:type="string" name="url">ammessengerwidget/icons/upload</param>
+                        </uploaderConfig>
+                    </settings>
+                </imageUploader>
+            </formElements>
+        </field>
+        <field name="default_icon" sortOrder="50" component="Amasty_MessengerWidget/js/form/element/default-icon" class="Amasty\MessengerWidget\Ui\Component\Form\Field\DefaultIcon" formElement="input">
+            <settings>
+                <visible>false</visible>
+                <label translate="true">Messenger Icon</label>
+                <dataScope>default_icon</dataScope>
+                <elementTmpl>Amasty_MessengerWidget/form/element/uploader/default-icons</elementTmpl>
+            </settings>
+        </field>
+        <field name="link" sortOrder="60" formElement="input">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">messenger</item>
+                </item>
+            </argument>
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Link</label>
+                <dataScope>link</dataScope>
+                <tooltip>
+                    <description>
+                        <![CDATA[Example:<br/><br/>
+                        WhatsApp: https://wa.me/{number}, where the {number} is a full phone number in international format.<br/><br/>
+                        Facebook Messenger: http://m.me/{PAGE_NAME}, where {PAGE_NAME} is the handle of the Facebook page the app is linked to.<br/><br/>
+                        Telegram: https://t.me/{username}, where {username} is Telegram user name.]]>
+                    </description>
+                </tooltip>
+                <notice translate="true">Set a link for customers to reach your messenger account. For more information please see User Guide.</notice>
+            </settings>
+        </field>
+
+        <field name="storeviews" formElement="multiselect" class="Magento\Store\Ui\Component\Form\Field\StoreView" sortOrder="70">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">messenger</item>
+                    <item name="default" xsi:type="number">0</item>
+                </item>
+            </argument>
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>int</dataType>
+                <label translate="true">Store View</label>
+                <dataScope>store_ids</dataScope>
+            </settings>
+            <formElements>
+                <multiselect>
+                    <settings>
+                        <options class="Amasty\MessengerWidget\Model\Config\Source\StoreOptions"/>
+                    </settings>
+                </multiselect>
+            </formElements>
+        </field>
+
+        <field name="comment" sortOrder="80" formElement="input">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">messenger</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Comment</label>
+                <dataScope>comment</dataScope>
+                <notice translate="true">Add some information that will help you to manage this messenger</notice>
+            </settings>
+        </field>
+        <field name="tooltip" sortOrder="90" formElement="input">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">messenger</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Tooltip</label>
+                <dataScope>tooltip</dataScope>
+                <notice translate="true">Set a tooltip for messenger icon</notice>
+            </settings>
+        </field>
+        <field name="sort_order" sortOrder="100" formElement="input">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">messenger</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>int</dataType>
+                <label translate="true">Sort Order</label>
+                <dataScope>sort_order</dataScope>
+                <validation>
+                    <rule name="validate-digits" xsi:type="boolean">true</rule>
+                </validation>
+            </settings>
+        </field>
+    </fieldset>
+</form>

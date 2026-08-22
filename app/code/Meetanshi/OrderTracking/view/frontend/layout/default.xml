@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd" layout="1column">
+    <head>
+        <css src="Meetanshi_OrderTracking::ordertracking.css"/>
+    </head>
+    <body>
+		<referenceBlock name="header.links">
+			<block class="Magento\Framework\View\Element\Html\Link" name="OrderTracking-link" ifconfig="OrderTracking/general/top_links">
+			    <arguments>
+					<argument name="label" xsi:type="string" translate="true">Track Your Order</argument>
+				    <argument name="class" xsi:type="string" translate="false">ordertracking</argument>
+				    <argument name="path" xsi:type="string">ordertracking</argument>
+			    </arguments>
+			</block>
+		</referenceBlock>
+        <referenceBlock name="store.menu">
+            <block class="Meetanshi\OrderTracking\Block\OrderTrackingLink" name="menu-link" template="advancetrackinglink.phtml" />
+        </referenceBlock>
+    </body>
+</page>

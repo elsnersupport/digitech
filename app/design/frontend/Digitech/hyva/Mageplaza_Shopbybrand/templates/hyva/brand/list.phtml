@@ -1,0 +1,587 @@
+<?php
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_Shopbybrand
+ * @copyright   Copyright (c) Mageplaza (https://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+/** @var \Mageplaza\Shopbybrand\Block\Brand $block */
+$helper = $block->helper();
+$allChars = $block->getAlphabet();
+$categories = $block->getCategories();
+$modalViewModel = $viewModels->require(\Hyva\Theme\ViewModel\Modal::class);
+
+?>
+<div class="block block-brand-list" x-data="hyva.modal()">
+    <div x-data="initListBrand()" x-init="checkBrand($el)">
+        <div x-init="openModalView($el), showMore($el)">
+            <?= $block->getChildHtml('loading') ?>
+    <div class="block-title">
+        <div class="title">
+            <h1>FILTER BRANDS</h1>
+        </div>
+        <?php if ($helper->getBrandConfig('brand_filter/enabled_alpha_filter')) : ?>
+            <ul class="nav brand-options navbar-nav controls">
+                <li id="mp-first-opt" class="control active">
+                    <a class="filter mp-option-item" data-filter="all"><?= /** @noEscape */ __('All') ?></a>
+                </li>
+                <?php foreach ($allChars as $_char) : ?>
+                    <?php $_numberChar['char'] = (is_numeric($_char['char'])) ? 'num' . $_char['char'] : $_char['char']; ?>
+                    <?php if ($_char['active']) : ?>
+                        <li class="control">
+                            <a class="filter mp-option-item" data-filter="<?= '.' . /** @noEscape */ $_char['char'] ?>">
+                                <?= isset($_char['label']) ? /** @noEscape */ $_char['label'] : /** @noEscape */ $_char['char'] ?>
+                            </a>
+                        </li>
+                    <?php else : ?>
+                        <li class="disabled">
+                            <a class="disabled mp-option-item">
+                                <?= isset($_char['label']) ? /** @noEscape */ $_char['label'] : /** @noEscape */ $_char['char'] ?>
+                            </a>
+                        </li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
+        <?php if ($helper->getBrandConfig('brand_filter/enabled_cat_filter')) : ?>
+            <ul class="nav brand-options category-nav-list navbar-nav controls" style="margin-bottom: 30px; clear: both; width: 100%; display: flex; justify-content: center; flex-wrap: wrap">
+                <li id="mp-first-opt" class="control active">
+                    <a class="filter mp-option-item"
+                       data-filter="all"><?= /** @noEscape */ __('All Category') ?></a>
+                </li>
+                <?php foreach ($categories as $category) : ?>
+                    <?php if ($block->getBrandQty($category->getId())) : ?>
+                        <li class="control">
+                            <a class="filter mp-option-item" <?= 'data-filter=".' . /** @noEscape */ $category->getId() .'cat' . /** @noEscape */ $block->getCatNameFilter($category->getName()) . '"' ?>><?= /** @noEscape */ $category->getName() ?></a>
+                        </li>
+                    <?php else : ?>
+                        <li class="disabled">
+                            <a class="disabled mp-option-item"><?= /** @noEscape */ $category->getName() ?></a>
+                        </li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
+        <div style="clear: both"></div>
+    </div>
+
+    <div class="brand-mix-container products wrapper grid products-grid">
+        <?= /** @noEscape */ ($helper->getBrandConfig('brandlist_style') === '1')
+            ? $block->getChildHtml('alphabet')
+            : $block->getChildHtml('listing')
+        ?>
+    </div>
+    <?= /** @noEscape */  $modalViewModel->createModal()->withDialogRefName('view-dialog-brand')
+        ->withTemplate('Mageplaza_Shopbybrand::hyva/brand/list/view.phtml')
+        ->addDialogClass('w-3/4 max-h-dialog relative')->removeDialogClass('p-10') ?>
+    </div>
+    </div>
+</div>
+<style type="text/css">
+
+
+    .modal-view-brand .product-item.product-card .product-item-photo .product-image-photo, 
+    .modal-view-brand .product-item.product-card:hover .product-item-photo .product-image-photo {
+        transform: none;
+        top: 0;
+    }
+    .brand-mix-container.products.wrapper{
+        display: block !important;
+    }
+    .brand-options.category-nav-list li {
+        padding: 5px 15px;
+    }
+    .brand-list-content .product-item-info .product-image-photo:hover {
+        border: 1px solid #d9d9d9;
+        box-shadow: none;
+        padding: 12px;        
+    }
+    .brand-info-container .img-content{
+        border: 1px solid #d9d9d9;
+        box-shadow: none;
+        width: 100%;
+        padding: 20px 5px;
+        border-radius: 8px;
+        min-height: 140px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .brand-info-container .img-content .quickview_img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        box-shadow: none !important;
+        border: none;
+        max-width: 180px;
+    }
+    .block-brand-list .block-title {
+        display: flex;
+        flex-direction: column;
+        padding: 40px 0;
+        border-bottom: none;
+        width: 85%;
+        margin: auto;
+    }
+    .brand_description h1 {
+        font-size: 24px;
+    }
+
+    .brand_description h2 {
+        font-size: 20px;
+    }
+    .block-brand-list .block-title .title {
+        width: 100%;
+        float: unset;
+        padding-left: 45px;
+        line-height: 50px;
+    }
+    .block-brand-list .block-title .title h1 {
+        font-size: 40px;
+        margin-bottom: 40px;
+        font-weight: bold;
+        text-align: center;
+    }
+    .block-brand-list ul.brand-options {
+        display: flex;
+        flex-wrap: wrap;
+        margin: auto;
+        justify-content: center;
+        list-style-type: none;
+        padding-left: 0;
+        width: 68%;
+        float: unset;
+    }
+
+    .block-brand-list ul.brand-options li.control {
+        cursor: pointer;
+        border: 1px solid #D4D4D4;
+    }
+    .block-brand-list ul.brand-options li {
+        position: relative;
+        min-width: 70px;
+        float: unset;
+        margin-bottom: 5px;
+        margin-left: 5px;
+        border-radius: 20px;
+    }
+    .block-brand-list ul.brand-options li.disabled {
+        cursor: not-allowed;
+        border: 1px solid #fff;
+    }
+    .block-brand-list ul.brand-options li.disabled a {
+        opacity: 0.5;
+        background: #C8C8C8;
+        border-radius: 15px;
+    }
+    .block-brand-list ul.brand-options a.mp-option-item {
+        color: inherit;
+        position: relative;
+        display: block;
+        padding: 4px 0;
+        line-height: 20px;
+        font-size: 12px;
+        text-decoration: none;
+        text-align: center;
+        font-weight: 600;
+    }
+    .block-brand-list ul.brand-options li.active {
+        color: #ffffff;
+    }
+    .block-brand-list ul.brand-options li.control:hover {
+        box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    }
+
+    .brand-list-content ol {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 auto;
+    }
+    .products {
+        margin: 30px 0;
+    }
+    .brand-list-content .product-item-details {
+        /* float: left;
+        width: 95%; */
+        padding: 0 35px;
+    }
+    .brand-info {
+        display: flex;
+        /* width: 100%; */
+        /* float: left; */
+        gap: 12px;
+        justify-content: center;
+        align-items: center;
+    }
+    /* .brand-info .product-item-name {
+        float: left;
+        width: 90%;
+    } */
+    .brand-info .quickview_popup {
+        /* float: right;
+        width: 10%; */
+        font-size: 18px;
+    }
+    .brand-list-content .product-item-description {
+        margin: 15px 0;
+        width: 100%;
+        float: left;
+        overflow: hidden;
+    }
+    .brand-list-content ol .product-item-info {
+        margin: 0 auto;
+    }
+    .product-image-wrapper {
+        display: block;
+        height: 0;
+        overflow: hidden;
+        position: relative;
+        z-index: 1;
+    }
+    .product-image-photo {
+        bottom: 0;
+        display: block;
+        left: 0;
+        margin: auto;
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+    @media (max-width: 768px) {
+        .block-brand-list .block-title {
+            width: 100%;
+        }
+        .block-brand-list .block-title .title {
+            width: 100%;            
+            text-align: center;
+            padding-left: 0px;
+        }
+        .block-brand-list .block-title .title h1 {
+            font-size: 36px;
+        }
+        .block-brand-list ul.brand-options {
+            width: 100%;
+        }
+        .block-brand-list .brand-list-content .product-item-info .product-image-photo {
+            width: 100px !important;
+            height: 100px !important;
+        }
+        .brand-info {
+            width: 100%;
+        }
+        .block-brand-list .brand-list-content li.product-item {
+            display: flex;
+        }
+        .brand-list-content .product-item-details {
+            padding: 0 15px;
+        }
+    }
+
+    .block-brand-list .brand-list-content .product-item-info .product-image-photo {
+        object-fit: contain;
+        padding: 12px;
+        border-radius: 8px;
+    }
+
+    .product-list-container.brand-list-container {
+        background: #f6f6f6;
+        padding: 24px 24px;
+        border-radius: 24px;
+        margin-bottom: 24px;
+    }
+
+    .product-list-container.brand-list-container .brand-char {
+        line-height: 24px;
+        padding-inline: 12px;
+        border-bottom: 0px;
+    }
+
+    .product-list-container.brand-list-container .brand-char .brand-char-title {
+        float: unset;
+        font-weight: 700;
+        font-size: 24px;
+        line-height: 24px;
+        width: unset;
+        margin-top: unset;
+    }
+
+    .product-list-container.brand-list-container .brand-list-content {
+        background: rgb(255, 255, 255);
+        display: block;
+        border-radius: 24px;
+        margin-top: 12px;
+    }
+
+</style>
+<script>
+    function initListBrand() {
+        return {
+            isLoading: false,
+            checkBrand (el) {
+                let self = this;
+                document.querySelectorAll('.brand-options li').forEach(item => {
+                    item.addEventListener('click', function() {
+                        if (!this.classList.contains('disabled')) {
+                            document.querySelectorAll('.brand-options li').forEach(li => li.classList.remove('active'));
+                            this.classList.add('active');
+                        }
+                    });
+                });
+
+                document.querySelectorAll('.category-nav-list li').forEach(item => {
+                    item.addEventListener('click', function() {
+                        if (!this.classList.contains('disabled')) {
+                            document.querySelectorAll('.category-nav-list li').forEach(li => li.classList.remove('active'));
+                            this.classList.add('active');
+                        }
+                    });
+                });
+
+                document.querySelectorAll('.navigation li.mpbrand-top-link').forEach(item => item.classList.add('active'));
+
+
+                let  config = {
+                    loadUrl: '<?php echo /** @noEscape */ $block->getUrl("mpbrand/index/"); ?>',
+                    brandListStyle: '<?php echo /** @noEscape */ $helper->getBrandConfig("brandlist_style"); ?>'
+                };
+                let listFilter = document.querySelectorAll('.brand-options .control');
+                listFilter?.forEach(itemfilter => {
+                    itemfilter.addEventListener('click', function (event) {
+                        if (event.target.tagName.toLowerCase() === 'a') {
+                            event.preventDefault();
+                            let char = event.target.getAttribute('data-filter');
+                            if (char !== 'all') {
+                                char = char.substring(1);
+                            }
+                            const url = `${config.loadUrl}?char=${char}`;
+                            loadMore(url, '', char);
+                            if (!document.querySelector('.show-more a')) {
+                                if (char !== 'all') {
+                                    enableScroll(char);
+                                }
+                            }
+                        }
+                    });
+                });
+                function enableScroll(char) {
+                    if (char !== 'all') {
+                        window.addEventListener('scroll', scrollHandler);
+                    }
+                }
+                function scrollHandler() {
+                    const nextItem = document.querySelector('li.item.pages-item-next a.action.next');
+                    const char = document.querySelector('.brand-options .control.active .filter').getAttribute('data-filter');
+                    if (nextItem && char !== 'all') {
+                        const listEl = document.querySelector('ol.products.list.items.product-items');
+                        if (listEl && (window.scrollY >= listEl.offsetTop + listEl.offsetHeight - window.innerHeight)) {
+                            if (self.isLoading === false) {
+                                loadMore(nextItem.getAttribute('href'), listEl, char);
+                                self.isLoading = true;
+                            }
+                        }
+                    }
+                }
+                function loadMore(url, element, char) {
+                    self.isLoading = true;
+                    const currentDate = new Date();
+                    const timestamp = currentDate.getTime();
+                    fetch(url + `&_=${timestamp}`, {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                        }
+                    ).then(response => {
+                            return response.json();
+                        }
+                    ).then(data => {
+                        if (element === '') {
+                            if (config.brandListStyle === '0') {
+                                document.querySelector('.brand-mix-container.products-grid').innerHTML = data.data;
+                            } else {
+                                document.querySelector('.products-grid').innerHTML = data.data;
+                            }
+                        } else {
+                            if (config.brandListStyle === '0') {
+                                const newItems = new DOMParser().parseFromString(data.data, 'text/html')
+                                .querySelector('ol.products.list.items.product-items').innerHTML.trim();
+                                const lastItem = document.querySelectorAll('.items.product-items li');
+                                if (lastItem.length) {
+                                    lastItem[lastItem.length - 1].insertAdjacentHTML('afterend', newItems);
+                                }
+                                document.querySelector('ul.items.pages-items').innerHTML = new DOMParser().parseFromString(data.data, 'text/html').querySelector("ul.items.pages-items").innerHTML.trim();
+                                // quickView();
+                                // modalPopup();
+                            }
+                        }
+                        if (char !== 'all') {
+                            let paginateEl = document.querySelector('.pagination-container.toolbar');
+                            if(paginateEl) {
+                                paginateEl.style.display = 'none';
+                            }
+                        }
+                        if (char === 'all') {
+                            const showMoreDivs = document.querySelectorAll('.show-more');
+                            showMoreDivs.forEach(showMoreDiv => {
+                                showMoreDiv.classList.add('text-center');
+                                setTimeout(() => {
+                                    const anchorElement = showMoreDiv.querySelector('a');
+                                    if (anchorElement) {
+                                        anchorElement.classList.add('btn', 'text-white', 'bg-primary', 'my-5', 'px-2', 'py-2');
+                                    }
+                                }, 100);
+                                self.showMore(showMoreDiv);
+                            });
+                        }
+                        self.openModalView(el.querySelector('div'));
+                        self.showMore(el.querySelector('div'));
+                        let showMoreDiv = el.querySelector('div');
+                        if(showMoreDiv){
+                            showMoreDiv.classList.add('text-center');
+                            setTimeout(() => {
+                                let anchorElement = showMoreDiv.querySelector('.show-more a');
+                                if (anchorElement) {
+                                    anchorElement.classList.add('btn', 'text-white', 'bg-primary', 'my-5', 'px-2', 'py-2');
+                                } 
+                            }, 100);
+                            self.showMore(showMoreDiv);
+                        }
+                        self.isLoading = false;
+                    }).catch(error => {
+                        console.log(error);
+                    });
+                }
+
+
+            },
+            openModalView(event) {
+                let quickviewUrl = '<?= /** @noEscape */ $helper->getQuickViewUrl() ?>';
+
+                event.querySelectorAll('.open_model').forEach(item => {
+                    item.addEventListener('click', function() {
+                        let loader = document.querySelector('.modal-view-brand #ln_overlay');
+                        loader.style.display = 'block';
+                        window.dispatchEvent(
+                            new CustomEvent('hyva-modal-show', {detail: {dialog: 'view-dialog-brand'}})
+                        );
+                        var brand = item.getAttribute('id');
+                        var url = quickviewUrl + brand;
+
+                        fetch(url, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                },
+                            }
+                        ).then(response => {
+                                return response.json();
+                            }
+                        ).then(response => {
+                            event.querySelector('.brand_title').textContent = response.brand['value'];
+                            var quickviewImg = event.querySelector('.quickview_img');
+                            if (parseInt(response.brand['swatch_type']) === 1) {
+                                var img = document.createElement('img');
+                                img.className = 'quickview_img';
+                                img.alt = '';
+                                quickviewImg.parentNode.replaceChild(img, quickviewImg);
+                                img.style.backgroundColor = response.brand['swatch_value'];
+                            } else {
+                                if (response.brand['image'] === null) {
+                                    quickviewImg.src = '';
+                                } else {
+                                    quickviewImg.src = response.brand['image'];
+                                }
+                            }
+                            let relatedProEl = event.querySelector('.related-product-modal-content');
+                            if(relatedProEl) {
+                                relatedProEl.innerHTML = response.products;
+                                hyva.activateScripts(relatedProEl);
+                                let amastyDiv = relatedProEl.querySelector('#amasty-shopby-product-list');
+                                if (amastyDiv) {
+                                    while (amastyDiv.attributes.length > 0) {
+                                        amastyDiv.removeAttribute(amastyDiv.attributes[0].name);
+                                    }
+                                }
+                                let toolbarDiv = relatedProEl.querySelector('.toolbar.toolbar-products');
+                                if (toolbarDiv) {
+                                    let navElement = toolbarDiv.querySelector('nav');
+                                    if (navElement) {
+                                        navElement.remove();
+                                    }
+                                }
+                                let ulElement = relatedProEl.querySelector('ul');
+                                if (ulElement) {
+                                    ulElement.className = "product-category-list mx-auto pt-4 pb-4 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
+                                }
+                            }
+                            var brandDescription = document.createElement('p');
+                            brandDescription.innerHTML = response.brand['short_description'];
+                            event.querySelector('.brand_description').innerHTML = '';
+                            event.querySelector('.brand_description').appendChild(brandDescription);
+
+                        }).catch(error => {
+                            console.log(error);
+                        }).finally(()=>{
+                            loader.style.display = 'none';
+                        });
+
+                    });
+                });
+            },
+            showMore: function (el) {
+                let self = this;
+                let config = {
+                    loadUrl: '<?php echo /** @noEscape */ $block->getUrl("mpbrand/index/showmore"); ?>'
+                };
+                el.querySelectorAll('.show-more a').forEach(function (link) {
+                    link.addEventListener('click', function (event) {
+                        event.preventDefault();
+                        var char           = this.getAttribute('value');
+                        var countBrandChar = document.querySelectorAll('.brand-list-container.' + char + ' li').length;
+                        var url            = config.loadUrl + '?char=' + char + '&count=' + countBrandChar;
+                        fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            var productItems = document.querySelector('.' + char + ' .brand-list-content .product-items');
+                            if (productItems) {
+                                productItems.innerHTML = data.data;
+                                self.openModalView(el);
+                            }
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
+                    });
+                });
+
+                el.querySelectorAll('.product-list-container .action').forEach(function (action) {
+                    action.addEventListener('click', function () {
+                        this.classList.toggle('active');
+                        var brandListContent;
+                        brandListContent = this.closest('.product-list-container').querySelector('.brand-list-content');
+                        if (brandListContent) {
+                            brandListContent.style.display = brandListContent.style.display === 'none' ? 'block' : 'none';
+                        }
+                    });
+                });
+            }
+        }
+
+    }
+</script>
+

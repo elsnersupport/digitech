@@ -1,0 +1,20 @@
+RewriteEngine On
+#RewriteCond %{HTTP_USER_AGENT} (Windows\ 98|Windows\ CE|Opera\/9|Safari\/53|CriOS\/43|Presto\/2\.9) [NC]
+#RewriteRule .* - [F,L]
+
+
+
+RewriteCond %{HTTP:CF-RAY} ^$
+RewriteRule ^ - [F,L]
+
+
+
+RewriteEngine on
+
+# Exclude certain directories from the rewrite rule
+RewriteCond %{REQUEST_URI} !^/pub/
+RewriteCond %{REQUEST_URI} !^/setup/
+RewriteCond %{REQUEST_URI} !^/update/
+RewriteCond %{REQUEST_URI} !^/dev/
+RewriteRule .* /pub/$0 [L]
+

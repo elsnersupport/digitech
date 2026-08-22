@@ -1,0 +1,58 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2022 Amasty (https://www.amasty.com)
+ * @package ILN Quick Config for Magento 2 (System)
+ */
+?>
+<?php
+/**
+ * @var $block \Magento\Backend\Block\Widget\Form\Container
+ * @var $escaper Magento\Framework\Escaper
+ */
+?>
+<?= /* @noEscape */ $block->getFormInitScripts() ?>
+<div class="page-main-actions">
+    <div data-mage-init='{"floatingHeader":
+    {"title": ".amshopbyconfig-filter-item.-active:eq(0) .amshopbyconfig-text span"}}'
+         class="page-actions" <?= /* @noEscape */ $block->getUiId('content-header') ?>>
+        <?= $block->getButtonsHtml() ?>
+    </div>
+</div>
+
+<form id="edit_form" class="edit-form  <?= $escaper->escapeHtml($block->getAdditionalClass()) ?>"
+      action="<?= $escaper->escapeHtml($block->getSaveUrl()) ?>" method="post">
+    <input name="form_key" type="hidden" value="<?= $escaper->escapeHtml($block->getFormKey()) ?>" />
+    <?= $block->getChildHtml('form') ?>
+</form>
+<script>
+    require([
+        'jquery',
+        'Amasty_ShopByQuickConfig/js/model/form-actions',
+        'Amasty_ShopByQuickConfig/js/model/form-state',
+        'mage/backend/form',
+        'mage/backend/validation'
+    ], function ($, formActions, formState) {
+        var $form = $('#edit_form');
+
+        $form.form()
+            .validation({
+                validationUrl: '<?= $escaper->escapeJs($block->getValidationUrl()) ?>',
+                highlight: function(element) {
+                    var detailsElement = $(element).closest('details');
+                    if (detailsElement.length && detailsElement.is('.details')) {
+                        var summaryElement = detailsElement.find('summary');
+                        if (summaryElement.length && summaryElement.attr('aria-expanded') === "false") {
+                            summaryElement.trigger('click');
+                        }
+                    }
+                    $(element).trigger('highlight.validate');
+                },
+                submitHandler: formActions.formSubmitHandle
+            });
+
+        $form.on('deleteContent', formActions.cancelAction);
+        formState.setInitialState($form);
+    });
+</script>
+<?= /* @noEscape */ $block->getFormScripts() ?>

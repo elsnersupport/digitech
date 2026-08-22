@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <!-- <add id="HyvaElsner_Base::base" title="HyvaElsner" module="HyvaElsner_Base"
+             sortOrder="10" resource="HyvaElsner_Base::base"/> -->
+        <!-- <add id="HyvaElsner_Base::base_configuration" title="Configuration" module="HyvaElsner_Base"
+             sortOrder="100" parent="HyvaElsner_Base::base" resource="HyvaElsner_Base::base"/> -->
+    </menu>
+</config>

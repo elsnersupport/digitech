@@ -1,0 +1,17 @@
+
+
+/*
+Use the following selector to extend the toolbar modes switcher with your own icon,
+also replace `custom` with your own mode name.
+
+.modes-mode.mode-custom {}
+*/
+#category-view-container {
+    @apply px-0 py-4 flex flex-col items-center;
+}
+
+.product-brand-logo{
+    img {
+        @apply bg-contain max-w-[80px] border p-[5px] rounded-xl border-solid border-[#d9d9d9];
+    }
+}

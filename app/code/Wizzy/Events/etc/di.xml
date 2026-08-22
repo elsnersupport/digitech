@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!-- Wizzy_Events plugin for MSI stock updates -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <type name="Magento\InventoryApi\Api\SourceItemsSaveInterface">
+        <plugin name="wizzy_msi_stock_sync_plugin"
+                type="Wizzy\Events\Plugin\SourceItemsSavePlugin"
+                sortOrder="10"/>
+    </type>
+
+</config>

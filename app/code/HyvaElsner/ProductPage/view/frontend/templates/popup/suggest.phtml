@@ -1,0 +1,7 @@
+<?php
+$exist = $block->getProductCollection()->getSize();
+$templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+$items = $block->getProductCollection();
+$image = 'related_products_list';
+echo $block->getLayout()->createBlock(\Magento\Catalog\Block\Product\View::class)->setProduct($block->getProduct())->setItems($items)->setTemplate('HyvaElsner_ProductPage::product-slider.phtml')->setType('related')->setTitle('Recommended Accessories
+')->setHeadingTag('h2')->toHtml();

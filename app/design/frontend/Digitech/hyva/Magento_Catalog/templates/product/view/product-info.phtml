@@ -1,0 +1,171 @@
+<?php
+
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\ProductAttributes;
+use Hyva\Theme\ViewModel\ProductCompare;
+use Hyva\Theme\ViewModel\ProductPage;
+use Hyva\Theme\ViewModel\Wishlist;
+use Magento\Catalog\Model\Product;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var ProductPage $productViewModel */
+$productViewModel = $viewModels->require(ProductPage::class);
+/** @var ProductAttributes $attributesViewModel */
+$attributesViewModel = $viewModels->require(ProductAttributes::class);
+/** @var Product $product */
+$product = $productViewModel->getProduct();
+$productType = $product->getTypeId();
+$currentProductId = $product->getId();
+$preOrderClass = HyvaElsner\Base\ViewModel\PreOrder::class;
+
+if (class_exists($preOrderClass)) {
+    try {
+        // require() can throw if view model is not available/registered — catch that
+        $elsnerPreOrder = $viewModels->require($preOrderClass);
+
+        // use null-coalescing to avoid accidental null propagation
+        $isStock = $elsnerPreOrder->getIsInStock($currentProductId) ?? true;
+        $isPreOrder = (bool) ($elsnerPreOrder->getIsPreOrder($product) ?? false);
+    } catch (\Throwable $e) {
+        // If anything goes wrong, fall back to the helper (or sensible defaults).
+        $isStock = $preOrderHelper->getIsInStock($currentProductId) ?? true;
+        $isPreOrder = false;
+        // optionally: log the exception if you have a logger available
+        // $this->logger->warning('PreOrder viewmodel unavailable: ' . $e->getMessage());
+    }
+} else {
+    // class not present — fallback to module helper (more reliable than blindly assuming in-stock)
+    $isStock = $preOrderHelper->getIsInStock($currentProductId) ?? true;
+    $isPreOrder = false;
+}
+
+?>
+<div class="w-full mb-6">
+    <div class="review-sku-stock-row flex flex-col justify-start sm:justify-between gap-2 pb-5 border-b border-[rgba(0,0,0,0.1)] mb-5">
+        <div class="product-title">
+            <?= $block->getChildHtml('product.info.title') ?>
+        </div>
+        <div class="stock-row flex flex-col gap-1">
+            <div class="flex flex-col sm:flex-row sm:justify-between gap-2">
+                <div class="review-row flex flex-row gap-1 items-center">
+                    <?= $block->getChildHtml('product.info.review') ?>
+                    <div id="product-details sku-row shrink-0" class="font-semibold sm:my-1 ml-auto">
+                        <?php foreach ($block->getAttributes() as $attributeConfig):
+                            $attribute = $attributesViewModel->getAttributeFromLayoutConfig($attributeConfig); ?>
+                            <?php if ($value = $attribute['value'] ?? null): ?>
+                                <div class="mt-[4px] font-normal text-gray-500 text-sm whitespace-nowrap attribute-<?=/* @noEscape */ $attribute['code'] ?: "" ?>">
+                                    <span class="product-detail-label">
+                                        <?= $escaper->escapeHtml($attribute['label']) . __(':'); ?>
+                                    </span>
+                                    <span class="ml-1 product-detail-value">
+                                        <?= $escaper->escapeHtml($value) ?>
+                                    </span>
+                                </div>
+                            <?php endif ?>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <div class="stock-status ml-0 shrink-0">
+                    <?= $block->getChildHtml("product.info.stockstatus") ?>
+                </div>
+            </div>
+            <span class="stock-alert text-sm">
+                <?= $block->getChildHtml("alert.urls") ?>
+            </span>
+        </div>
+    </div>
+
+    <div class="price-row">
+        <?php if ($productType === 'bundle'): ?>
+            <span class="sr-only">
+                <?= $escaper->escapeHtml(__('The price depends on the chosen options')) ?>
+            </span>
+        <?php endif; ?>
+
+        <div role="group" aria-label="<?= $escaper->escapeHtmlAttr('Price') ?>">
+            <?= $block->getChildHtml("product.info.price") ?>
+        </div>
+    </div>
+
+    <?= $block->getChildHtml('product.info.form') ?>
+
+    <div class="flex flex-col sm:flex-row my-1">
+        <div class="flex items-center sm:mt-4 sm:mt-0 w-full">
+            <div class="quantity">
+                <?php if ($product->isSaleable()): ?>
+                    <?= $block->getChildHtml("product.info.quantity") ?>
+                <?php endif; ?>
+            </div>
+            <div class="addtocart grow">
+                <?php if ($product->isSaleable()): ?>
+                    <?= $block->getChildHtml("product.info.addtocart") ?>
+                <?php endif; ?>
+            </div>
+            <div class="compare">
+                <?= $block->getChildHtml('product.info.addtocompare'); ?>
+            </div>
+            <div class="wishlist">
+                <?= $block->getChildHtml('product.info.addtowishlist'); ?>
+            </div>
+        </div>
+    </div>
+    <?php if($isStock && !$isPreOrder){
+    echo $block->getChildHtml('elsnertech.delivery.countdown');
+    }?>
+    <?php if ($shortDescription = $productViewModel->getShortDescription(true, false)) { ?>
+        <div class="mb-4 leading-relaxed product-description prose short-description-row text-sm text-gray-500 border-t border-[rgba(0,0,0,0.1)]  mt-5 pt-4"><?= /* @noEscape */ $shortDescription ?></div>
+    <?php } ?>
+
+    <div class="tabby-checkout rounded-lg bg-gray-200">
+        <?= $block->getChildHtml("product_tabby_promotion") ?>
+    </div>
+
+    <div class="tamara-checkout rounded-lg bg-gray-200 pt-4">
+        <?= $block->getChildHtml("tamara.product.popup") ?>
+        <script>
+            let x = window.setInterval(function() {
+                if (document.querySelector('tamara-widget') && document.querySelector('tamara-widget').shadowRoot) {
+                    if (document.querySelector('tamara-widget').shadowRoot.querySelector('span.tamara-summary-widget__amount svg')) {
+                        document.querySelector('tamara-widget').shadowRoot.querySelector('span.tamara-summary-widget__amount svg').style.height = "11px";
+                        window.setTimeout(function() {
+                            window.clearInterval(x);
+                        }, 1000);
+                    }
+                }
+            }, 100);
+        </script>
+    </div>
+
+    <?php if ($product->isSaleable()): ?>
+        <div class="flex mt-4 justify-end" x-data x-show="$el.innerHTML.trim()!=''">
+            <?= $block->getChildHtml('addtocart.shortcut.buttons') ?>
+        </div>
+    <?php endif; ?>
+
+    <div class="flex mt-4 justify-end" x-data x-show="$el.innerHTML.trim()!=''">
+        <?= $block->getChildHtml('product.info.emailtofriend'); ?>
+        <?= $block->getChildHtml('product.info.additional.actions'); ?>
+    </div>
+
+    <?php if ($tierPriceBlock = $block->getChildHtml("product.price.tier")): ?>
+        <div class="py-4 my-2 tier-price-container" x-data x-show="$el.innerHTML.trim()!=''">
+            <?=
+            /** @noEscape */
+            $tierPriceBlock ?>
+        </div>
+    <?php endif; ?>
+</div>

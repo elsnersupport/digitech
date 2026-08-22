@@ -1,0 +1,85 @@
+@layer utilities {
+    /* This class only exists for backwards compatibility, */
+    /* The default is applied in tailwind.config.js since Hyvä 1.2.0 */
+    .text-sans-serif {
+        font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    }
+}
+
+html {
+    @apply antialiased;
+}
+
+body {
+    @apply font-body text-black-100 leading-normal text-base tracking-normal bg-white;
+}
+
+a:hover,
+a:focus {
+  @apply [box-shadow:none] [outline:none];
+  
+}
+
+img {
+    @apply max-w-full h-auto;
+}
+
+p {
+    @apply mb-[10px];
+}
+
+h1,.h1, h2,.h2, h3,.h3, h4,.h4 {
+    @apply mb-4;
+}
+h1,.h1, h2,.h2, h3,.h3, h4,.h4,h5,.h5, h6,.h6 {
+    @apply text-black-100;
+}
+
+h1,
+.h1 {
+    @apply font-bold text-[34px] leading-[1.05];
+}
+h2,
+.h2 {
+    @apply font-medium text-[26px] leading-[1.4];
+}
+h3,
+.h3 {
+    @apply font-bold text-[24px] leading-[1.05];
+}
+
+@screen max-xl {
+    body{
+        @apply text-sm;
+    }
+    h1,
+    .h1 {
+        @apply text-[28px];
+    }
+    h2,
+    .h2 {
+        @apply text-[24px];
+    }
+    h3,
+    .h3 {
+        @apply text-[20px];
+    }
+}
+
+@screen max-sm {
+    body{
+        @apply text-sm;
+    }
+    h1,
+    .h1 {
+        @apply text-[26px];
+    }
+    h2,
+    .h2 {
+        @apply text-[20px];
+    }
+    h3,
+    .h3 {
+        @apply text-base;
+    }
+}

@@ -1,0 +1,52 @@
+<div class="ammessenger-widget-container"
+     data-bind="css: widgetPositionCss">
+    <div class="ammessenger-widget-component"
+         data-bind="css: widgetCssModifiers">
+        <!-- ko if: messengers.length === 1 -->
+        <a class="ammessenger-item -single" data-bind="{
+            attr: {
+                href: messengers[0].link,
+                title: messengers[0].tooltip,
+                'aria-label': messengers[0].title
+            },
+            click: !isPrivacyPolicyAccepted() ? onMainButtonClick : ''
+        }" target="_blank">
+            <img class="ammessenger-icon" data-bind="{
+                attr: {
+                    src: messengers[0].image_src[0],
+                    srcset: messengers[0].image_src.length > 1 ? messengers[0].image_src[1] + ' 2x' : '',
+                    alt: messengers[0].tooltip
+                }
+            }" >
+        </a>
+        <!-- /ko -->
+        <!-- ko if: messengers.length > 1 -->
+        <span class="ammessenger-toggle"
+              click="onMainButtonClick"
+              data-bind="css: {'-opened': openedState}"></span>
+        <div class="ammessenger-messengers-container">
+            <!-- ko fastForEach: { data: messengers, as: 'messenger' } -->
+            <a class="ammessenger-item" data-bind="{
+                    attr: {
+                        href: messenger.link,
+                        title: messenger.tooltip,
+                        'aria-label': messenger.title
+                    },
+                    click: $parent.onMessengerClick
+                }" target="_blank">
+                <img class="ammessenger-icon" data-bind="{
+                        attr: {
+                            src: messenger.image_src[0],
+                            srcset: messenger.image_src.length > 1 ? messenger.image_src[1] + ' 2x' : '',
+                            alt: messenger.title
+                        }
+                    }" >
+            </a>
+            <!-- /ko -->
+        </div>
+        <!-- /ko -->
+        <each args="data:elems(), as: 'element'">
+            <render if="hasTemplate()"></render>
+        </each>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+"Parameter attribute_code is required","Parameter attribute_code is required"
+Cancel,Cancel
+"Please update Amasty Base module. Re-upload it and replace all the files.","Please update Amasty Base module. Re-upload it and replace all the files."
+"Empty Request","Empty Request"
+"Configuration was saved successfully","Configuration was saved successfully"
+"Error. Please see the log for more information.","Error. Please see the log for more information."
+"Navigation Filters","Navigation Filters"
+"The item was moved successfully.","The item was moved successfully."
+"Invalid Data","Invalid Data"
+"The changes for ""%1"" were saved successfully.","The changes for ""%1"" were saved successfully."
+"Can not load Filter with code ""%1""","Can not load Filter with code ""%1"""
+"Amasty Custom Filter","Amasty Custom Filter"
+Yes/No,Yes/No
+Dropdown,Dropdown
+"Visual Swatch","Visual Swatch"
+"Text Swatch","Text Swatch"
+"Multiple Select","Multiple Select"
+Price,Price
+"Add/Remove Filters","Add/Remove Filters"
+"Previous Page","Previous Page"
+"Next Page","Next Page"
+Products,Products
+"Do not display this warning again.","Do not display this warning again."
+"Are you sure?","Are you sure?"
+"Improved Layered Navigation","Improved Layered Navigation"
+"Manage Navigation Filters","Manage Navigation Filters"
+"Improved Layered Navigation: Quick Config","Improved Layered Navigation: Quick Config"
+Information,Information
+"Please select...","Please select..."
+"Use in Layered Navigation","Use in Layered Navigation"
+"Filter Label","Filter Label"
+"Attribute Code","Attribute Code"
+"Catalog Input Type","Catalog Input Type"
+"Sidebar Block","Sidebar Block"
+Edit,Edit
+"Top Block","Top Block"
+Back,Back
+"Save and Continue Edit","Save and Continue Edit"
+"Save Changes","Save Changes"

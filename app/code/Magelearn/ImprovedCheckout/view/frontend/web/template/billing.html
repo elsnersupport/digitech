@@ -1,0 +1,23 @@
+<div class="checkout-billing-address">
+    <!-- ko foreach: getRegion('billing-address-list') -->
+    <!-- ko template: getTemplate() --><!-- /ko -->
+    <!--/ko-->
+
+    <!-- Inline address form -->
+    <render if="isFormInline" args="billingFormTemplate"></render>
+</div>
+
+<!-- Address form pop up -->
+<if args="!isFormInline">
+	<div class="new-address-popup">
+	    <button type="button"
+		    class="action action-show-popup"
+		    click="showFormPopUp"
+		    visible="!isNewAddressAdded()">
+			<span translate="'New Address'"></span>
+	    </button>
+    </div>
+    <div id="opc-new-billing-address"
+	 visible="isFormPopUpVisible()"
+	 render="billingFormTemplate"></div>
+</if>

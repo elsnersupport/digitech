@@ -1,0 +1,41 @@
+<?php
+/**
+ * BSS Commerce Co.
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the EULA
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://bsscommerce.com/Bss-Commerce-License.txt
+ *
+ * @category   BSS
+ * @package    Hyva_BssPreOrder
+ * @author     Extension Team
+ * @copyright  Copyright (c) 2022 BSS Commerce Co. ( http://bsscommerce.com )
+ * @license    http://bsscommerce.com/Bss-Commerce-License.txt
+ */
+?>
+<?php
+use Magento\Framework\Escaper;
+use Hyva\BssPreOrder\ViewModels\Helper as ModuleViewModel;
+use Bss\PreOrder\Helper\Data as BssPreOder;
+
+/** @var Escaper $escaper */
+/** @var $block \Bss\PreOrder\Block\PreOrderProduct */
+// @codingStandardsIgnoreFile
+$message = $block->getMessage();
+
+$moduleViewModel = $viewModels->require(ModuleViewModel::class);
+$preOrderHelper = $moduleViewModel->getHelper();
+?>
+<?php if ($block->isGroupProduct()): ?>
+    <span class="mess-preorder"><?= $message ?></span>
+    <input type="hidden" name="is_preorder_group_<?= $block->getProduct()->getId(); ?>" value="1">
+<?php else :?>
+    <?php if($preOrderHelper->isEnable()) : ?>
+        <div x-data="preOderBss()" x-init="initPreOder($el)" class="bss-pre-order">
+            
+        </div>
+    <?php endif; ?>
+<?php endif; ?>

@@ -1,0 +1,12 @@
+#order_tracking{width: 50%}
+
+.table.track-data-table{border: 1px solid #ccc;}
+
+.table.track-data-table th,
+.table.track-data-table td{border-left: 1px solid #ccc;}
+
+@media (max-width: 767px) {
+
+#order_tracking{width: 100%;}
+
+}

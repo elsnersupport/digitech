@@ -1,0 +1,41 @@
+.opc-wrapper .billing-address-items {
+	font-size: 0;
+	margin-top: 10px;
+}
+.opc-wrapper .billing-address-item.selected-item:after {
+    background: #ff5501;
+    color: #fff;
+    content: '\e610';
+    font-family: 'luma-icons';
+    height: 27px;
+    width: 29px;
+    font-size: 19px;
+    line-height: 21px;
+    padding-top: 2px;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 0;
+}
+.opc-wrapper .billing-address-item.selected-item {
+   	border-color: #ff5501;
+}
+.opc-wrapper .billing-address-item {
+   	border: 2px solid transparent;
+    font-size: 14px;
+    line-height: 30px;
+    margin: 0 0 20px;
+    padding: 20px 35px 20px 20px;
+    transition: .3s border-color;
+    width: 50%;
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+    word-wrap: break-word;
+	box-sizing: border-box;
+}
+@media only screen and (min-width: 768px), @media only screen and (min-width: 1024px) {
+  	.opc-wrapper .billing-address-item {
+    	width: 33.33333333%;
+	}
+}

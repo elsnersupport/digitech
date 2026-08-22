@@ -1,0 +1,13 @@
+<div class="data-grid-radio-cell-inner">
+    <div class="admin__field admin__field-option" outereach="resolveOption($row())">
+        <input
+            class="admin__control-radio"
+            type="radio"
+            attr="
+                id: 'check' + $row()[$col.indexField] + '-' + value,
+                name: 'check' + $row()[$col.indexField],
+                value: value"
+            data-bind="staticChecked: $col.resolveSelectedObserver($row())">
+        <label class="admin__field-label" text="label" attr="for: 'check' + $row()[$col.indexField] + '-' + value"></label>
+    </div>
+</div>

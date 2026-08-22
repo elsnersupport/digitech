@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Widget:etc/widget.xsd">
+    <widget id="social_feeds" class="Elsnertech\SocialFeeds\Block\Widget\SocialFeeds">
+        <label translate="true">Instagram Feeds</label>
+        <description translate="true">Display Instagram feeds (HYVA Compatible)</description>
+        <parameters>
+            <parameter name="title" xsi:type="text" required="true" visible="true" sort_order="10">
+                <label translate="true">Widget Title</label>
+                <value>SOCIAL MEDIA FEEDS</value>
+            </parameter>
+            <parameter name="instagram_access_token" xsi:type="text" required="false" visible="true" sort_order="20">
+                <label translate="true">Instagram Access Token</label>
+            </parameter>
+            <parameter name="posts_count" xsi:type="text" required="false" visible="true" sort_order="30">
+                <label translate="true">Number of Posts to Display</label>
+                <value>4</value>
+            </parameter>
+            <parameter name="enable_animations" xsi:type="select" required="false" visible="true" sort_order="40">
+                <label translate="true">Enable Hover Animations</label>
+                <options>
+                    <option name="1" value="1">
+                        <label translate="true">Yes</label>
+                    </option>
+                    <option name="0" value="0">
+                        <label translate="true">No</label>
+                    </option>
+                </options>
+            </parameter>
+        </parameters>
+    </widget>
+</widgets>

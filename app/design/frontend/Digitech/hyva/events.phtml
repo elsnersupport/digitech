@@ -1,0 +1,279 @@
+<?php
+?>
+<script type="text/javascript">
+    var wizzyConfigUpdated = true;
+
+    if (window.wizzyConfig.events !== null && window.wizzyConfig.events !== undefined) {
+        WizzyCustomInit();
+    } else {
+        window.onWizzyLoaded = [];
+        window.onWizzyLoaded.push(function () {
+            WizzyCustomInit();
+        });
+    }
+
+    window.wizzyLazyAssets={
+        assets:{
+            styles:[],
+            scripts:[]
+        },
+        loadCssFile(url){
+            var link = document.createElement("link");
+            link.rel = "stylesheet";
+            link.type = "text/css";
+            link.href = url;
+            document.head.appendChild(link);
+        },
+        loadJsFile(url){
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = url;
+            document.head.appendChild(script)
+        },
+        loadLazyAssets(){
+            for (var i in this.assets.styles){
+                this.loadCssFile(this.assets.styles[i]);
+            }
+            for (var i in this.assets.scripts){
+                this.loadJsFile(this.assets.scripts[i]);
+            }
+        },
+        push(url,type){
+            if(this.assets.hasOwnProperty(type) && typeof this.assets[type] == 'object') {
+                var assetKey= this.assets[type].length;
+                this.assets[type][assetKey] = url;
+            }
+        },
+        load(){
+            this.loadLazyAssets();
+        }
+    }
+
+    // window.wizzyLazyAssets.assets.scripts = ["https://digitech-hyva.elsnermage.com/static/frontend/Digitech/hyva/en_US/Wizzy_Search/core/wizzyFrontend.min.js"];
+    // window.wizzyLazyAssets.assets.styles = [
+    // "https://digitech-hyva.elsnermage.com/static/frontend/Digitech/hyva/en_US/Wizzy_Search/core/wizzyFrontend.min.css",
+    // "https://digitech-hyva.elsnermage.com/static/frontend/Digitech/hyva/en_US/Wizzy_Search/custom/custom.css"
+    // ];
+    
+    window.wizzyLazyAssets.assets.scripts = [
+        '<?= $escaper->escapeUrl($block->getViewFileUrl("Wizzy_Search::core/wizzyFrontend.min.js")) ?>'
+    ];
+
+    window.wizzyLazyAssets.assets.styles = [
+        '<?= $escaper->escapeUrl($block->getViewFileUrl("Wizzy_Search::core/wizzyFrontend.min.css")) ?>',
+        '<?= $escaper->escapeUrl($block->getViewFileUrl("Wizzy_Search::custom/custom.css")) ?>'
+    ];
+
+    var wizzyLazyAssetUtils = {
+        isWizzyLazyLoaded: false,
+        isCollectionEnabled:false,
+        wizzyStore : JSON.parse(window.localStorage.getItem('wizzy_store'))??false,
+        collectionId:document.querySelector("[data-wcollection-id]")?.getAttribute("data-wcollection-id")??false,
+        productId: document.querySelector("[data-wproduct-id]")?.getAttribute("data-wproduct-id")??false,
+        pageHandle: document.querySelector("[data-wpage-handle]")?.getAttribute("data-wpage-handle")??false,
+        currentEle: null,
+        searchInputIdentifiers:[],
+        enableWizzyAssets() {
+            if (!this.isWizzyLazyLoaded) {
+                this.isWizzyLazyLoaded=true;
+                if(typeof window.wizzyLazyAssets == 'object' && window.wizzyLazyAssets.hasOwnProperty('load') &&  typeof window.wizzyLazyAssets.load == "function") {
+                    window.wizzyLazyAssets.load();
+                }
+            }
+        },
+        isValidTargetEleToEnable(targetEle){
+            allCondition=[];
+            let dom,type ;
+            for (let i in this.searchInputIdentifiers){
+                dom = this.searchInputIdentifiers[i].dom;
+                type = this.searchInputIdentifiers[i].type;
+                allCondition.push(targetEle.matches(dom) &&
+                targetEle.getAttribute("type")===type);
+            }
+            allCondition = allCondition.filter(x=>x);
+            let condition = allCondition.length>0;
+            if(condition)this.currentEle=targetEle;
+            return condition;
+            
+            
+            return ;
+        },
+        clickCondition(targetEle){
+            return wizzyLazyAssetUtils.isValidTargetEleToEnable(targetEle);
+        },
+        keyDownCondition(targetEle){
+            return wizzyLazyAssetUtils.isValidTargetEleToEnable(targetEle);
+        },
+        handleInitClick(e) {
+            var self = wizzyLazyAssetUtils;
+            let targetEle = e.target;
+            if (self.clickCondition(targetEle) && !window.isWizzyLazyLoaded) {
+                self.enableWizzyAssets();
+                document.removeEventListener("click", self.handleInitClick);
+            }
+        },
+        handleInitKeyDown(e){
+            var self = wizzyLazyAssetUtils;
+            let targetEle = e.target;
+            if (self.keyDownCondition(targetEle) && !window.isWizzyLazyLoaded) {
+                self.enableWizzyAssets();
+                document.removeEventListener("keydown", self.handleInitKeyDown);
+            }
+        },
+        attachEvents() {
+            var self = wizzyLazyAssetUtils;
+            document.addEventListener("click", self.handleInitClick);
+            document.addEventListener("keydown", self.handleInitKeyDown);
+
+            window.addEventListener("onWizzyScriptLoaded", () => {
+                window.wizzySearchInit();
+            });
+
+            window.addEventListener("onWizzyInit", () => {
+                if (self.currentEle) {
+                    setTimeout(() => {
+                        self.currentEle.click();
+                    }, 10);
+                }
+
+                document.removeEventListener("click", self.handleInitClick);
+            });
+        },
+        isOnValidaProductPage(){
+            let self = wizzyLazyAssetUtils;
+            return self.wizzyStore
+                && typeof self.wizzyStore == 'object'
+                && self.wizzyStore.hasOwnProperty('CLICKED_PRODUCTS')
+                && typeof self.wizzyStore['CLICKED_PRODUCTS'] == 'object'
+                && self.wizzyStore['CLICKED_PRODUCTS'].hasOwnProperty(self.productId)
+                ;
+        },
+        isOnCollectionPage(){
+            let self = wizzyLazyAssetUtils;
+            return self.isCollectionEnabled && self.collectionId !== undefined && self.collectionId !=="" && self.collectionId !== null;
+        },
+        isOnPDP(){
+           return document.body.classList.contains('catalog-product-view');
+        },
+        isOnSLP(){
+           return document.body.classList.contains('search-index-index');
+        },
+        isNeedToAutoInitWizzy(){
+            var self = wizzyLazyAssetUtils;
+            return self.isOnPDP() || self.isOnSLP();
+        },
+        init() {
+            var self = wizzyLazyAssetUtils;
+            this.attachEvents();
+            if (!window.wizzyConfigUpdated) {
+                let wizzyCategoryPageInterval = setInterval(() => {
+                    if (window.wizzyConfigUpdated) {
+                        clearInterval(wizzyCategoryPageInterval);
+                        this.setFromAppConfig();
+                        if (self.isNeedToAutoInitWizzy())
+                            self.enableWizzyAssets();
+
+                    }
+                }, 10);
+            } else {
+                this.setFromAppConfig();
+                if (self.isNeedToAutoInitWizzy())
+                    self.enableWizzyAssets();
+
+            }
+        },
+        setFromAppConfig() {
+            this.isCollectionEnabled=window.wizzyConfig?.common?.hasToReplaceCollectionPages ?? false;
+            this.searchInputIdentifiers = [
+                {
+                    "dom": "#search",
+                    "type": "text"
+                }
+            ];  
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+        wizzyLazyAssetUtils.init();
+    });
+
+    function checkAutocompleteDisplay() {
+        const autocompleteWrapper = document.querySelector('.wizzy-autocomplete-wrapper');
+        if (autocompleteWrapper && getComputedStyle(autocompleteWrapper).display === 'flex') {
+            document.body.classList.add('wz-ac-opened');
+            document.documentElement.classList.add('wz-ac-opened');
+        } else {
+            document.body.classList.remove('wz-ac-opened');
+            document.documentElement.classList.remove('wz-ac-opened');
+        }
+    }
+
+    function WizzyCustomInit() {
+
+        window.wizzyConfig.filters = {
+            configs: {
+                keepOpenedInMobileAfterApply: 1,
+            }
+        }
+
+        var noProductsFound = JSON.parse('{"showProducts": true,"defaultPool":{"method":"filters","expiry":"session","data":{"productsCount":8,"categories": ["digital-cameras"]}}}');
+        window.wizzyConfig["search"]["configs"]["noProductsFound"] = noProductsFound;
+
+        setInterval(checkAutocompleteDisplay, 20);
+
+        window.wizzyConfig.events.registerEvent(
+            window.wizzyConfig.events.allowedEvents.BEFORE_AUTOCOMPLETE_EXECUTED,
+            function (payload) {
+                payload.minLastWordLength = 2;
+                return payload;
+            }
+        );
+        window.wizzyConfig.events.registerEvent(
+            window.wizzyConfig.events.allowedEvents.BEFORE_SEARCH_EXECUTED,
+            function (payload) {
+                payload.minLastWordLength = 2;
+                return payload;
+            }
+        );
+        window.wizzyConfig.events.registerEvent(
+            window.wizzyConfig.events.allowedEvents.AFTER_PRODUCTS_TRANSFORMED,
+            function (payload) {
+                payload.forEach((product) => {
+                    product.wishListAction = window.wizzyConfig.search.addToWishlist.postData.action;
+                    product.uenc = window.wizzyConfig.search.addToWishlist.postData.data.uenc;
+                    product.wzQuickViewUrl = window.location.origin + "/alothemes/product/view/id/" + product.id + "/";
+                    product.formKey = window.wizzyConfig.search.addToCart.formKey;
+                    var attributes = product.attributes;
+                    attributes.forEach((attribute) => {
+                        if (attribute.id == "pre_order_availability_message") {
+                            product.wzProductAvailibility = attribute.values[0].value[0];
+                        }
+                        if (attribute.id == "special_price") {
+                            var specialPrice = attribute.values[0].value[0];
+                            product.specialPrice = Number(specialPrice).toFixed(2);
+                        }
+                    })
+                    product.sku = product.sku[0];
+
+                    var categories = product.categories;
+                    const highestLevelCategory = categories.reduce((max, category) => {
+                        return (category.level > max.level) ? category : max;
+                    }, categories[0]);
+
+                   product.highLevelCategory = highestLevelCategory.name;
+                   if(window.wizzyConfig.store.currency.code == "USD") {
+                    product.hasToShowCurrencySymbol = true;
+                   }
+                });
+                return payload;
+            }
+        );
+
+        window.wizzyConfig.events.registerEvent(
+            window.wizzyConfig.events.allowedEvents.PRODUCTS_CACHED_RESULTS_RENDERED,
+            function (payload) {
+                return payload;
+            }
+        );
+    }
+</script>

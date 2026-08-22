@@ -1,0 +1,71 @@
+<?php
+$orderTracking = $block->getOrderTracking();
+$shipTrack = [];
+if ($orderTracking) {
+    $trackShipments = $orderTracking->getShipmentsCollection();
+    foreach ($trackShipments as $shipment) {
+        $increment_id = $shipment->getIncrementId();
+        $tracks = $shipment->getTracksCollection();
+
+        $trackingInfos = [];
+        foreach ($tracks as $track) {
+            $trackingInfos[] = $track->getData();
+        }
+        $shipTrack[$increment_id] = $trackingInfos;
+    }
+    $shipTrack;
+}
+?>
+<?php $_results = $shipTrack;?>
+<?php $_shipment = $block->getShipment(); ?>
+<?php if ($_shipment): ?>
+    <table cellspacing="0" cellpadding="0" border="0" width="650" style="border:1px solid #EAEAEA;">
+        <thead>
+        <tr>
+            <th align="left" bgcolor="#EAEAEA" style="font-size:13px; padding:3px 9px">
+                <?= $block->escapeHtml(__('Item')) ?></th>
+            <th align="left" bgcolor="#EAEAEA" style="font-size:13px; padding:3px 9px">
+                <?= $block->escapeHtml(__('Sku')) ?></th>
+            <th align="center" bgcolor="#EAEAEA" style="font-size:13px; padding:3px 9px">
+                <?= $block->escapeHtml(__('Qty')) ?></th>
+        </tr>
+        </thead>
+
+        <?php $i = 0;
+        foreach ($_shipment->getAllItems() as $_item): ?>
+            <?php if ($_item->getOrderItem()->getParentItem()) { continue;
+            } else { $i++;
+            } ?>
+            <tbody<?= $i % 2 ? ' bgcolor="#F6F6F6"' : '' ?>>
+            <?= $block->escapeHtmlAttr(__($block->getItemHtml($_item))) ?>
+            </tbody>
+        <?php endforeach; ?>
+    </table>
+<?php endif; ?>
+<?php if ($block->getHelper()->isEnabled() && $block->getHelper()->sendOrdertrackingLink()) { ?>
+    <table cellspacing="0" cellpadding="0" border="0" width="650">
+        <thead>
+        <tr>
+            <th align="left" bgcolor="#EAEAEA"
+                style="font-size:13px; padding:3px 9px"><?= $block->escapeHtml(__('Track Your Order')) ?></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td style="font-size: 12px; padding: 7px 9px 9px 9px; border-left: 1px solid #EAEAEA;
+border-bottom: 1px solid #EAEAEA; border-right: 1px solid #EAEAEA;">
+                <?= $block->escapeHtml(__('Track Your Order ')) ?>
+                <a style="text-decoration: none;" href="<?= $block->escapeHtmlAttr($block->
+                getBaseUrl()) . 'OrderTracking/OrderTracking/view/' . $block->
+                                                        escapeHtmlAttr($orderTracking->getIncrementId())?>">
+                <?= $block->escapeHtml(__('Here')) ?></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+<?php } ?>
+
+
+
+
+

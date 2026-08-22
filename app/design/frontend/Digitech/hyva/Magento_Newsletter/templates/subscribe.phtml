@@ -1,0 +1,95 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Hyva\Theme\ViewModel\ReCaptcha;
+use Magento\Framework\Escaper;
+use Magento\Newsletter\Block\Subscribe;
+
+/** @var Subscribe $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+/** @var ReCaptcha $recaptcha */
+/** @var HeroiconsOutline $heroicons */
+
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+
+// Do not replace this with $viewModels->require(ReCaptcha::class); that might break the dependency
+// on the Magento_ReCaptchaNewsletter module
+$recaptcha = $block->getData('viewModelRecaptcha');
+?>
+<div class="block max-w-full sm:max-w-md sm:px-4 ms-auto">
+    <form
+        class="form subscribe"
+        action="<?= $escaper->escapeUrl($block->getFormActionUrl()) ?>"
+        method="post"
+        x-data="initNewsletterForm()"
+        @submit.prevent="submitForm()"
+        id="newsletter-validate-detail"
+        aria-label="<?= $escaper->escapeHtmlAttr(__('Subscribe to Newsletter')) ?>"
+    >
+        <div class="flex justify-center md:justify-start h-[46px] sm:h-[57px] rounded overflow-hidden">
+            <label for="newsletter-subscribe" class="sr-only">
+                <?= $escaper->escapeHtml(__('Email Address')) ?>
+            </label>
+            <input
+                name="email"
+                type="email"
+                required
+                id="newsletter-subscribe"
+                class="form-input inline-flex w-full border-0 text-black-brand !rounded-none"
+                placeholder="<?= $escaper->escapeHtmlAttr(__('Enter your email address')) ?>"
+                aria-describedby="footer-newsletter-heading"
+            >
+            <input type="hidden" name="form_key" :value="hyva.getFormKey()">
+            <?= $recaptcha ? $recaptcha->getInputHtml(ReCaptcha::RECAPTCHA_FORM_ID_NEWSLETTER) : '' ?>
+            <button class="btn-action inline-flex shrink-0 ml-auto xl:mt-0 btn bg-white text-primary font-bold uppercase p-0 !rounded-none">
+                <?= $escaper->escapeHtml(__('Subscribe')) ?>
+            </button>
+        </div>
+        <div>
+            <template x-if="displayErrorMessage">
+                <p class="flex items-center text-red">
+                    <span class="inline-block w-8 h-8 mr-3">
+                        <?= $heroicons->exclamationCircleHtml(); ?>
+                    </span>
+                    <template x-for="errorMessage in errorMessages">
+                        <span x-html="errorMessage"></span>
+                    </template>
+                </p>
+            </template>
+        </div>
+    </form>
+    <div class="w-full">
+        <?= $recaptcha ? $recaptcha->getLegalNoticeHtml(ReCaptcha::RECAPTCHA_FORM_ID_NEWSLETTER) : '' ?>
+    </div>
+    <script>
+        function initNewsletterForm() {
+            return {
+                errors: 0,
+                hasCaptchaToken: 0,
+                displayErrorMessage: false,
+                errorMessages: [],
+                setErrorMessages(messages) {
+                    this.errorMessages = [messages]
+                    this.displayErrorMessage = this.errorMessages.length
+                },
+                submitForm() {
+                    // Do not rename $form, the variable is expected to be declared in the recaptcha output
+                    const $form = document.querySelector('#newsletter-validate-detail');
+                    <?= $recaptcha ? $recaptcha->getValidationJsHtml(ReCaptcha::RECAPTCHA_FORM_ID_NEWSLETTER) : '' ?>
+
+                    if (this.errors === 0) {
+                        $form.submit();
+                    }
+                }
+            }
+        }
+    </script>
+</div>

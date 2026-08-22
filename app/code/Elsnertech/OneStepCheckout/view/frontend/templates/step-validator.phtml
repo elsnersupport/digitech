@@ -1,0 +1,9 @@
+ <?php $scriptString = <<<script
+require(['Elsnertech_OneStepCheckout/js/view/step-validator','jquery'], function (Component,$) {
+    $(document).ready(function() {
+        Component();
+    });
+});	
+script;
+    ?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false) ?>

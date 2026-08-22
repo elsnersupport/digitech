@@ -1,0 +1,258 @@
+<?php
+$order = $block->getTrackOrder();
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$enable = $objectManager->get(\Magento\Framework\App\Config\ScopeConfigInterface::class)->getValue('contacts/contacts/enabled');
+
+$localeDate = $objectManager->get(\Magento\Framework\Stdlib\DateTime\TimezoneInterface::class);
+
+$email = $objectManager->get(\Magento\Framework\App\Config\ScopeConfigInterface::class)->getValue('trans_email/ident_support/email');
+$helperData = $objectManager->get(\Meetanshi\OrderTracking\Helper\Data::class);
+$helper = $objectManager->get(\Meetanshi\OrderTracking\Helper\Data::class)->getAllCarriers();
+$url = "";
+$shipTrack = [];
+if ($order) {
+    $shipments = $order->getShipmentsCollection();
+    foreach ($shipments as $shipment) {
+        $increment_id = $shipment->getIncrementId();
+        $tracks = $shipment->getTracksCollection();
+        $trackingInfos = [];
+        foreach ($tracks as $track) {
+            $trackingInfos[] = $track->getData();
+        }
+        $shipTrack[$increment_id] = $trackingInfos;
+    }
+    $shipTrack;
+}
+?>
+<?php $_results = $shipTrack; ?>
+<hr>
+<div class="page-title title-buttons ">
+    <div class="block-title"><h3><?= $block->escapeHtml(__('Tracking Information')) ?></h3></div>
+</div>
+<p><?= $block->escapeHtml(__("Your Order Status is :")) ?> <strong><?= $order->getStatusLabel() ?></strong></p>
+<p><?= $block->escapeHtml(__("Click")) ?>
+    <a target="_blank" href="
+        <?= $block->escapeHtmlAttr(__($block->returnBaseUrl() . 'ordertracking/ordertracking/view/' . $order->getIncrementId())) ?>">
+        <strong><?= $block->escapeHtml(__(' here')) ?></strong>
+    </a><?= $block->escapeHtml(__(" to view your Order Detail.")) ?></p>
+
+
+<?php if (count($_results) > 0): ?>
+    <?php foreach ($_results as $shipid => $_result): ?>
+        <?php if ($shipid): ?>
+            <p><strong><?= $block->escapeHtml(__('Shipment #') . $shipid) ?></strong></p>
+        <?php endif; ?>
+        <?php if (count($_result) > 0): ?>
+            <?php $rowCount = count($_result);
+            $counter = 1; ?>
+            <?php foreach ($_result as $track): ?>
+                <table class="table data-table track-data-table">
+                    <col width="15%"/>
+                    <col/>
+                    <tbody>
+                    <?php if (is_object($track)): ?>
+                        <tr>
+                            <th><?= $block->escapeHtml(__('Tracking Number:')) ?></th>
+                            <td><?= $block->escapeHtmlAttr(__($track->getTrackNumber())) ?></td>
+                        </tr>
+                        <?php if ($track->getTitle()): ?>
+                            <tr>
+                                <th><?= $block->escapeHtml(__('Carrier:')) ?></th>
+                                <td><?= $block->escapeHtmlAttr(__($track->getTitle())) ?></td>
+                            </tr>
+                        <?php endif; ?>
+                        <?php if ($track->getErrorMessage()): ?>
+                            <tr>
+                                <th><?= $block->escapeHtml(__('Error:')) ?></th>
+                                <td class="error"><?php if ($enable): ?>
+                                        <a href="<?= $block->escapeHtmlAttr(__($block->getUrl('contacts'))) ?>"
+                                           onclick="this.target='_blank'">
+                                            <?= $block->escapeHtml(__('Click here')) ?>
+                                        </a>
+                                        <?= $block->escapeHtml(__('to get details or '));
+                                    endif;
+                                                  echo $block->escapeHtml(__('email us at ')); ?>
+                                    <a href="mailto:<?= $block->escapeHtmlAttr(__($email)) ?>">
+                                        <?= $block->escapeHtmlAttr(__($email)) ?>
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php elseif ($track->getTrackSummary()): ?>
+                            <tr>
+                                <th><?= $block->escapeHtml(__('Info:')) ?></th>
+                                <td><?= $block->escapeHtmlAttr(__($track->getTrackSummary())) ?></td>
+                            </tr>
+                        <?php elseif ($track->getUrl()): ?>
+                            <tr>
+                                <th><?= $block->escapeHtml(__('Track:')) ?></th>
+                                <td><a href="<?= $block->escapeHtmlAttr(__($track->getUrl())) ?>"
+                                       onclick="this.target='_blank'">
+                                        <?= $block->escapeHtml(__('Click here to get details')) ?></a></td>
+                            </tr>
+                        <?php else: ?>
+                            <?php if ($track->getStatus()): ?>
+                                <tr>
+                                    <th><?= $block->escapeHtml(__('Status:')) ?></th>
+                                    <td><?= $block->escapeHtmlAttr(__($track->getStatus())) ?></td>
+                                </tr>
+                            <?php endif; ?>
+
+                            <?php if ($track->getDeliverydate()): ?>
+                                <tr>
+                                    <th><?= $block->escapeHtml(__('Delivered on:')) ?></th>
+                                    <td><?= $block->escapeHtmlAttr(__($block->formatDeliveryDateTime(
+                                        $track->getDeliverydate(),
+                                        $track->getDeliverytime()
+                                    ))) ?></td>
+                                </tr>
+                            <?php endif; ?>
+
+                            <?php if ($track->getSignedby()): ?>
+                                <tr>
+                                    <th><?= $block->escapeHtml(__('Signed by:')) ?></th>
+                                    <td><?= $block->escapeHtmlAttr(__($track->getSignedby())) ?></td>
+                                </tr>
+                            <?php endif; ?>
+
+                            <?php if ($track->getDeliveryLocation()): ?>
+                                <tr>
+                                    <th><?= $block->escapeHtml(__('Delivered to:')) ?></th>
+                                    <td><?= $block->escapeHtmlAttr(__($track->getDeliveryLocation())) ?></td>
+                                </tr>
+                            <?php endif; ?>
+
+                            <?php if ($track->getShippedDate()): ?>
+                                <tr>
+                                    <th><?= $block->escapeHtml(__('Shipped or billed on:')) ?></th>
+                                    <td><?= $block->escapeHtmlAttr(__($track->getShippedDate())) ?></td>
+                                </tr>
+                            <?php endif; ?>
+
+                            <?php if ($track->getService()): ?>
+                                <tr>
+                                    <th><?= $block->escapeHtml(__('Service Type:')) ?></th>
+                                    <td><?= $block->escapeHtmlAttr(__($track->getService())) ?></td>
+                                </tr>
+                            <?php endif; ?>
+
+                            <?php if ($track->getWeight()): ?>
+                                <tr>
+                                    <th><?= $block->escapeHtml(__('Weight:')) ?></th>
+                                    <td><?= $block->escapeHtmlAttr(__($block->escapeHtmlAttr(__($track->getWeight())))) ?></td>
+                                </tr>
+                            <?php endif; ?>
+
+                        <?php endif; ?>
+                    <?php elseif (isset($track['title']) && isset($track['track_number']) && $track['track_number']): ?>
+                        <!--if the tracking is custom value-->
+                        <tr>
+                            <th><?= $block->escapeHtmlAttr(__($track['title'] ? $block
+                                    ->escapeHtml($track['title']) : __('N/A'))) ?>:
+                            </th>
+                            <?php
+                            $firstname = '';
+                            $lastname = '';
+                            $countryCode = '';
+                            $postCode = '';
+
+                            $trackingDate = $localeDate->scopeDate();
+
+                            $orderId = $order->getEntityId();
+                            if ($shipAddress = $order->getShippingAddress()) {
+                                $firstname = $shipAddress->getFirstname();
+                                $lastname = $shipAddress->getLastname();
+                                $countryCode = $shipAddress->getCountryId();
+                                $postCode = $shipAddress->getPostcode();
+                            }
+
+                            foreach ($helper as $data) {
+                                if ($data->getTitle() == $track['title']) {
+                                    $url = $data->getUrl();
+                                }
+                            }
+                            $trackNumber = $track['track_number'];
+                            $url = preg_replace(
+                                [
+                                    "/#TRACKINGCODE#/i",
+                                    "/#POSTCODE#/i",
+                                    "/#ORDERID#/i",
+                                    "/#FIRSTNAME#/i",
+                                    "/#LASTNAME#/i",
+                                    "/#COUNTRYCODE#/i",
+                                    "/#d#/i",
+                                    "/#m#/i",
+                                    "/#y#/",
+                                    "/#Y#/"
+                                ],
+                                [
+                                    urlencode($trackNumber),
+                                    urlencode($postCode),
+                                    urlencode($orderId),
+                                    urlencode($firstname),
+                                    urlencode($lastname),
+                                    urlencode($countryCode),
+                                    $trackingDate->format('j'),
+                                    $trackingDate->format('n'),
+                                    $trackingDate->format('Y'),
+                                    $trackingDate->format('y')
+                                ],
+                                $url
+                            );
+                            ?>
+                            <td>
+                                <a href="<?= $url ?>" target="_blank"><?= $block->escapeHtmlAttr(__(isset($track['track_number']) ? $block->escapeHtml($track['track_number']) : '')) ?></a>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                    </tbody>
+                </table>
+
+                <?php if (is_object($track) && count($track->getProgressdetail()) > 0): ?>
+                    <table class="data-table" id="track-history-table-<?=
+                    $block->escapeHtmlAttr(__($track->getTracking())) ?>">
+                        <col/>
+                        <col width="1"/>
+                        <col width="1"/>
+                        <col/>
+                        <thead>
+                        <tr>
+                            <th><?= $block->escapeHtml(__('Location')) ?></th>
+                            <th><?= $block->escapeHtml(__('Date')) ?></th>
+                            <th><?= $block->escapeHtml(__('Local Time')) ?></th>
+                            <th><?= $block->escapeHtml(__('Description')) ?></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($track->getProgressdetail() as $_detail): ?>
+                            <?php $_detailDate = (isset($_detail['deliverydate']) ? $block->
+                            formatDeliveryDate($_detail['deliverydate']) : '') ?>
+                            <?php $_detailTime = (isset($_detail['deliverytime']) ? $block->
+                            formatDeliveryTime($_detail['deliverytime'], $_detailDate) : '') ?>
+                            <tr>
+                                <td><?= $block->escapeHtmlAttr(__(isset($_detail['deliverylocation']) ? $_detail
+                                    ['deliverylocation'] : '')) ?></td>
+                                <td><?= $block->escapeHtmlAttr(__($_detailDate)) ?></td>
+                                <td><?= $block->escapeHtmlAttr(__($_detailTime)) ?></td>
+                                <td><?= $block->escapeHtmlAttr(__((
+                                    isset($_detail['activity']) ? $_detail['activity'] : ''))) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+
+                    <script type="text/javascript">decorateTable('track-history-table-<?= $block->
+                        escapeHtmlAttr(__($track->getTracking())) ?>');</script>
+                <?php endif; ?>
+                <?php if ($counter != $rowCount): ?>
+                <?php endif; ?>
+                <?php $counter++; ?>
+            <?php endforeach; ?>
+            <!--end for each tracking information-->
+        <?php else: ?>
+            <p><?= $block->escapeHtml(__('There is no tracking available for this shipment.')) ?></p>
+        <?php endif; ?>
+    <?php endforeach; ?>
+<?php else: ?>
+    <div><?= $block->escapeHtml(__('There is no tracking available.')) ?></div>
+<?php endif; ?>
+

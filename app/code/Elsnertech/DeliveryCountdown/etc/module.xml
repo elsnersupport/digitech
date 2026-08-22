@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Elsnertech_DeliveryCountdown
+ * 
+ * @category    Elsnertech
+ * @package     Elsnertech_DeliveryCountdown
+ * @author      Elsnertech
+ * @copyright   Copyright (c) 2025 Elsnertech
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+    <module name="Elsnertech_DeliveryCountdown" setup_version="1.0.0">
+        <sequence>
+            <module name="Magento_Catalog"/>
+            <module name="Hyva_Theme"/>
+        </sequence>
+    </module>
+</config>

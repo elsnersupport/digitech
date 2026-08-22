@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2022 Amasty (https://www.amasty.com)
+ * @package ILN Quick Config for Magento 2 (System)
+ */-->
+
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider"
+                  xsi:type="string">amasty_shopby_add_attributes.amasty_shopby_add_attributes_data_source
+            </item>
+        </item>
+    </argument>
+    <settings>
+        <spinner>filter_columns</spinner>
+        <deps>
+            <dep>amasty_shopby_add_attributes.amasty_shopby_add_attributes_data_source</dep>
+        </deps>
+    </settings>
+
+    <dataSource name="amasty_shopby_add_attributes_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">id</param>
+            </storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <dataProvider name="amasty_shopby_add_attributes_data_source"
+                      class="Amasty\ShopByQuickConfig\Ui\DataProvider\AddFiltersList">
+            <settings>
+                <primaryFieldName>id</primaryFieldName>
+                <requestFieldName>id</requestFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+
+    <listingToolbar name="listing_top">
+        <settings>
+            <sticky>false</sticky>
+        </settings>
+        <paging name="listing_paging"/>
+        <filters name="listing_filters">
+            <filterSelect name="is_filterable" provider="${ $.parentName }">
+                <settings>
+                    <caption translate="true">Please select...</caption>
+                    <options class="Magento\LayeredNavigation\Model\Attribute\Source\FilterableOptions"/>
+                    <label translate="true">Use in Layered Navigation</label>
+                    <dataScope>is_filterable</dataScope>
+                </settings>
+            </filterSelect>
+        </filters>
+        <columnsControls name="columns_controls"/>
+        <bookmark name="bookmarks"/>
+    </listingToolbar>
+
+    <columns name="filter_columns" class="Magento\Ui\Component\Listing\Columns">
+        <column name="label" sortOrder="10" component="Amasty_ShopByQuickConfig/js/view/grid/columns/column">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="is_custom_filter" xsi:type="string">is_custom_filter</item>
+                </item>
+            </argument>
+            <settings>
+                <label translate="true">Filter Label</label>
+                <filter>text</filter>
+                <sorting>asc</sorting>
+            </settings>
+        </column>
+        <column name="attribute_code" sortOrder="20">
+            <settings>
+                <label translate="true">Attribute Code</label>
+                <filter>text</filter>
+            </settings>
+        </column>
+        <column name="frontend_input" sortOrder="30"  component="Magento_Ui/js/grid/columns/select">
+            <settings>
+                <options class="Amasty\ShopByQuickConfig\Model\Source\InputType"/>
+                <label translate="true">Catalog Input Type</label>
+                <filter>select</filter>
+                <dataType>select</dataType>
+            </settings>
+        </column>
+        <selectionsColumn class="Magento\Ui\Component\Listing\Columns\Column"
+                          name="is_filterable"
+                          sortOrder="50"
+                          component="Amasty_ShopByQuickConfig/js/view/grid/radiobuttons">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="optionGroupField" xsi:type="string">is_custom_filter</item>
+                </item>
+            </argument>
+            <settings>
+                <preserveSelectionsOnFilter>true</preserveSelectionsOnFilter>
+                <label translate="true">Use in Layered Navigation</label>
+                <draggable>false</draggable>
+                <dataType>select</dataType>
+                <indexField>id</indexField>
+                <options class="Amasty\ShopByQuickConfig\Model\Source\NavigationUsage"/>
+            </settings>
+        </selectionsColumn>
+    </columns>
+</listing>

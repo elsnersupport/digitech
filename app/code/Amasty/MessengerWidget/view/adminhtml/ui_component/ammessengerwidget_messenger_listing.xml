@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Live Chat for Magento 2
+ */-->
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">ammessengerwidget_messenger_listing.ammessengerwidget_messenger_listing_data_source</item>
+            <item name="deps" xsi:type="string">ammessengerwidget_messenger_listing.ammessengerwidget_messenger_listing_data_source</item>
+        </item>
+        <item name="spinner" xsi:type="string">ammessengerwidget_messenger_columns</item>
+        <item name="buttons" xsi:type="array">
+            <item name="add" xsi:type="array">
+                <item name="name" xsi:type="string">add</item>
+                <item name="label" xsi:type="string" translate="true">Add New Messenger</item>
+                <item name="class" xsi:type="string">primary</item>
+                <item name="url" xsi:type="string">*/*/new</item>
+            </item>
+        </item>
+    </argument>
+    <dataSource name="ammessengerwidget_messenger_listing_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">messenger_id</param>
+            </storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>Amasty_MessengerWidget::messenger_manage</aclResource>
+        <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="ammessengerwidget_messenger_listing_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>messenger_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top">
+        <bookmark name="bookmarks"/>
+        <columnsControls name="columns_controls"/>
+        <massaction name="listing_massaction"
+                    component="Magento_Ui/js/grid/tree-massactions">
+            <action name="active">
+                <settings>
+                    <confirm>
+                        <message translate="true">Delete selected items?</message>
+                        <title translate="true">Delete items</title>
+                    </confirm>
+                    <url path="ammessengerwidget/messenger/massDelete"/>
+                    <type>delete</type>
+                    <label translate="true">Delete</label>
+                </settings>
+            </action>
+            <action name="inactive">
+                <settings>
+                    <type>status</type>
+                    <label translate="true">Change status</label>
+                    <actions>
+                        <action name="0">
+                            <type>active</type>
+                            <label translate="true">Active</label>
+                            <url path="ammessengerwidget/messenger/massStatus">
+                                <param name="status">1</param>
+                            </url>
+                        </action>
+                        <action name="1">
+                            <type>inactive</type>
+                            <label translate="true">Inactive</label>
+                            <url path="ammessengerwidget/messenger/massStatus">
+                                <param name="status">0</param>
+                            </url>
+                        </action>
+                    </actions>
+                </settings>
+            </action>
+        </massaction>
+        <filters name="listing_filters">
+            <filterSelect name="store_id" provider="${ $.parentName }">
+                <settings>
+                    <captionValue>0</captionValue>
+                    <options class="Amasty\MessengerWidget\Model\Config\Source\StoreOptions"/>
+                    <label translate="true">Store View</label>
+                    <dataScope>store_id</dataScope>
+                    <imports>
+                        <link name="visible">ns = ${ $.ns }, index = ${ $.index }:visible</link>
+                    </imports>
+                </settings>
+            </filterSelect>
+            <filterSelect name="code" provider="${ $.parentName }">
+                <settings>
+                    <captionValue>0</captionValue>
+                    <options class="Amasty\MessengerWidget\Model\Config\Source\MessengerCode"/>
+                    <label translate="true">Messenger</label>
+                    <dataScope>code</dataScope>
+                    <imports>
+                        <link name="visible">ns = ${ $.ns }, index = ${ $.index }:visible</link>
+                    </imports>
+                </settings>
+            </filterSelect>
+        </filters>
+        <paging name="listing_paging"/>
+    </listingToolbar>
+    <columns name="ammessengerwidget_messenger_columns">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="childDefaults" xsi:type="array">
+                    <item name="fieldAction" xsi:type="array">
+                        <item name="provider" xsi:type="string">ammessengerwidget_messenger_listing.ammessengerwidget_messenger_listing.ammessengerwidget_messenger_columns.actions</item>
+                        <item name="target" xsi:type="string">applyAction</item>
+                        <item name="params" xsi:type="array">
+                            <item name="0" xsi:type="string">edit</item>
+                            <item name="1" xsi:type="string">${ $.$data.rowIndex }</item>
+                        </item>
+                    </item>
+                </item>
+            </item>
+        </argument>
+        <selectionsColumn name="ids" sortOrder="0">
+            <settings>
+                <indexField>messenger_id</indexField>
+            </settings>
+        </selectionsColumn>
+        <column name="icon" sortOrder="20" class="Amasty\MessengerWidget\Ui\Component\Listing\Column\Icon">
+            <settings>
+                <label translate="true">Icon</label>
+                <bodyTmpl>ui/grid/cells/html</bodyTmpl>
+                <sortable>false</sortable>
+            </settings>
+        </column>
+        <column name="name" sortOrder="30">
+            <settings>
+                <label translate="true">Messenger Name</label>
+            </settings>
+        </column>
+        <column name="is_active" component="Magento_Ui/js/grid/columns/select" sortOrder="40">
+            <settings>
+                <filter>select</filter>
+                <options class="Amasty\MessengerWidget\Model\Messenger\Grid\Status"/>
+                <dataType>select</dataType>
+                <label translate="true">Status</label>
+                <bodyTmpl>Amasty_MessengerWidget/grid/cells/status</bodyTmpl>
+            </settings>
+        </column>
+        <column name="store_id" class="Magento\Store\Ui\Component\Listing\Column\Store" sortOrder="50">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="allScopesValue" xsi:type="string" translate="true">All Store Views</item>
+                    <item name="filter" xsi:type="array">
+                        <item name="filterType" xsi:type="string">select</item>
+                        <item name="caption" xsi:type="string" translate="true">All Store Views</item>
+                    </item>
+                </item>
+            </argument>
+            <settings>
+                <options class="Magento\Store\Ui\Component\Listing\Column\Store\Options"/>
+                <bodyTmpl>Amasty_MessengerWidget/grid/cells/scope-cell</bodyTmpl>
+                <dataType>select</dataType>
+                <sortable>false</sortable>
+                <label translate="true">Store Views</label>
+                <fieldClass>
+                </fieldClass>
+            </settings>
+        </column>
+
+        <column name="comment" sortOrder="60">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Comment</label>
+            </settings>
+        </column>
+
+        <column name="sort_order" sortOrder="70">
+            <settings>
+                <filter>textRange</filter>
+                <label translate="true">Sort Order</label>
+            </settings>
+        </column>
+
+        <actionsColumn name="actions" class="Amasty\MessengerWidget\Ui\Component\Listing\Column\MessengerActions" sortOrder="1000">
+            <settings>
+                <indexField>messenger_id</indexField>
+                <resizeEnabled>false</resizeEnabled>
+                <resizeDefaultWidth>107</resizeDefaultWidth>
+            </settings>
+        </actionsColumn>
+    </columns>
+</listing>

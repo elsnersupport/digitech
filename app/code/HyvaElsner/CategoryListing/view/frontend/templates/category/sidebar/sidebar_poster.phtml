@@ -1,0 +1,29 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Catalog\Block\Category\View;
+use Magento\Catalog\ViewModel\Category\Output as CategoryOutput;
+use Magento\Framework\Escaper;
+
+/** @var View $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var CategoryOutput $categoryOutput */
+$categoryOutput = $viewModels->require(CategoryOutput::class);
+$sidebarPoster = $block->getCurrentCategory()->getSidebarPoster();
+?>
+
+<?php if ($sidebarPoster): ?>
+    <div class="category-sidebar-poster mt-5 px-3">
+        <?= /* @noEscape */ $categoryOutput->categoryAttribute($block->getCurrentCategory(), $sidebarPoster, 'sidebar_poster') ?> 
+    </div>
+<?php endif; ?>

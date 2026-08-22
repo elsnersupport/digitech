@@ -1,0 +1,184 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Shop By Hyva Compatibility
+ */
+
+declare(strict_types=1);
+
+use Amasty\ShopbyHyvaCompatibility\ViewModel\JsInit;
+use Amasty\ShopbyHyvaCompatibility\ViewModel\ProductListAjax;
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Magento\Framework\Escaper;
+use Magento\LayeredNavigation\Block\Navigation;
+
+// phpcs:disable Generic.Files.LineLength.TooLong
+
+/** @var Navigation $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var JsInit $jsInitViewModel */
+$jsInitViewModel = $viewModels->require(JsInit::class);
+
+/** @var HeroiconsOutline $heroIcons */
+$heroIcons = $viewModels->require(HeroiconsOutline::class);
+
+/** @var ProductListAjax $productListAjax */
+$productListAjax = $viewModels->require(ProductListAjax::class);
+
+$filterUniqId = uniqid();
+$pageLayout = $productListAjax->getPageLayout() ?: $block->getLayout()->getUpdate()->getPageLayout();
+$isOneColumn = $pageLayout === '1column' || $pageLayout === 'cms-full-width' || $pageLayout === 'product-full-width';
+$isSidebar = !!$block->getData('isSidebar') && !$isOneColumn;
+$expandedArray = $jsInitViewModel->getFiltersExpanded();
+?>
+<?php if ($block->canShowBlock()): ?>
+    <div class="<?= /** @noEscape */ $isSidebar ? 'sidebar sidebar-main' : 'sidebar-topnav'; ?> one-column-wrapper relative">
+        <?= $block->getChildHtml('amshopby.js.main') ?>
+        <script>
+            function layeredNavigationExtend_<?= $escaper->escapeHtml($filterUniqId); ?>() {
+                <?php if ($isSidebar): ?>
+                return deepMerge({}, initLayeredNavigation(), {
+                    isSidebar: true,
+                    isStickyEnabled: Boolean(<?= /** @noEscape */ $jsInitViewModel->isEnableStickySidebarDesktop(); ?>)
+                });
+                <?php else: ?>
+                return deepMerge({}, initLayeredNavigationTop(), {
+                    isSidebar: false,
+                    isOneColumn: Boolean(<?= /** @noEscape */ $isOneColumn; ?>)
+                });
+                <?php endif; ?>
+            }
+        </script>
+        <div class="block-filter flex flex-col border border-gray-light rounded-md
+             <?= $escaper->escapeHtmlAttr($isSidebar ? 'md:block' : '-top hidden my-0') ?>"
+             :class="{
+                 'md:block': isSidebar,
+                 '-top hidden my-0': !isSidebar
+             }"
+             x-data="layeredNavigationExtend_<?= $escaper->escapeHtml($filterUniqId); ?>()"
+             x-init="checkIsMobileResolution($el)"
+             @resize.window.debounce="checkIsMobileResolution($el)"
+             :id="isSidebar ? 'layered-filter-block' : ''"
+             x-on:visibilitychange.window.debounce="isSidebar && checkIsMobileResolution($el)">
+            <div class="block-title flex items-center justify-between px-4 py-4
+                 <?= $escaper->escapeHtmlAttr($isSidebar ? '' : 'hidden'); ?>"
+                 :class="{
+                     'hidden' : !isSidebar,
+                     '' : isSidebar
+                 }"
+                 :aria-expanded="isSidebar ? (blockOpen ? 'true' : 'false') : null"
+                 @click="isSidebar && (blockOpen = !blockOpen)"
+                 role="button"
+                 tabindex="0">
+                <span class="text-base font-semibold uppercase">
+                    <?= $escaper->escapeHtml(__('Filters')) ?>
+                </span>
+                <span class="hidden"
+                      :class="{
+                          'block': isSidebar && isMobile,
+                          'hidden': isSidebar && !isMobile
+                      }">
+                    <template x-if="isSidebar">
+                        <?= $heroIcons->chevronDownHtml(
+                            'transition-transform transform duration-300 ease-in-out',
+                            24,
+                            24,
+                            [":class" => "{ 'rotate-180': blockOpen }"]
+                        ); ?>
+                    </template>
+                </span>
+            </div>
+
+            <?= $block->getChildHtml('state') ?>
+
+            <div class="block-content filter-content
+                 <?= $escaper->escapeHtmlAttr($productListAjax->isMobile() ? 'hidden' : '') ?>
+                 <?= $escaper->escapeHtmlAttr($isSidebar ? 'md:block' : 'flex flex-wrap mt-2'); ?>"
+                 :id="isSidebar ? 'layered-filter-block-content' : ''"
+                 :class="{
+                     'block-content filter-content': true,
+                     'flex flex-wrap mt-2': !isSidebar,
+                     'md:block': isSidebar,
+                     'hidden': isMobile && !blockOpen,
+                     'overflow-y-auto': isApplySticky
+                 }">
+                <?php $filterIndex = 0; ?>
+                <?php foreach ($block->getFilters() as $filter): ?>
+                   
+                    <?php if ($filter->getName() == 'Category' && (int) $this->getRequest()->getParam('id',0) == 144) {
+                        continue;
+                    } ?>
+                    <?php if ($filter->getItemsCount()): ?>
+                        <?php
+                        $open = in_array($filterIndex, $expandedArray);
+                        ?>
+                        <div class="filter-option relative border-t shadow-none last:rounded-b-md
+                             <?= $escaper->escapeHtmlAttr($isSidebar ? 'card shadow-none' : 'my-0 mb-2 mr-6 shadow-none bg-transparent last:mr-0 pb-4'); ?>"
+                             :class="{
+                                 'card shadow-none': isSidebar,
+                                 'my-0 mb-2 mr-6 shadow-none bg-transparent last:mr-0 pb-4': !isSidebar
+                             }"
+                             x-data="{ open: Boolean('<?= /** @noEscape */ $open; ?>') }"
+                             @amSetFilterOpenState="isSidebar && (open = true)">
+                            <div class="filter-options-title flex justify-start items-center cursor-pointer hover:text-secondary-darker border-container
+                                 <?= $escaper->escapeHtmlAttr(!$isSidebar ? '' : ''); ?>
+                                 <?= $escaper->escapeHtmlAttr($open ? '': ''); ?>"
+                                 x-on:click.prevent.stop="isSidebar ? open = !open : setOpenedFilter('<?= $escaper->escapeJs($filterIndex) ?>', $event.currentTarget)"
+                                 :class="{
+                                     'border-none pb-0': !isSidebar,
+                                     '': open
+                                 }"
+                                 :aria-expanded="isSidebar ? (open ? 'true' : 'false') : null"
+                                 role="button"
+                                 tabindex="0"
+                            >
+                                <span class="title text-primary
+                                      <?= $escaper->escapeHtmlAttr(!$isSidebar ? 'mr-6' : ''); ?>"
+                                      :class="{
+                                          'mr-6': !isSidebar
+                                      }">
+                                    <?= $escaper->escapeHtml(__($filter->getName())) ?>
+                                </span>
+                                <span class="order-2 ml-auto">
+                                    <svg class="transition-transform transform duration-300 ease-in-out"
+                                         :class="{
+                                            'rotate-180': isSidebar ? open : isFilterOpened('<?= $escaper->escapeJs($filterIndex) ?>')
+                                         }"
+                                         aria-hidden="true"
+                                         focusable="false"
+                                         width="24"
+                                         height="24"
+                                         xmlns="http://www.w3.org/2000/svg"
+                                         fill="none"
+                                         stroke="currentColor"
+                                         viewBox="0 0 24 24"
+                                    >
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+                                    </svg>
+                                </span>
+                            </div>
+
+                            <div class="filter-options-content pt-3
+                                 <?= $escaper->escapeHtmlAttr(!$isSidebar ? 'min-w-[230px] w-max max-w-[35vw] absolute z-50 top-full -mt-4 left-0 box-content px-6 py-4 shadow-lg bg-container-lighter' : ''); ?>"
+                                 :class="{
+                                     'min-w-[230px] w-max max-w-[35vw] absolute z-50 top-full -mt-4 left-0 box-content px-6 py-4 shadow-lg bg-container-lighter': !isSidebar
+                                 }"
+                                 x-show="isSidebar ? open : isFilterOpened('<?= $escaper->escapeJs($filterIndex) ?>')"
+                                 x-cloak>
+                                <?= /* @noEscape */ $block->getChildBlock('renderer')->render($filter) ?>
+                            </div>
+                        </div>
+                        <?php $filterIndex++; ?>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </div>
+
+            <?= $block->getChildHtml('amasty.shopby.applybutton.sidebar'); ?>
+        </div>
+    </div>
+<?php endif; ?>
+

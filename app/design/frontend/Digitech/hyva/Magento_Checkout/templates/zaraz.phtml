@@ -1,0 +1,27 @@
+<?php
+
+use HyvaElsner\CategoryListing\ViewModel\CategoryData;
+
+$categoryData = $viewModels->require(CategoryData::class);
+$quote = $categoryData->getQuote();
+$cartItems = $quote->getAllVisibleItems();
+$zarazProducts = [];
+foreach ($cartItems as $cartItem) {
+	$product = $categoryData->getProductById($cartItem->getProductId());
+	$zarazProducts[] = [
+		'product_id' => $cartItem->getProductId(),
+		'sku' => $cartItem->getSku(),
+		'category' => $categoryData->getCategoryNameById($product->getCategoryIds()[0]),
+		'name' => $cartItem->getName(),
+		'brand' => $product->getAttributeText('manufacturer'),
+		'price' => $cartItem->getPrice(),
+		'currency' => $categoryData->getCurrencyCode(),
+		'quantity' => $cartItem->getQty()
+	];
+}
+?>
+<script type="text/javascript">
+	if (window.zaraz) {
+		zaraz.ecommerce('Product Added', <?= json_encode($zarazProducts) ?>);
+	}
+</script>

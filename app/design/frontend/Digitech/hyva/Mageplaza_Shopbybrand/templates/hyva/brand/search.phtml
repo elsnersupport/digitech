@@ -1,0 +1,309 @@
+<?php
+/**
+ * Mageplaza
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Mageplaza.com license that is
+ * available through the world-wide-web at this URL:
+ * https://www.mageplaza.com/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Mageplaza
+ * @package     Mageplaza_Shopbybrand
+ * @copyright   Copyright (c) Mageplaza (https://www.mageplaza.com/)
+ * @license     https://www.mageplaza.com/LICENSE.txt
+ */
+?>
+
+<?php /** @var \Mageplaza\Shopbybrand\Block\Brand\Search $block */ ?>
+<div class="block block-brand-search rounded-lg">
+    <div class="block-title">
+        <strong><?= /** @noEscape */ $block->getPageTitle() ?></strong>
+    </div>
+    <div class="block-content">
+        <div class="mp-searchbox">
+            <input id="mp-search" type="text" class="mp-search form-control input-query ui-autocomplete-input" name="q"
+                   placeholder="<?= /** @noEscape */ __('Search a brand name') ?>">
+            <button type="submit" id="mp-brand-search-button" class="btn btn-primary btn-lg search-btn fa fa-search">
+                <span><?= /** @noEscape */ __('Search') ?></span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .block-brand-search {
+        padding: 15px 0 40px 0;
+        text-align: center;
+        color: #fff;
+        margin-bottom: 0 !important;
+    }    
+
+    .block-brand-search .block-title {
+        font-size: 3.5em;
+        display: block;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        text-align: center;
+        font-weight: normal;
+    }
+    .block-brand-search .block-content {
+        margin-top: 1em;
+        padding: 15px;
+        display: block !important;
+    }
+    .block-brand-search .block-content .mp-searchbox {
+        position: relative;
+        max-width: 660px;
+        text-align: left;
+        margin: 0 auto;
+    }
+    .block-brand-search .search-btn {
+        display: inline-block;
+        background: none;
+        border: 0;
+        box-shadow: none;
+        line-height: inherit;
+        margin: 0;
+        padding: 0;
+        text-decoration: none;
+        text-shadow: none;
+        font-weight: 400;
+        position: absolute;
+        right: 20px;
+        top: -2px;
+        z-index: 1;
+        height: 61px !important;
+    }
+    .block-brand-search .block-content .mp-searchbox .form-control {
+        display: block;
+        width: 100%;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        margin: 0 auto;
+        transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+        padding: 18px 60px 18px 20px !important;
+        height: auto !important;
+    }
+    .block-brand-search .search-btn:before {
+        -webkit-font-smoothing: antialiased;
+        font-size: 39px;
+        line-height: 61px;
+        color: #8f8f8f;
+        margin: 0;
+        vertical-align: top;
+        display: inline-block;
+        font-weight: normal;
+        overflow: hidden;
+        speak: none;
+        text-align: center;
+    }
+    .block-brand-search .search-btn > span {
+        border: 0;
+        clip: rect(0, 0, 0, 0);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        width: 1px;
+    }
+    #mp-searchautocomplete-list {
+        position: absolute;
+        max-height: 2000px;
+        z-index: 2;
+        width: 660px;
+        background: #FFF;
+        border: 1px solid #ddd;
+        padding: 10px 0;
+        border-radius: 15px;
+        box-shadow: 1px 4px 3px rgba(50, 50, 50, 0.64);
+        border-top: 0;
+        color: #101010;
+        max-height: 63vh;
+        overflow-y: auto;
+    }
+    #mp-searchautocomplete-list .autocomplete-suggestion a {
+       display: flex;
+       gap: 0 15px;
+    }
+    #mp-searchautocomplete-list .autocomplete-suggestion:hover {
+        background-color: #f1f1f1;
+    }
+    #mp-searchautocomplete-list .autocomplete-suggestion{
+        padding: 10px 10px;
+        border-bottom: 1px solid #d1d1d1;
+    }
+    #mp-searchautocomplete-list  .no-result-suggestion {
+        padding: 10px 10px;
+        font-size: 20px;
+    }
+    #mp-searchautocomplete-list  .shopbybrand-suggestion-left {
+        margin-right: 10px;
+        flex-shrink:0;
+        max-width: 90px;
+        max-height: 80px;
+    }
+    #mp-searchautocomplete-list .autocomplete-suggestion:last-child {
+        border-bottom: 0;
+    }
+    .shopbybrand-product-des h1 {
+        font-size: 24px;
+    }
+
+    .shopbybrand-product-des h2 {
+        font-size: 20px;
+    }
+    .shopbybrand-product-name {
+        font-size: 20px;
+        color: #101010;
+        font-weight: 600;
+        padding: 0 0 10px 0;
+    }
+    .autocomplete-suggestion  .shopbybrand-suggestion-left {
+        width: 100px;
+        height: 100px;
+        border: 1px solid #d9d9d9;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .shopbybrand-product-des {
+        color: #101010;
+    }
+
+    /* Brand Page CSS */
+    .brand-container .block-brand-search {
+        background-color: transparent;
+        color: #101010;
+        border: none !important;
+    }
+
+    .brand-container .block-brand-search .search-btn:before {
+        font-size: 20px;
+        line-height: 24px;
+    }
+</style>
+
+<script id="mpbrand-autocomplete-suggest" type="text/x-magento-template">
+    <a class="shopbybrand-suggestion" href="<%- data.brandUrl %>">
+        <?php if ($block->isVisibleImage()) : ?>
+            <div class="shopbybrand-suggestion-left">
+                <% if (data.swatchcolor) { %>
+                <img class="shopbybrand-img-responsive" style="background-color: <%- data.swatchcolor %>" width="70" height="70" />
+                <% } else { %>
+                <img class="shopbybrand-img-responsive" src="<%- data.image %>" alt="" width="70" />
+                <% } %>
+            </div>
+        <?php endif; ?>
+        <div class="shopbybrand-suggestion-right">
+            <div class="shopbybrand-product-line shopbybrand-product-name">
+                <%- data.value %>
+            </div>
+            <div class='shopbybrand-product-des'>
+                <p class='shopbybrand-short-des'>
+                    <%= data.desc %>
+                </p>
+            </div>
+        </div>
+    </a>
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", (event) => {
+        let lookup = <?=  /** noEscape */ $block->getSearchData() ?>,
+            minChars= <?= /** @noEscape */ $block->getMinSearchChar() ?>,
+            lookupLimit= <?= /** @noEscape */ $block->getMaxQueryResult() ?>;
+        function autocomplete(inp, arr) {
+            var currentFocus;
+            inp.addEventListener("input", function(e) {
+                var a, b, i, val = this.value;
+                let numberOfResult = 0;
+                closeAllLists();
+                if (!val || val.length < minChars) { return false;}
+                currentFocus = -1;
+                a = document.createElement("DIV");
+                a.setAttribute("id", this.id + "autocomplete-list");
+                a.setAttribute("class", "autocomplete-items autocomplete-suggestions");
+                this.parentNode.appendChild(a);
+                let isResult = false;
+                for (i = 0; i < arr.length; i++) {
+                    let value = arr[i].value,
+                        item = arr[i];
+                    if(numberOfResult >= lookupLimit) {
+                        break;
+                    }
+                    if (value.toUpperCase().includes(val.toUpperCase())) {
+
+                        numberOfResult++ ;
+                        isResult = true;
+                        b = document.createElement("div");
+                        b.className = 'autocomplete-suggestion';
+                       let text = `<a class="shopbybrand-suggestion" href="${item.brandUrl}">`;
+                        if(<?= /** @noEscape */ $block->isVisibleImage() ?>) {
+                            text += `<div class="shopbybrand-suggestion-left">
+                    ${item.swatchcolor ? (`<img class="shopbybrand-img-responsive" style="background-color: ${item.swatchcolor}" width="70" height="70" />`) : (`<img class="shopbybrand-img-responsive" src="${item.image}" alt="" width="70">`)}
+                </div>`
+                        }
+                        text += `<div class="shopbybrand-suggestion-right"><div class="shopbybrand-product-line shopbybrand-product-name">${item.value}</div>
+                <div class="shopbybrand-product-des">
+                    <p class="shopbybrand-short-des">
+                        ${item.desc}
+                    </p>
+                </div>
+                </div>
+                </a>`;
+                        b.innerHTML = text;
+                        b.addEventListener("click", function(e) {
+                            closeAllLists();
+                        });
+                        a.appendChild(b);
+                    }
+                }
+                if(!isResult) {
+                    b = document.createElement("div");
+                    b.className = 'no-result-suggestion';
+                    b.innerHTML =`No result`;
+                    a.appendChild(b);
+                }
+            });
+            inp.addEventListener("keydown", function(e) {
+                var x = document.getElementById(this.id + "autocomplete-list");
+                if (x) x = x.getElementsByTagName("div");
+                if (e.keyCode == 40) {
+                    currentFocus++;
+                } else if (e.keyCode == 38) {
+                    currentFocus--;
+                } else if (e.keyCode == 13) {
+                    e.preventDefault();
+                    if (currentFocus > -1) {
+                        if (x) x[currentFocus].click();
+                    }
+                }
+            });
+
+            function closeAllLists(elmnt) {
+
+                var x = document.getElementsByClassName("autocomplete-items");
+                for (var i = 0; i < x.length; i++) {
+                    if (elmnt != x[i] && elmnt != inp) {
+                        x[i].parentNode.removeChild(x[i]);
+                    }
+                }
+            }
+
+        }
+
+
+        autocomplete(document.getElementById("mp-search"), lookup);
+    });
+</script>

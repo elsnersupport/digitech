@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <social_feeds>
+            <instagram>
+                <enabled>0</enabled>
+            </instagram>
+            <general>
+                <posts_count>4</posts_count>
+                <cache_time>30</cache_time>
+                <enable_animations>1</enable_animations>
+            </general>
+        </social_feeds>
+    </default>
+</config>

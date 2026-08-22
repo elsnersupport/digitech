@@ -1,0 +1,68 @@
+<?php
+
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Catalog\Block\Category\View;
+use Magento\Catalog\ViewModel\Category\Output as CategoryOutput;
+use Magento\Framework\Escaper;
+
+/** @var View $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var CategoryOutput $categoryOutput */
+$categoryOutput = $viewModels->require(CategoryOutput::class);
+?>
+
+<?php if ($description = $block->getCurrentCategory()->getDescription()): ?>
+    <div
+        x-data="{ 
+            expanded: false, 
+            height: 0, 
+            showButton: false 
+        }"
+        x-init="() => {
+            height = $refs.content.scrollHeight * 0.3;
+            showButton = $refs.content.scrollHeight > height + 20;
+            if (!showButton) {
+                expanded = true;
+            }
+        }"
+        class="category-description block-container mb-10">
+        <div class="description-content-wrapper bg-[#F5F5F5] rounded-xl p-8">
+            <div class="description-content relative" x-bind:class="expanded ? 'expanded-class' : 'collapsed-class'">
+                <div
+                    x-ref="content"
+                    x-bind:style="`max-height: ${expanded ? 'none' : height + 'px'}; overflow: hidden; transition: max-height 0.3s ease;`"
+                    class="markdown">
+                    <?php $categoryDescription = $categoryOutput->categoryAttribute($block->getCurrentCategory(), $description, 'description');
+
+                    $categoryDescription = preg_replace(
+                        '/<h1>(.*?)<\/h1>/i', // Match <h1>...</h1>
+                        '<h2 class="text-3xl font-bold">$1</h2>', // Replace with <h2> and add the class
+                        $categoryDescription ?? ""
+                    );
+                    echo $categoryDescription;
+                    ?>
+                </div>
+            </div>
+            <template x-if="showButton">
+                <button
+                    :aria-expanded="expanded"
+                    @click="expanded = !expanded"
+                    class="block w-fit bg-white text-primary hover:text-primary-darker font-semibold rounded-md shadow mx-auto mt-4 px-5 py-2">
+                    <span x-text="expanded ? 'Read Less' : 'Read more'"><?= $escaper->escapeHtml('Read more') ?></span>
+                    <span x-text="expanded ? '↑' : '↓'"><?= $escaper->escapeHtml('↓') ?></span>
+                </button>
+            </template>
+        </div>
+    </div>
+<?php endif; ?>

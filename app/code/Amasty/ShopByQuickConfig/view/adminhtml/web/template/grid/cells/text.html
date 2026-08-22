@@ -1,0 +1,7 @@
+<div class="amshopbyconfig-attribute-placeholder" if="$col.isCustomFilter($row())">
+    <img class="amshopbyconfig-image" data-bind="attr: {
+            src: require.toUrl('Amasty_ShopByQuickConfig/images/attribute-placeholder.svg'),
+            alt: $t($col.getLabel($row()))
+        }" />
+</div>
+<div class="amshopbyconfig-attribute-name data-grid-cell-content" text="$col.getLabel($row())"></div>

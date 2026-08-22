@@ -1,0 +1,39 @@
+<div class="admin__field" visible="visible" css="$data.additionalClasses">
+    <label class="admin__field-label" if="$data.label" attr="for: uid">
+        <span translate="label" attr="'data-config-scope': $data.scopeLabel"></span>
+    </label>
+
+    <div class="admin__field-control" css="'_with-tooltip': $data.tooltip">
+        <div class="file-uploader image-uploader" data-role="drop-zone" css="_loading: isLoading">
+            <div class="file-uploader-area">
+                <input type="file" afterRender="onElementRender"
+                       attr="id: uid, name: inputName, multiple: isMultipleFiles" disable="disabled">
+            </div>
+
+            <render args="tooltipTpl" if="$data.tooltip"></render>
+
+            <label class="admin__field-error" if="error" attr="for: uid" text="error"></label>
+
+            <each args="data: value, as: '$file'" render="$parent.getPreviewTmpl($file)"></each>
+
+            <div if="!hasData()" class="image image-placeholder" click="triggerImageUpload">
+                <div class="file-uploader-summary product-image-wrapper">
+                    <div class="file-uploader-spinner image-uploader-spinner"></div>
+                    <p class="image-placeholder-text" translate="'Browse to find or drag image here'"></p>
+                </div>
+            </div>
+        </div>
+        <render args="$data.service.template" if="$data.hasService()"></render>
+        <div class="admin__field-note" if="$data.notice" attr="id: noticeId">
+            <span html="notice"></span>
+        </div>
+        <p class="image-upload-requirements">
+            <span if="$data.maxFileSize">
+                <span translate="'Recommended SVG format, supports'"></span>:<span if="$data.allowedExtensions"></span>
+                <text args="getAllowedFileExtensionsInCommaDelimitedFormat()"></text>
+                <span translate="'formats'"></span>.
+                <span translate="'Min size 120x120px'"></span>.
+            </span>
+        </p>
+    </div>
+</div>

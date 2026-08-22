@@ -1,0 +1,188 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Shop By Hyva Compatibility
+ */
+
+declare(strict_types=1);
+
+use Amasty\Shopby\Block\Product\ProductList\ChildrenCategoryList;
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Magento\Framework\Escaper;
+
+/** @var Escaper $escaper */
+/** @var ChildrenCategoryList $block */
+/** @var ViewModelRegistry $viewModels */
+/** @var Magento\Catalog\Model\Category[] $categories */
+
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+
+$categories = $block->getChildrenCategories();
+$size = $block->getImageSize();
+$uniqueId = '_' . uniqid();
+$isSliderEnabled = $block->isSliderEnabled();
+$swiperPrefix = $isSliderEnabled ? 'swiper-' : '';
+// phpcs:disable Generic.Files.LineLength.TooLong
+?>
+<?php if (count($categories)): ?>
+    <div class="container overflow-hidden">
+        <div class="amslider-container mx-auto amwidget-children-categories my-5
+            <?= $escaper->escapeHtmlAttr($isSliderEnabled ? 'am-swiper-slider w-full opacity-0 h-[' . $size . 'px]' : ''); ?>"
+            <?= /* @noEscape */ $isSliderEnabled ? 'x-data="amShopBySwiperSlider' . $escaper->escapeJs($uniqueId) . '()"' : ''; ?>>
+            <div class="amslider relative amshopby-categories-slider" id="category-carousel">
+                <div class="flex justify-between">
+                    <div class="title">
+                        <h2 class="font-medium text-2xl mb-2">
+                            <?= $escaper->escapeHtml('Browse Category') ?>
+                        </h2>
+                    </div>
+                    <div class="slider-nav">
+                        <div
+                            class="flex items-center justify-center py-2 gap-x-[14px]"
+                        >
+                            <?php if ((count($categories) > $block->getItemsCountPerSlide()) && $isSliderEnabled): ?>
+                                <button class="swiper-button-prev text-black flex-none p-0"
+                                        data-amshopby-js="children-category-swiper-prev"
+                                        aria-label="<?= $escaper->escapeHtmlAttr(__('Previous')) ?>"
+                                        title="<?= $escaper->escapeHtmlAttr(__('Previous')) ?>"
+                                        type="button"
+                                        >
+                                        <?= $heroicons->arrowLeftHtml("w-6 h-6", 24, 24, ['aria-hidden' => 'true']) ?>
+                                </button>
+                                <button class="swiper-button-next text-black flex-none p-0"
+                                        data-amshopby-js="children-category-swiper-next"
+                                        aria-label="<?= $escaper->escapeHtmlAttr(__('Next')) ?>"
+                                        title="<?= $escaper->escapeHtmlAttr(__('Next')) ?>"
+                                        >
+                                        <?= $heroicons->arrowRightHtml("w-6 h-6", 24, 24, ['aria-hidden' => 'true']) ?>
+                                </button>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="children-category-container <?= /* @noEscape */ $swiperPrefix ?>container overflow-hidden">
+                    <div class="<?= /* @noEscape */ $swiperPrefix ?>wrapper <?= !$isSliderEnabled ? 'flex flex-wrap w-full justify-center' : ''; ?>">
+                        <?php foreach ($categories as $category): ?>
+                            <?php
+                            $imgUrl = $block->getCategoryImageUrl($category, $size);
+                            $imgAlt = __('Category') . ' ' . $category->getName() . ' ' . __('image');
+                            ?>
+                            <?php if ($imgUrl): ?>
+                                <a title="<?= $escaper->escapeHtmlAttr($category->getName()); ?>"
+                                   href="<?= $escaper->escapeUrl($category->getUrl()) ?>"
+                                   class="<?= /* @noEscape */ $swiperPrefix; ?>slide
+                                   <?= /* @noEscape */ $isSliderEnabled ? '' : 'max-md:mr-2.5 max-md:mb-5 md:mr-4' ?>">
+                                    <span class="<?= /* @noEscape */ $swiperPrefix ?>category-item block
+                                    <?= /* @noEscape */ ($block->showLabels()) ? ' category-item-label' : '' ?>">
+                                        <?php if (!$block->isOnlyLabels()): ?>
+                                            <div class="inline-flex justify-center items-center col-start-1 row-start-1 border border-[#D4D4D4] rounded-[6px] w-full lg:scale-95 lg:group-hover:scale-100 transition-all duration-300">                        
+                                                <img class="block mx-auto !mb-0"
+                                                style="margin-bottom:0px;"
+                                                     height="<?= /* @noEscape */ $size ?>"
+                                                     width="<?= /* @noEscape */ $size ?>"
+                                                     src="<?= $escaper->escapeUrl($imgUrl) ?>"
+                                                     alt="<?= $escaper->escapeHtmlAttr($imgAlt) ?>"/>
+                                            </div>
+                                        <?php endif; ?>
+
+                                        <?php if ($block->showLabels() || $block->isOnlyLabels()): ?>
+                                            <div class="category-item-title w-full flex justify-center text-center"
+                                                <?= /* @noEscape */ $isSliderEnabled ? '' : 'style="max-width: ' . $size . 'px"' ?>>
+                                                <?= $escaper->escapeHtml($category->getName()) ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </span>
+                                </a>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+<?php if ($isSliderEnabled): ?>
+    <script>
+        function amShopBySwiperSlider<?= $escaper->escapeJs($uniqueId) ?>() {
+            return {
+                initSwiper(selector) {
+                    return new Swiper(selector, {
+                        slidesPerView: 1,
+                        loop: true,
+                        simulateTouch: true,
+                        breakpoints: {
+                            320: {
+                                slidesPerView: 1,
+                                spaceBetween: 10
+                            },
+                            480: {
+                                slidesPerView: 2,
+                                spaceBetween: 20
+                            },
+                            768: {
+                                slidesPerView: "<?= /* @noEscape */ $block->getItemsCountPerSlide()?>",
+                                spaceBetween: 20
+                            }
+                        },
+                        navigation: {
+                            nextEl: "[data-amshopby-js=\"children-category-swiper-next\"]",
+                            prevEl: "[data-amshopby-js=\"children-category-swiper-prev\"]"
+                        },
+                        spaceBetween: 30,
+                        a11y: {
+                            slideLabelMessage: "slide {{index}} of {{slidesLength}} slide",
+                            itemRoleDescriptionMessage: "This is a slide for a child category filter"
+                        }
+                    });
+                },
+
+                init() {
+                    const sliderSelector = '.amwidget-children-categories .swiper-container';
+                    if (!window.Swiper) {
+                        window.addEventListener('amSwiperLoaded', () => {
+                            this.setupSwiper(this.$el, sliderSelector);
+                        });
+                        this.initializeSwiper();
+                    } else {
+                        this.setupSwiper(this.$el, sliderSelector);
+                    }
+                },
+
+                setupSwiper(element, sliderSelector) {
+                    element.classList.remove('opacity-0');
+                    element.classList.remove(`h-[<?= /** @noEscape */ $size; ?>px]`);
+                    this.initSwiper = this.initSwiper(sliderSelector);
+                    this.initSwiper.init();
+                },
+
+                initializeSwiper() {
+                    if (window._amSwiperLoaded) {
+                        return;
+                    }
+
+                    // load swiper
+                    const script = document.createElement('script');
+                    script.src = '<?= $escaper->escapeUrl($block->getViewFileUrl('Amasty_ShopByBrandHyvaCompatibility::js/swiper.min.js')) ?>';
+                    script.async = true;
+                    document.body.appendChild(script);
+
+                    window._amSwiperLoaded = true;
+
+                    script.onload = () => {
+                        window.dispatchEvent(new CustomEvent('amSwiperLoaded', {}));
+                    }
+
+                    const styles = document.createElement('link');
+                    styles.rel = 'stylesheet';
+                    styles.href = '<?= $escaper->escapeUrl($block->getViewFileUrl('Amasty_ShopByBrandHyvaCompatibility::css/swiper.min.css')) ?>';
+
+                    document.head.appendChild(styles);
+                }
+            }
+        }
+    </script>
+<?php endif; ?>
+

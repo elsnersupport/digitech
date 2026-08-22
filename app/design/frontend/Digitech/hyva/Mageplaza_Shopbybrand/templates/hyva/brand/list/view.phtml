@@ -1,0 +1,115 @@
+<?php
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+
+?>
+<div class="modal-view-brand" style="position: relative; max-height: 90vh">
+    <div id="ln_overlay" class="ln_overlay" style="display: block;">
+        <div class="loader">
+            <!-- <img src="#" alt="Loading..."> -->
+        </div>
+    </div>
+    <div class="header-view-brand p-8 relative">
+        <div>
+            Brand Informations
+        </div>
+        <div style="position: absolute; right: 1rem; top: 36%; cursor: pointer" @click="hide">
+            <?= $heroicons->xHtml('', 24, 24, ['aria-hidden' => 'true']) ?>
+        </div>
+    </div>
+    <div class="content-view-brand p-4">
+        <div id="quick-view">
+            <div class="container-fluid flex justify-between flex-col md:flex-row">
+                <div class="brand-info-container  w-full md:w-1/3">
+                    <div class="brand_title"></div>
+                    <div class="img-content">
+                        <img class="quickview_img" alt="">
+                    </div>
+                    <div class="brand_description"></div>
+                </div>
+                <div class="related-product-container  w-full md:w-2/3">
+                    <div class="related-product-modal-title"
+                         style="float: initial;"><?= /** @noEscape */ __('Related Products') ?></div>
+                    <div class="related-product-modal-content"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="footer-view-brand p-8" style="border-top: 1px solid #d1d1d1; display: flex; justify-content: flex-end">
+        <button @click="hide" type="button" class="btn">Close</button>
+    </div>
+</div>
+<style>
+    .ln_overlay {
+        background-color: #FFFFFF;
+        height: 100%;
+        left: 0;
+        opacity: 0.5;
+        position: absolute;
+        top: 0;
+        width: 100%;
+        z-index: 555;
+        display: none;
+    }
+    .loader img {
+        top: 40%;
+        left: 45%;
+        display: block;
+        position: fixed;
+    }
+
+    .modal-view-brand 
+
+    #quick-view .brand-info-container {
+        float: left;
+        padding: 0 25px;
+        background: #f7f7f7;
+    }
+    #quick-view .related-product-container {
+        float: left;
+        padding: 0 30px;
+    }
+    #quick-view .related-product-modal-title {
+        padding: 20px 0;
+        width: 100%;
+        text-align: center;
+        font-size: 26px;
+        font-weight: 700;
+        background: #f7f7f7;
+        margin-bottom: 20px;
+    }
+    #quick-view .brand_title {
+        float: left;
+        padding: 20px 0;
+        width: 100%;
+        text-align: center;
+        font-size: 26px;
+        font-weight: 700;
+    }
+    .brand-info-container .img-content {
+        width: 100%;
+        text-align: center;
+        margin: 15px 0 25px 0;
+    }
+    .brand-info-container .img-content .quickview_img {
+        width: 165px;
+        height: 165px;
+        margin: auto;
+    }
+    .brand-info-container .quickview_img {
+        border: 1px solid #d9d9d9;
+        border-radius: 30px;
+        box-shadow: 3px 3px 3px 3px #d9d9d9!important;
+    }
+    .modal-view-brand .mode-grid ul li a {
+        position: relative;
+        width: 100%;
+    }
+    .modal-view-brand .mode-list ul li a {
+        position: relative;
+        width: 33%;
+    }
+</style>
+
