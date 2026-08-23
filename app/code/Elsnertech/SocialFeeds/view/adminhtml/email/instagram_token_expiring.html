@@ -1,0 +1,9 @@
+<!--@subject Instagram Access Token Expiring Soon @-->
+<!--@vars {
+"var store_name":"Store Name",
+"var expires_at":"Expires At"
+} @-->
+
+<p>{{trans "The Instagram access token for %store_name is expiring soon (within 24 hours)." store_name=$store_name}}</p>
+<p>{{trans "Expected expiry: %expires_at" expires_at=$expires_at}}</p>
+<p>{{trans "The automatic daily refresh cron was not able to renew it in time. Please generate a new access token manually in Stores &gt; Configuration &gt; Instagram Feeds before it expires, and check the admin notifications / system log for why the automatic refresh failed."}}</p>
