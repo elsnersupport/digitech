@@ -6,20 +6,19 @@
  * @package     Elsnertech_DeliveryCountdown
  * @author      Elsnertech
  * @copyright   Copyright (c) 2025 Elsnertech
- * 
+ *
  * @var $block \Magento\Framework\View\Element\Template
  * @var $viewModel \Elsnertech\DeliveryCountdown\ViewModel\DeliveryCountdown
  */
 
 $viewModel = $block->getData('view_model');
-$deliveryInfo = $viewModel->getDeliveryInfo();
 
-if (empty($deliveryInfo) || !$deliveryInfo['enabled']) {
+if (!$viewModel->isEnabled()) {
     return;
 }
 ?>
 
-<div x-data="deliveryCountdown(<?= $block->escapeHtmlAttr($viewModel->getConfigJson()) ?>)" x-init="init()">
+<div x-data="deliveryCountdown(<?= $block->escapeHtmlAttr($viewModel->getConfigJson()) ?>)" x-init="init()" x-cloak>
     <!-- Same-Day Delivery Countdown Timer -->
     <div class="delivery-countdown-wrapper mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200" 
          x-show="!showNextDay"
@@ -46,24 +45,24 @@ if (empty($deliveryInfo) || !$deliveryInfo['enabled']) {
                     <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                     </svg>
-                    <span>Fulfilled</span>
+                    <span><?= $block->escapeHtml(__('Fulfilled')) ?></span>
                 </div>
                 
                 <!-- Delivery Message -->
                 <div class="text-sm font-medium text-gray-900 mb-1">
-                    <span x-text="sameDayMessage"></span>
+                    <span x-text="message"></span>
                 </div>
                 
                 <!-- Countdown Timer with Seconds -->
                 <div class="text-sm text-gray-700">
-                    <span>Order within </span>
+                    <span><?= $block->escapeHtml(__('Order within')) ?> </span>
                     <span class="font-semibold text-green-700">
-                        <span x-text="hoursRemaining"></span> hrs 
-                        <span x-text="minutesRemaining"></span> mins
-                        <span x-text="secondsRemaining"></span> secs
+                        <span x-text="hours"></span> <?= $block->escapeHtml(__('hrs')) ?>
+                        <span x-text="minutes"></span> <?= $block->escapeHtml(__('mins')) ?>
+                        <span x-text="seconds"></span> <?= $block->escapeHtml(__('secs')) ?>
                     </span>
                     <span class="text-gray-500 text-xs ml-1">
-                        <a href="#" @click.prevent="scrollToDetails()" class="underline hover:text-gray-700">Details</a>
+                        <a href="#" @click.prevent="scrollToDetails()" class="underline hover:text-gray-700"><?= $block->escapeHtml(__('Details')) ?></a>
                     </span>
                 </div>
             </div>
@@ -78,8 +77,7 @@ if (empty($deliveryInfo) || !$deliveryInfo['enabled']) {
          x-transition:enter-end="opacity-100 transform scale-100"
          x-transition:leave="transition ease-in duration-300"
          x-transition:leave-start="opacity-100 transform scale-100"
-         x-transition:leave-end="opacity-0 transform scale-95"
-         style="display: none;">
+         x-transition:leave-end="opacity-0 transform scale-95">
         
         <div class="flex items-start gap-3">
             <!-- Icon -->
@@ -97,24 +95,24 @@ if (empty($deliveryInfo) || !$deliveryInfo['enabled']) {
                     <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
                     </svg>
-                    <span>Next Day Delivery</span>
+                    <span><?= $block->escapeHtml(__('Next Day Delivery')) ?></span>
                 </div>
                 
                 <!-- Next Day Message -->
                 <div class="text-sm font-medium text-gray-900 mb-1">
-                    <span x-text="nextDayMessage"></span>
+                    <span x-text="message"></span>
                 </div>
                 
                 <!-- Next Day Countdown Timer -->
                 <div class="text-sm text-gray-700">
-                    <span>Order within </span>
+                    <span><?= $block->escapeHtml(__('Order within')) ?> </span>
                     <span class="font-semibold text-blue-700">
-                        <span x-text="nextDayHoursRemaining"></span> hrs 
-                        <span x-text="nextDayMinutesRemaining"></span> mins
-                        <span x-text="nextDaySecondsRemaining"></span> secs
+                        <span x-text="hours"></span> <?= $block->escapeHtml(__('hrs')) ?>
+                        <span x-text="minutes"></span> <?= $block->escapeHtml(__('mins')) ?>
+                        <span x-text="seconds"></span> <?= $block->escapeHtml(__('secs')) ?>
                     </span>
                     <span class="text-gray-500 text-xs ml-1">
-                        for delivery on next business day
+                        <?= $block->escapeHtml(__('for delivery on next business day')) ?>
                     </span>
                 </div>
             </div>
@@ -123,43 +121,172 @@ if (empty($deliveryInfo) || !$deliveryInfo['enabled']) {
 </div>
 
 <script>
+/**
+ * The component is handed the delivery rules, never a decision taken when the page
+ * was rendered. Product pages sit in the full page cache, so anything worked out on
+ * the server goes stale as soon as the clock passes the cutoff or the day changes.
+ * Deciding here, against the shopper's own clock, keeps a cached page correct.
+ */
 function deliveryCountdown(config) {
     return {
-        // Same-day delivery timer
-        sameDayMessage: config.delivery_message,
-        hoursRemaining: config.hours_remaining,
-        minutesRemaining: config.minutes_remaining,
-        secondsRemaining: config.seconds_remaining,
-        cutoffTimestamp: config.cutoff_timestamp,
-        
-        // Next-day delivery timer
-        nextDayMessage: '',
-        nextDayHoursRemaining: 0,
-        nextDayMinutesRemaining: 0,
-        nextDaySecondsRemaining: 0,
-        nextDayCutoffTimestamp: 0,
-        
-        // State management
-        intervalId: null,
         showNextDay: false,
-         nowTs: 0,      // unix timestamp (seconds)
-        nowDate: null, 
+        message: '',
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+        intervalId: null,
 
         init() {
-            this.updateNow();
-            this.calculateNextDayCutoff();
-            this.calculateNextDayMessage();
-            this.startCountdown();
+            this.refresh();
+            this.intervalId = setInterval(() => this.refresh(), 1000);
         },
-        updateNow() {
-        //             const date = new Date(
-        //     new Date().toLocaleString('en-US', { timeZone: 'Asia/Dubai' })
-        // );
-        const date = new Date();
-        // date.setDate(date.getDate() - 2);
-                this.nowDate = date;
-                this.nowTs = Math.floor(date.getTime() / 1000);
+
+        destroy() {
+            if (this.intervalId) {
+                clearInterval(this.intervalId);
+                this.intervalId = null;
+            }
         },
+
+        /**
+         * Wall clock reading in the store's timezone, whatever timezone the
+         * shopper's device happens to be set to.
+         */
+        storeParts(date) {
+            const parts = {};
+            const formatter = new Intl.DateTimeFormat('en-US', {
+                timeZone: config.timezone,
+                hour12: false,
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+
+            formatter.formatToParts(date).forEach(part => {
+                if (part.type !== 'literal') {
+                    parts[part.type] = parseInt(part.value, 10);
+                }
+            });
+
+            // Some engines report midnight as hour 24.
+            if (parts.hour === 24) {
+                parts.hour = 0;
+            }
+
+            return parts;
+        },
+
+        /**
+         * Difference in milliseconds between the store's wall clock and UTC at this
+         * instant, so a store-local date and time can be turned back into a real one.
+         */
+        storeOffset(date, parts) {
+            const asIfUtc = Date.UTC(
+                parts.year, parts.month - 1, parts.day,
+                parts.hour, parts.minute, parts.second
+            );
+
+            return asIfUtc - Math.floor(date.getTime() / 1000) * 1000;
+        },
+
+        /** The instant a given store-local day reaches the cutoff. */
+        cutoffAt(day, offset) {
+            return Date.UTC(day.year, day.month - 1, day.day, config.cutoffHour, config.cutoffMinute, 0) - offset;
+        },
+
+        isWorkingDay(day) {
+            const weekday = new Date(Date.UTC(day.year, day.month - 1, day.day)).getUTCDay();
+
+            return !config.nonWorkingDays.includes(weekday);
+        },
+
+        /** First working day strictly after the given one. */
+        nextWorkingDay(day) {
+            const date = new Date(Date.UTC(day.year, day.month - 1, day.day));
+
+            // Bounded so a misconfiguration can never spin the browser.
+            for (let i = 0; i < 8; i++) {
+                date.setUTCDate(date.getUTCDate() + 1);
+
+                if (!config.nonWorkingDays.includes(date.getUTCDay())) {
+                    break;
+                }
+            }
+
+            return { year: date.getUTCFullYear(), month: date.getUTCMonth() + 1, day: date.getUTCDate() };
+        },
+
+        refresh() {
+            const now = new Date();
+            const parts = this.storeParts(now);
+            const offset = this.storeOffset(now, parts);
+            const nowMs = Math.floor(now.getTime() / 1000) * 1000;
+
+            const today = { year: parts.year, month: parts.month, day: parts.day };
+            const todayIsWorkingDay = this.isWorkingDay(today);
+            const beforeCutoff = nowMs < this.cutoffAt(today, offset);
+
+            // Same day is only on the table on a working day, before the cutoff.
+            const isSameDay = config.sameDayEnabled && todayIsWorkingDay && beforeCutoff;
+            const deliveryDay = isSameDay ? today : this.nextWorkingDay(today);
+
+            // Orders still count towards today until the cutoff passes; after that,
+            // or on a non-working day, the next chance is the next working day.
+            const orderDeadline = (todayIsWorkingDay && beforeCutoff)
+                ? this.cutoffAt(today, offset)
+                : this.cutoffAt(this.nextWorkingDay(today), offset);
+
+            const remaining = Math.max(0, Math.floor((orderDeadline - nowMs) / 1000));
+
+            this.showNextDay = !isSameDay;
+            this.message = this.renderMessage(
+                isSameDay ? config.sameDayMessage : config.nextDayMessage,
+                deliveryDay,
+                today
+            );
+            this.hours = Math.floor(remaining / 3600);
+            this.minutes = Math.floor((remaining % 3600) / 60);
+            this.seconds = remaining % 60;
+        },
+
+        /**
+         * Same placeholders, and the same date format, the server side uses.
+         *
+         * The month names are spelled out rather than taken from Intl on purpose:
+         * PHP's "M" is always the three letter English abbreviation, while browsers
+         * follow their own locale data, which renders September as "Sept" on newer
+         * ICU versions and "Sep" on older ones.
+         */
+        renderMessage(template, deliveryDay, today) {
+            const months = [
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+            ];
+            const formatted = String(deliveryDay.day).padStart(2, '0') + ' ' + months[deliveryDay.month - 1];
+
+            return (template || '')
+                .replace(/\{day\}/g, this.dayLabel(deliveryDay, today))
+                .replace(/\{date\}/g, formatted)
+                .replace(/\{time\}/g, config.cutoffLabel);
+        },
+
+        /**
+         * Word for the {day} placeholder: "Tomorrow" when the parcel arrives the
+         * very next day, and the plain preposition once a non-working day has
+         * pushed it further out. The words come from the server so they stay
+         * translatable.
+         */
+        dayLabel(deliveryDay, today) {
+            const from = Date.UTC(today.year, today.month - 1, today.day);
+            const to = Date.UTC(deliveryDay.year, deliveryDay.month - 1, deliveryDay.day);
+            const offset = Math.round((to - from) / 86400000);
+
+            if (offset <= 0) {
+                return config.dayLabels.today;
+            }
+
+            return offset === 1 ? config.dayLabels.tomorrow : config.dayLabels.later;
+        },
+
         scrollToDetails() {
             var targetToScroll = document.querySelector('[x-data="initProductSections"]');
             var pageHeader = document.querySelector('.page-header');
@@ -173,143 +300,7 @@ function deliveryCountdown(config) {
                     setTimeout(() => {
                         navButtons[navButtons.length - 1].click();
                     }, 300); // Delay to ensure scroll completes
-                    // navButtons[navButtons.length - 1].click();
                 }
-            }
-        },
-        startCountdown() {
-            // Update immediately
-            this.updateCountdown();
-            
-            // Update every second
-            this.intervalId = setInterval(() => {
-                this.updateCountdown();
-            }, 1000);
-        },
-
-        updateCountdown() {
-           this.updateNow();
-            
-            if (this.showNextDay) {
-                // Update next-day timer
-                this.updateNextDayTimer();
-            } else {
-                // Update same-day timer
-                this.updateSameDayTimer();
-            }
-        },
-
-        updateSameDayTimer() {
-            const timeRemaining = this.cutoffTimestamp - this.nowTs;
-
-            if (timeRemaining <= 0) {
-                // Same-day cutoff passed, switch to next-day
-                this.switchToNextDay();
-                return;
-            }
-
-            // Calculate hours, minutes, and seconds
-            this.hoursRemaining = Math.floor(timeRemaining / 3600);
-            this.minutesRemaining = Math.floor((timeRemaining % 3600) / 60);
-            this.secondsRemaining = timeRemaining % 60;
-        },
-
-        updateNextDayTimer() {
-            const timeRemaining = this.nextDayCutoffTimestamp - this.nowTs;
-            if (timeRemaining <= 0) {
-                // Next-day cutoff also passed, reload page to recalculate
-                clearInterval(this.intervalId);
-                // window.location.reload();
-                return;
-            }
-
-            // Calculate hours, minutes, and seconds for next-day
-            this.nextDayHoursRemaining = Math.floor(timeRemaining / 3600);
-            this.nextDayMinutesRemaining = Math.floor((timeRemaining % 3600) / 60);
-            this.nextDaySecondsRemaining = timeRemaining % 60;
-        },
-
-        switchToNextDay() {
-            // Switch display from same-day to next-day
-            this.showNextDay = true;
-            
-            // Start updating next-day timer
-            this.updateNextDayTimer(Math.floor(Date.now() / 1000));
-        },
-
-        calculateNextDayCutoff() {
-            // Next day cutoff is current cutoff + 24 hours
-            this.nextDayCutoffTimestamp = this.cutoffTimestamp + (24 * 60 * 60);
-            const now = this.nowDate;
-            const tomorrow = new Date(now);
-            tomorrow.setDate(tomorrow.getDate() + 1);
-             if(tomorrow.getDay() === 0){
-                    while (tomorrow.getDay() === 0) {
-                         tomorrow.setDate(tomorrow.getDate() + 1);
-                        this.nextDayCutoffTimestamp = this.cutoffTimestamp + (24 * 60 * 60);
-
-                    }
-                }
-        },
-        // calculateNextDayCutoff() {
-        //     const nextDay = new Date(this.nowDate);
-        //     nextDay.setDate(nextDay.getDate() + 1);
-
-        //     // Skip weekends
-        //     while (nextDay.getDay() === 0 || nextDay.getDay() === 6) {
-        //         nextDay.setDate(nextDay.getDate() + 1);
-        //     }
-
-        //     // Preserve cutoff time, only shift the date
-        //     const cutoff = new Date(this.cutoffTimestamp * 1000);
-        //     nextDay.setHours(
-        //         cutoff.getHours(),
-        //         cutoff.getMinutes(),
-        //         cutoff.getSeconds()
-        //     );
-
-        //     this.nextDayCutoffTimestamp = Math.floor(nextDay.getTime() / 1000);
-        // },
-
-        // calculateNextDayMessage() {
-        //     const now = new Date();
-        //     const tomorrow = new Date(now);
-        //     tomorrow.setDate(tomorrow.getDate() + 1);
-        //     let checkdayisWeekend = false;
-            
-        //     // Skip weekends if needed
-        //     while (tomorrow.getDay() === 0 || tomorrow.getDay() === 6) {
-        //         checkdayisWeekend = true;
-        //         tomorrow.setDate(tomorrow.getDate() + 1);
-        //     }
-            
-        //     const options = { day: 'numeric', month: 'short' };
-        //     const formattedDate = tomorrow.toLocaleDateString('en-US', options);
-        //     this.nextDayMessage = `FREE delivery ${checkdayisWeekend ? 'on' : 'Tomorrow'}, ${formattedDate}.`;
-        // },
-         calculateNextDayMessage() {
-            const deliveryDate = new Date(config.current_time_formatted);
-            deliveryDate.setDate(deliveryDate.getDate() + 1);
-
-            let isWeekendShifted = false;
-            while (deliveryDate.getDay() === 0 || deliveryDate.getDay() === 6) {
-                isWeekendShifted = true;
-                deliveryDate.setDate(deliveryDate.getDate() + 1);
-            }
-
-            const formattedDate = deliveryDate.toLocaleDateString('en-US', {
-                day: 'numeric',
-                month: 'short'
-            });
-
-            this.nextDayMessage = `FREE delivery ${
-                isWeekendShifted ? 'on' : 'Tomorrow'
-            }, ${formattedDate}.`;
-        },
-
-        destroy() {
-            if (this.intervalId) {
-                clearInterval(this.intervalId);
             }
         }
     }
