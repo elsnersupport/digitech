@@ -24,6 +24,7 @@ class Data extends AbstractHelper
     const XML_PATH_SAME_DAY_MESSAGE = 'delivery_countdown/general/same_day_message';
     const XML_PATH_NEXT_DAY_MESSAGE = 'delivery_countdown/general/next_day_message';
     const XML_PATH_COUNTDOWN_TEXT = 'delivery_countdown/general/countdown_text';
+    const XML_PATH_NON_WORKING_DAYS = 'delivery_countdown/general/non_working_days';
     
     const XML_PATH_ENABLE_LOCATION_CHECK = 'delivery_countdown/location/enable_location_check';
     const XML_PATH_ALLOWED_COUNTRIES = 'delivery_countdown/location/allowed_countries';
@@ -219,4 +220,37 @@ class Data extends AbstractHelper
         );
     }
 
+    /**
+     * Get the days of the week on which no delivery happens
+     *
+     * Values follow PHP's date('w') numbering (0 = Sunday ... 6 = Saturday) so the
+     * same list can be handed to the browser and compared against Date::getDay().
+     * Returns an empty array when the exclusion is switched off, or when every day
+     * has been selected, since treating every day as non-working would leave the
+     * delivery date unresolvable.
+     *
+     * @return int[]
+     */
+    public function getNonWorkingDays()
+    {
+        if (!$this->isExcludeWeekends()) {
+            return [];
+        }
+
+        $configured = $this->scopeConfig->getValue(
+            self::XML_PATH_NON_WORKING_DAYS,
+            ScopeInterface::SCOPE_STORE
+        );
+
+        if ($configured === null || $configured === '') {
+            return [];
+        }
+
+        $days = array_map('intval', explode(',', (string) $configured));
+        $days = array_values(array_unique(array_filter($days, function ($day) {
+            return $day >= 0 && $day <= 6;
+        })));
+
+        return count($days) >= 7 ? [] : $days;
+    }
 }

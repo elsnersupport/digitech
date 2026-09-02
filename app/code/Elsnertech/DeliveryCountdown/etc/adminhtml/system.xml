@@ -53,14 +53,23 @@
                 <field id="exclude_weekends" translate="label comment" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Exclude Weekends</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Skip Saturday and Sunday for delivery calculation</comment>
+                    <comment>Skip non-working days when calculating the delivery date and when deciding whether same day delivery can still be offered</comment>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
+                <field id="non_working_days" translate="label comment" type="multiselect" sortOrder="55" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Non-Working Days</label>
+                    <source_model>Elsnertech\DeliveryCountdown\Model\Config\Source\DaysOfWeek</source_model>
+                    <comment>Days on which nothing is delivered. Same day delivery is never offered on these days, and delivery dates skip past them. Defaults to Saturday and Sunday.</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="exclude_weekends">1</field>
+                    </depends>
+                </field>
                 <field id="same_day_message" translate="label comment" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Same Day Delivery Message</label>
-                    <comment>Message to display for same day delivery. Use {date} and {time} as placeholders.</comment>
+                    <comment>Message to display for same day delivery. Placeholders: {date} the delivery date, {time} the cutoff time, and {day} which becomes Today, Tomorrow, or "on" when a non-working day pushes the delivery further out.</comment>
                     <depends>
                         <field id="enabled">1</field>
                         <field id="same_day_enabled">1</field>
@@ -68,7 +77,7 @@
                 </field>
                 <field id="next_day_message" translate="label comment" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Next Day Delivery Message</label>
-                    <comment>Message to display for next day delivery. Use {date} and {time} as placeholders.</comment>
+                    <comment>Message to display for next day delivery. Placeholders: {date} the delivery date, {time} the cutoff time, and {day} which becomes Today, Tomorrow, or "on" when a non-working day pushes the delivery further out.</comment>
                     <depends>
                         <field id="enabled">1</field>
                         <field id="next_day_enabled">1</field>

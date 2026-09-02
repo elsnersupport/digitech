@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Elsnertech_DeliveryCountdown
+ * 
+ * @category    Elsnertech
+ * @package     Elsnertech_DeliveryCountdown
+ * @author      Elsnertech
+ * @copyright   Copyright (c) 2025 Elsnertech
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <delivery_countdown>
+            <general>
+                <!-- Saturday and Sunday, matching the "Exclude Weekends" label this
+                     module has always shown. Stores whose weekend differs can change
+                     it in the admin without a code release. -->
+                <non_working_days>0,6</non_working_days>
+            </general>
+        </delivery_countdown>
+    </default>
+</config>
