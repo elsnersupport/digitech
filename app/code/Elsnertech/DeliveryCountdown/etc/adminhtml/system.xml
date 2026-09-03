@@ -120,7 +120,7 @@
                 </field>
                 <field id="allowed_regions" translate="label comment" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Allowed Regions/Cities</label>
-                    <comment>Enter allowed regions or cities, one per line (e.g., Dubai, Abu Dhabi). Leave empty to allow all regions in selected countries.</comment>
+                    <comment>Enter allowed regions or cities, one per line (e.g., Dubai). Matched against the visitor's city, region and region code, case insensitively. Requires "Add visitor location headers" to be enabled under Managed Transforms in Cloudflare; without it the emirate cannot be determined and the countdown is hidden. Leave empty to allow all regions in the selected countries.</comment>
                     <depends>
                         <field id="enable_location_check">1</field>
                     </depends>
@@ -139,6 +139,13 @@
                     <depends>
                         <field id="enable_location_check">1</field>
                         <field id="use_ip_detection">1</field>
+                    </depends>
+                </field>
+                <field id="preview_ips" translate="label comment" type="textarea" sortOrder="55" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Always Show For These IPs</label>
+                    <comment>Addresses that always see the countdown regardless of where they are, for previewing a region restricted widget. One per line, either a single address (e.g. 180.211.96.18) or an IPv4 range (e.g. 180.211.96.0/24). Keep this to individual developer addresses: anything broad will show the countdown to real shoppers outside the delivery area.</comment>
+                    <depends>
+                        <field id="enable_location_check">1</field>
                     </depends>
                 </field>
                 <field id="fallback_to_session" translate="label comment" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">

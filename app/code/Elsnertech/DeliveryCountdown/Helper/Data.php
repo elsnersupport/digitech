@@ -32,6 +32,7 @@ class Data extends AbstractHelper
     const XML_PATH_USE_IP_DETECTION = 'delivery_countdown/location/use_ip_detection';
     const XML_PATH_GEOLOCATION_API_KEY = 'delivery_countdown/location/geolocation_api_key';
     const XML_PATH_FALLBACK_TO_SESSION = 'delivery_countdown/location/fallback_to_session';
+    const XML_PATH_PREVIEW_IPS = 'delivery_countdown/location/preview_ips';
 
     /**
      * Check if delivery countdown is enabled
@@ -252,5 +253,32 @@ class Data extends AbstractHelper
         })));
 
         return count($days) >= 7 ? [] : $days;
+    }
+    /**
+     * Get the addresses that always see the countdown, whatever their location
+     *
+     * Intended for the people building and supporting the site, so they can check
+     * a region restricted widget from their own desk without opening it up to real
+     * shoppers nearby. Accepts single addresses and IPv4 CIDR ranges, separated by
+     * new lines or commas.
+     *
+     * @return string[]
+     */
+    public function getPreviewIps()
+    {
+        $configured = $this->scopeConfig->getValue(
+            self::XML_PATH_PREVIEW_IPS,
+            ScopeInterface::SCOPE_STORE
+        );
+
+        if (empty($configured)) {
+            return [];
+        }
+
+        $entries = preg_split('/[\s,]+/', trim((string) $configured));
+
+        return array_values(array_filter(array_map('trim', $entries ?: []), function ($entry) {
+            return $entry !== '';
+        }));
     }
 }

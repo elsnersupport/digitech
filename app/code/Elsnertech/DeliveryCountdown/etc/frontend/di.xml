@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Elsnertech_DeliveryCountdown
+ * 
+ * @category    Elsnertech
+ * @package     Elsnertech_DeliveryCountdown
+ * @author      Elsnertech
+ * @copyright   Copyright (c) 2025 Elsnertech
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\App\Http\Context">
+        <plugin name="elsnertech_delivery_countdown_area_context"
+                type="Elsnertech\DeliveryCountdown\Plugin\AddDeliveryAreaToHttpContext"
+                sortOrder="10"/>
+    </type>
+</config>
