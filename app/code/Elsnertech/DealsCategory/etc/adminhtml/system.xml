@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Elsnertech_DealsCategory
+ *
+ * @category    Elsnertech
+ * @package     Elsnertech_DealsCategory
+ * @author      Elsnertech
+ * @copyright   Copyright (c) 2026 Elsnertech
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="elsnertech_deals_category" translate="label" type="text" sortOrder="900" showInDefault="1" showInWebsite="0" showInStore="0">
+            <label>Deals Category</label>
+            <tab>catalog</tab>
+            <resource>Elsnertech_DealsCategory::config</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Automatic Deals Category</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable Scheduled Sync</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Fills the category below with enabled, in-stock, catalog-visible products whose special price is at least 1 and runs today (special from/to dates).</comment>
+                </field>
+                <field id="category_id" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Deals Category ID</label>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                    <comment>Every sync replaces this category's products with the current deals, so products added to it by hand are removed. Positions of products that stay are kept.</comment>
+                </field>
+                <field id="cron_expr" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Sync Schedule</label>
+                    <comment>Cron expression, e.g. */5 * * * * for every 5 minutes. The category is only saved when its product list actually changes.</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

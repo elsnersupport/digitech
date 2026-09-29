@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Elsnertech_DealsCategory
+ *
+ * @category    Elsnertech
+ * @package     Elsnertech_DealsCategory
+ * @author      Elsnertech
+ * @copyright   Copyright (c) 2026 Elsnertech
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <elsnertech_deals_category>
+            <general>
+                <enabled>0</enabled>
+                <category_id/>
+                <cron_expr>*/5 * * * *</cron_expr>
+            </general>
+        </elsnertech_deals_category>
+    </default>
+</config>

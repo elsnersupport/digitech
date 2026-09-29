@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Elsnertech_DealsCategory
+ *
+ * @category    Elsnertech
+ * @package     Elsnertech_DealsCategory
+ * @author      Elsnertech
+ * @copyright   Copyright (c) 2026 Elsnertech
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="elsnertechDealsCategorySync" xsi:type="object">Elsnertech\DealsCategory\Console\Command\SyncDealsCategory</item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- Every bin/magento call builds the command list, so keep the catalog services lazy. -->
+    <type name="Elsnertech\DealsCategory\Console\Command\SyncDealsCategory">
+        <arguments>
+            <argument name="dealsCategorySync" xsi:type="object">Elsnertech\DealsCategory\Model\DealsCategorySync\Proxy</argument>
+            <argument name="productResource" xsi:type="object">Magento\Catalog\Model\ResourceModel\Product\Proxy</argument>
+        </arguments>
+    </type>
+</config>

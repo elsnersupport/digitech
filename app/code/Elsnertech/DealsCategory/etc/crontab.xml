@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Elsnertech_DealsCategory
+ *
+ * @category    Elsnertech
+ * @package     Elsnertech_DealsCategory
+ * @author      Elsnertech
+ * @copyright   Copyright (c) 2026 Elsnertech
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="default">
+        <job name="elsnertech_deals_category_sync" instance="Elsnertech\DealsCategory\Cron\SyncDealsCategory" method="execute">
+            <config_path>elsnertech_deals_category/general/cron_expr</config_path>
+        </job>
+    </group>
+</config>
